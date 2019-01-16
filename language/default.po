@@ -1,0 +1,88 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: MyThemeShop Connect\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-02-07 11:49+0100\n"
+"PO-Revision-Date: 2017-02-07 11:49+0100\n"
+"Last-Translator: MyThemeShop <support-team@mythemeshop.com>\n"
+"Language-Team: MyThemeShop <support-team@mythemeshop.com>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Generator: Poedit 1.8.11\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../mythemeshop-connect.php:228
+msgid "<p>Login successful! Checking for theme updates...</p>"
+msgstr ""
+
+#: ../mythemeshop-connect.php:229
+msgid "<p>Theme check done. Checking plugins...</p>"
+msgstr ""
+
+#: ../mythemeshop-connect.php:230
+msgid "<p>Plugin check done. Refreshing page...</p>"
+msgstr ""
+
+#: ../mythemeshop-connect.php:231 ../mythemeshop-connect.php:232
+msgid "Check for updates now"
+msgstr ""
+
+#: ../mythemeshop-connect.php:233
+msgid ""
+"Please insert your MyThemeShop <strong>username</strong> instead of the "
+"email address you registered with."
+msgstr ""
+
+#: ../mythemeshop-connect.php:473
+msgid "Disconnected."
+msgstr ""
+
+#: ../mythemeshop-connect.php:477
+msgid "Notices reset."
+msgstr ""
+
+#: ../mythemeshop-connect.php:507
+msgid "MyThemeShop Connect"
+msgstr ""
+
+#: ../mythemeshop-connect.php:511
+msgid "Connected!"
+msgstr ""
+
+#: ../mythemeshop-connect.php:512
+msgid "MyThemeShop username:"
+msgstr ""
+
+#: ../mythemeshop-connect.php:513
+msgid "Disconnect"
+msgstr ""
+
+#: ../mythemeshop-connect.php:519
+msgid ""
+"Enter your MyThemeShop Email/Username and Password to get free Theme/Plugin "
+"updates."
+msgstr ""
+
+#: ../mythemeshop-connect.php:520
+msgid "Email address or Username"
+msgstr ""
+
+#: ../mythemeshop-connect.php:522
+msgid "Password"
+msgstr ""
+
+#: ../mythemeshop-connect.php:525
+msgid "Connect"
+msgstr ""
+
+#: ../mythemeshop-connect.php:818
+msgid "Dissmiss Notice"
+msgstr ""
+
+#: ../mythemeshop-connect.php:819
+msgid "Dissmiss All Notices"
+msgstr ""

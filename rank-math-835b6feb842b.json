@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "rank-math",
+  "private_key_id": "835b6feb842bd54f45f33f251c4654384e83d0be",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCtlaoeZ3CnIXat\niestytJFRZkr+uoXxYEtcYb5iM6FVzLC9WIjiuv//rh0sbkBxqnj1AUME8eF8XJo\nFLcqavHidRIYAZS0Zl5NNs3eq5Smq2xk688baFrlZG4two+pqSNxV+wQ5yImbuQx\nbCQsyubzPNYgv0X1g1l1Id9M2U2QCGDmmsShw4Gtvjo+7M0bpY3Jgc8QzABqaOYz\nYMqzNvhEWEsB1LVk3Dun19E8V4xhcBfYuOM4me1QxKoMZOH7Hxn4hz4xJe3x4upG\nHwt/pb4xCVNv55bjp3kyTw340EsfQ+KwDdbMKQGlvf8Z/EAVXAlYvMYQD22PO466\nPtSbmhfdAgMBAAECggEAAQJWu9iEGiSiqP2dRWXhdQ+jhVLvG3ZFevsm+rpl4PaR\nz/pXOLetCY70iZEi7zS1diKcaOaQiWHO9XXxXqjCgTuHAGa585aIw9AmwD2lHpbu\niWOpj5I6vQypa1CvPyBBmX4WXD7Lvwd0AimLyErhrtZStFwITxYVZg3tW2gEAGtZ\nmWXeo/xUR/+uOmXJ1bTSfLDED7xNoLLw6QYgWK4HClnAiEusrABqvcFYchdltBTm\nGmHPESlIi66JxW4RANjDzaGrGCN4yLavWbc8CddDi0/6kCfHpiqbr5c4CJrt0j1r\nGWPNrAWfboE4LJslUlDxepUlYdASc2gfrCbYD436bQKBgQDTMvcg53FuHa+XV9tS\n0w08hbg770nb13dmKQu/itC2YFEihEf1PF9Bv3Y/Fu6jYEB0PV9uVukkxOOetb21\nOv2WCET+pML858d9QurrLWFp0Vf8SSVH7GGVczdfDiUaHHbu1Ygqu5bYX9d+D/c1\nt7aE94ndwUqhUV0XQdj1oEwn+wKBgQDSaBHO09+r3gZrwMIJEbp0iCcjQYPqHaXW\nEbLc7QUEfglApbnKdFrhmmFvlbmtjeI+oXS0D9E7d6pQkTgEfnBdX3rfmBnBNXdv\nblEvDYdDME6nBO7JSmrxuRv3mhBdPnCsFmNc5V7Kcns2kuAiPo97SpsUAol9+kqX\niYVO7H8ABwKBgCDgfCv5G2VC5cSvforkI9laD5X06BB6+DFFDnkgyOC7GaY/5Vu9\nrC51+ZhUn417PE1cCHEKwnxg0fYw4HlH15X1b5gcWeY4xosvUZaOl+17EzFIya7q\nkz5Kk0IO16O67qC7SNkuHotMUCVlotwP3y/PwPxuTInUOqOWMon6DCDlAoGAKmxt\nWsSBjse/h65f8TAv5hsluQgWrve3XkhHRiBMKLG47936bgWz5VUZXERWIdY/zd0E\nCOI/j7v7DS+amd1cjpcX0Ul7t+ct47vchp41rahp02c9NjzY/1ARgYUA06wpT6lb\n83kT+cHHciN/Kahvia5rQkeYrVvv+knyJQ2uNbUCgYAhC2IHZ+BnA2lD/NYwT9Fy\nE1BQbYFH8yWY9ltM7gtu9JsklVGXEfebCqiehTEVoxj0DmUmDHKwVVIZ6tONWf4h\nWL1B1qeMP5s7RNpYUHs/A7/GSFabRNoWTLsNfIC4kgg6+GS8pWeXbRQXFQCqXCqA\n/uxi9ICJfhRhK7SAtAsDDg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "indexing-api-service-account@rank-math.iam.gserviceaccount.com",
+  "client_id": "114363778534361415626",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/indexing-api-service-account%40rank-math.iam.gserviceaccount.com"
+}
