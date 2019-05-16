@@ -20,8 +20,22 @@ class MTS_GIAPI {
         add_action( 'wp_ajax_mts_giapi',array( $this,'ajax_mts_giapi' ) );
         add_action( 'wp_ajax_mts_giapi_deauth',array( $this,'ajax_mts_giapi_deauth' ) );
         
+        $post_types = apply_filters( 'mtsgiapi_post_types', array( 'post', 'page' ) );
+        foreach ( $post_types as $pt ) {
+            add_filter( $pt.'_row_actions', array( $this, 'send_to_api_link' ), 10, 2 );
+        }
         // localization
         add_action( 'plugins_loaded', array( $this, 'mythemeshop_giapi_load_textdomain' ) );
+    }
+
+    function send_to_api_link( $actions, $post ) {
+        if ( ! current_user_can( apply_filters( 'mtsgiapi_capability', 'manage_options' ) ) ) {
+            return $actions;
+        }
+        $nonce = wp_create_nonce( 'giapi-action' );
+        $actions['mtsgiapi_update'] = '<a href="' . admin_url( 'tools.php?page=mts-giapi&apiaction=update&_wpnonce='.$nonce.'&apiurl='.rawurlencode( get_permalink( $post) ) ) . '" class="mtsgiapi-link mtsgiapi_update">' . __('Indexing API: Update', 'mts-giapi') . '</a>';
+        $actions['mtsgiapi_getstatus'] = '<a href="' . admin_url( 'tools.php?page=mts-giapi&apiaction=getstatus&_wpnonce='.$nonce.'&apiurl='.rawurlencode( get_permalink( $post) ) ) . '" class="mtsgiapi-link mtsgiapi_update">' . __('Indexing API: Get Status', 'mts-giapi') . '</a>';
+        return $actions;
     }
     
     function mythemeshop_giapi_load_textdomain() {
@@ -29,7 +43,7 @@ class MTS_GIAPI {
     }
     
     function ajax_mts_giapi() {
-        if ( ! current_user_can( apply_filters( 'mtsgia_capability', 'manage_options' ) ) ) {
+        if ( ! current_user_can( apply_filters( 'mtsgiapi_capability', 'manage_options' ) ) ) {
             die('0');
         }
 
@@ -48,7 +62,6 @@ class MTS_GIAPI {
         $service = new Google_Service_Indexing($this->client);
         $batch = new Google_Http_Batch($this->client,false,'https://indexing.googleapis.com');
         foreach ( $url_input as $i => $url ) {
-            $request = $this->build_request( $action, $url );
             $postBody = new Google_Service_Indexing_UrlNotification();
             if ( $action == 'getstatus' ) {
                 $request_part = $service->urlNotifications->getMetadata( array( 'url' => $url ) );
@@ -82,40 +95,13 @@ class MTS_GIAPI {
         return array_values( array_filter( array_map( 'trim', explode( "\n", $_POST['url'] ) ) ) );
     }
 
-    function build_request( $action, $url ) {
-
-        $url = esc_url( $url );
-        $output = array( 
-            'url' => 'https://indexing.googleapis.com/v3/urlNotifications:publish', 
-            'method' => 'post', 
-            'body' => array( 'url' => $url ),
-            'obj_method' => 'publish'
-        );
-        
-        if ( $action == 'getstatus' ) {
-            $output['method'] = 'get';
-            $output['obj_method'] = 'getMetadata';
-            $output['body'] = null;
-            $output['url'] = 'https://indexing.googleapis.com/v3/urlNotifications/metadata';
-            $output['url'] = add_query_arg( 'url', $url, $output['url'] );
-        } elseif ( $action == 'update' ) {
-            $output['body']['type'] = 'URL_UPDATED';
-        } elseif ( $action == 'remove' ) {
-            $output['body']['type'] = 'URL_DELETED';
-        }
-
-        //$output['body'] = $output['body'] ? json_encode( $output['body'] ) : '';
-
-        return $output;
-    }
-
     function batch_request( $method, $url ) {
 
     }
 
     function admin_menu() {
         // Add the new admin menu and page and save the returned hook suffix    
-        $this->menu_hook_suffix = add_management_page(__('Google Indexing API', 'mts-giapi'), __('Indexing API', 'mts-giapi'), apply_filters( 'mtsgia_capability', 'manage_options' ), 'mts-giapi', array( $this, 'show_ui' ) );
+        $this->menu_hook_suffix = add_management_page(__('Google Indexing API', 'mts-giapi'), __('Indexing API', 'mts-giapi'), apply_filters( 'mtsgiapi_capability', 'manage_options' ), 'mts-giapi', array( $this, 'show_ui' ) );
         add_action( 'load-' . $this->menu_hook_suffix , array( $this, 'ui_onload' ) );
     
     }
@@ -198,6 +184,12 @@ class MTS_GIAPI {
                     });
                     
                 });
+
+                <?php if ( ! empty( $_GET['apiaction'] ) && ! empty( $_GET['apiurl'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'giapi-action' ) ) { ?>
+                    $('#giapi-url').val('<?php echo esc_url_raw( $_GET['apiurl'] ); ?>');
+                    $('#mts-giapi').find('input.giapi-action[value="<?php echo sanitize_title( $_GET['apiaction'] ); ?>"]').prop('checked', true);
+                    $('#mts-giapi').submit();
+                <?php } ?>
             });        
         </script>
         <?php
