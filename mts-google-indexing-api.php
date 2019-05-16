@@ -3,7 +3,7 @@
  * Plugin Name: MTS Google Indexing API
  * Plugin URI: https://mythemeshop.com
  * Description: Crawl pages instantly with the indexing API.
- * Version: 1.0
+ * Version: 1.1
  * Author: MyThemeShop
  * Author URI: https://mythemeshop.com
  * License: GPLv2
@@ -22,11 +22,6 @@ class MTS_GIAPI {
         
         // localization
         add_action( 'plugins_loaded', array( $this, 'mythemeshop_giapi_load_textdomain' ) );
-
-        include_once 'google-api-php-client/vendor/autoload.php';
-        $this->client = new Google_Client();
-        $this->client->setAuthConfig(plugin_dir_path( __FILE__ ).'rank-math-835b6feb842b.json');
-        $this->client->addScope('https://www.googleapis.com/auth/indexing');
     }
     
     function mythemeshop_giapi_load_textdomain() {
@@ -34,76 +29,93 @@ class MTS_GIAPI {
     }
     
     function ajax_mts_giapi() {
+        if ( ! current_user_can( apply_filters( 'mtsgia_capability', 'manage_options' ) ) ) {
+            die('0');
+        }
+
+        include_once 'vendor/autoload.php';
+        $this->client = new Google_Client();
+        $this->client->setAuthConfig(plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json');
+        $this->client->setConfig('base_path', 'https://indexing.googleapis.com');
+        $this->client->addScope( 'https://www.googleapis.com/auth/indexing' );
+
         header("Content-type: application/json");
         $action = sanitize_title( $_POST['api_action'] );
-        $url = esc_url( $_POST['url'] );
-        
-        $req_method = 'post';
-        $req_url = 'https://indexing.googleapis.com/v3/urlNotifications:publish';
-        $req_body = array( 'url' => $url );
-        if ( $action == 'getstatus' ) {
-            $req_method = 'get';
-            $req_body = null;
-            $req_url = 'https://indexing.googleapis.com/v3/urlNotifications/metadata';
-            $req_url = add_query_arg( 'url', $url, $req_url );
-        } elseif ( $action == 'update' ) {
-            $req_body['type'] = 'URL_UPDATED';
-        } elseif ( $action == 'remove' ) {
-            $req_body['type'] = 'URL_DELETED';
+        $url_input = $this->get_input_urls();
+        // Batch request
+        $this->client->setUseBatch(true);
+        //init google batch and set root URL
+        $service = new Google_Service_Indexing($this->client);
+        $batch = new Google_Http_Batch($this->client,false,'https://indexing.googleapis.com');
+        foreach ( $url_input as $i => $url ) {
+            $request = $this->build_request( $action, $url );
+            $postBody = new Google_Service_Indexing_UrlNotification();
+            if ( $action == 'getstatus' ) {
+                $request_part = $service->urlNotifications->getMetadata( array( 'url' => $url ) );
+            } else {
+                $postBody->setType( $request['body']['type'] );
+                $postBody->setUrl( $url );
+                $request_part = $service->urlNotifications->publish( $postBody );
+            }
+            $batch->add( $request_part, 'url-'.$i );
         }
 
-        //$response = $this->client->$req_method( $req_url, $req_body );
-        //$response = array( 'method' => $req_method, 'url' => $req_url, 'body' => $req_body );
-
-        $httpClient = $this->client->authorize();
-        $content = $req_body ? json_encode( $req_body ) : '';
-        $response = $httpClient->$req_method( $req_url, array( 'body' => $content ) );
-
-        $body = $response->getBody()->getContents();
-        if ( $body ) {
-            $body = json_decode( $body, true );
+        $results = $batch->execute();
+        $data = array();
+        $rc = count( $results );
+        foreach ( $results as $id => $response ) {
+            if ( is_a( $response, 'Google_Service_Exception' ) ) {
+                $data[substr( $id, 9 )] = json_decode( $response->getMessage() );
+            } else {
+                $data[substr( $id, 9 )] = (array) $response->toSimpleObject();
+            }
+            if ( $rc === 1 ) {
+                $data = $data[substr( $id, 9 )];
+            }
         }
-        $data = array( 'code' => $response->getStatusCode(), 'body' => $body );
         wp_send_json( $data );
-        exit;
-    }
-
-    function ajax_mts_giapi_auth() {
-        $code = isset( $_POST['code'] ) ? trim( wp_unslash( $_POST['code'] ) ) : false;
-        if ( ! $code ) {
-            wp_send_json( array( 'error' => esc_html__( 'No authentication code found.', 'rank-math' ) ) );
-        }
-        //$data = $this->client->fetch_access_token( $code );
-        wp_send_json( $data );
-        exit;
-    }
-
-    function ajax_mts_giapi_deauth() {
-        //$this->client->disconnect();
         exit();
+    
     }
 
-    function ajax_mts_giapi_get_profiles() {
-        //$profiles = $this->client->fetch_profiles();
-        if ( empty( $profiles ) ) {
-            wp_send_json( array( 'error' => 'No profiles found.' ) );
+    function get_input_urls() {
+        return array_values( array_filter( array_map( 'trim', explode( "\n", $_POST['url'] ) ) ) );
+    }
+
+    function build_request( $action, $url ) {
+
+        $url = esc_url( $url );
+        $output = array( 
+            'url' => 'https://indexing.googleapis.com/v3/urlNotifications:publish', 
+            'method' => 'post', 
+            'body' => array( 'url' => $url ),
+            'obj_method' => 'publish'
+        );
+        
+        if ( $action == 'getstatus' ) {
+            $output['method'] = 'get';
+            $output['obj_method'] = 'getMetadata';
+            $output['body'] = null;
+            $output['url'] = 'https://indexing.googleapis.com/v3/urlNotifications/metadata';
+            $output['url'] = add_query_arg( 'url', $url, $output['url'] );
+        } elseif ( $action == 'update' ) {
+            $output['body']['type'] = 'URL_UPDATED';
+        } elseif ( $action == 'remove' ) {
+            $output['body']['type'] = 'URL_DELETED';
         }
-        wp_send_json( array(
-            'profiles' => $profiles,
-            'selected' => $this->select_profile( $profiles ),
-        ));
-        exit;
+
+        //$output['body'] = $output['body'] ? json_encode( $output['body'] ) : '';
+
+        return $output;
+    }
+
+    function batch_request( $method, $url ) {
+
     }
 
     function admin_menu() {
-        if ( ! current_user_can( 'administrator' ) ) {
-            return;
-        }
-
         // Add the new admin menu and page and save the returned hook suffix    
-        $this->menu_hook_suffix = add_management_page(__('Google Indexing API', 'mts-giapi'), __('Indexing API', 'mts-giapi'), 'administrator', 'mts-giapi', array( $this, 'show_ui' ) );
-        //$this->settings_menu_hook_suffix = add_options_page( __('Google Indexing API', 'mts-giapi'), __('Indexing API', 'mts-giapi'), 'administrator', 'mts-giapi-settings', array( $this, 'show_settings' ) );
-        // Use the hook suffix to compose the hook and register an action executed when plugin's options page is loaded
+        $this->menu_hook_suffix = add_management_page(__('Google Indexing API', 'mts-giapi'), __('Indexing API', 'mts-giapi'), apply_filters( 'mtsgia_capability', 'manage_options' ), 'mts-giapi', array( $this, 'show_ui' ) );
         add_action( 'load-' . $this->menu_hook_suffix , array( $this, 'ui_onload' ) );
     
     }
@@ -122,16 +134,10 @@ class MTS_GIAPI {
         ?>
         <div class="wrap">
             <h2><?php echo get_admin_page_title(); ?></h2>
-            <?php /* if ( ! $data['authorized'] ) { ?>
-                <div id="giapi-unauthorized-wrapper">
-                    <p><?php _e('You need to authorize access in Settings > Indexing API.', 'mts-giapi'); ?></p>
-                </div>
-
-                <?php echo '</div>'; return; ?>
-            <?php } */ ?>
             <form id="mts-giapi" class="wpform" method="post">
-                <label for="giapi-url"><?php _e('URL:', 'mts-giapi'); ?></label><br>
-                <input type="text" name="url" id="giapi-url" class="regular-text code" style="min-width: 600px;" value="<?php echo home_url( '/' ); ?>"><br><br>
+                <label for="giapi-url"><?php _e('URLs (one per line, up to 100):', 'mts-giapi'); ?></label><br>
+                <textarea name="url" id="giapi-url" class="regular-text code" style="min-width: 600px;" rows="5"><?php echo esc_textarea( home_url( '/' ) ); ?></textarea>
+                <br><br>
                 <label><?php _e('Action:', 'mts-giapi'); ?></label><br>
                 <label><input type="radio" name="api_action" value="update" checked="checked" class="giapi-action"> <?php _e('Publish/update', 'mts-giapi'); ?></label><br>
                 <label><input type="radio" name="api_action" value="remove" class="giapi-action"> <?php _e('Remove', 'mts-giapi'); ?></label><br>
@@ -142,6 +148,12 @@ class MTS_GIAPI {
                 <br><hr><br>
                 <textarea id="giapi-response" class="large-text code" rows="10" placeholder="<?php esc_attr_e('Response...', 'mts-giapi'); ?>"></textarea>
             </div>
+            <br>
+            <br>
+            <p class="" style="line-height: 1.8"><a href="https://developers.google.com/search/apis/indexing-api/v3/quota-pricing" target="_blank"><strong><?php _e('API Limits:', 'mts-giapi'); ?></strong></a><br>
+            <code>PublishRequestsPerDayPerProject = <strong>200</strong></code><br>
+            <code>RequestsPerMinutePerProject = <strong>600</strong></code><br>
+            <code>MetadataRequestsPerMinutePerProject = <strong>180</strong></code></p>
         </div>
 
         <script type="text/javascript">
@@ -153,8 +165,15 @@ class MTS_GIAPI {
                 var logResponse = function( info ) {
                     var d = new Date();
                     var n = d.toLocaleTimeString();
+                    var urls = $urlField.val().split('\n').filter(Boolean);
+                    var urls_str = urls[0];
+                    var is_batch = false;
+                    if ( urls.length > 1 ) {
+                        urls_str = '(batch)';
+                        is_batch = true;
+                    }
 
-                    info = n + " " + $actionRadio.filter(':checked').val() + " " + $urlField.val() + " " + info;
+                    info = n + " " + $actionRadio.filter(':checked').val() + " " + urls_str + "\n" + info + "\n" + "-".repeat(56);
                     var current = $responseTextarea.val();
                     $responseTextarea.val(info + "\n" + current);
                 };
@@ -185,54 +204,8 @@ class MTS_GIAPI {
 
     }
 
-    public function show_settings() {
-        if ( isset( $_POST['token'] ) ) {
-            $token = $_POST['token'];
-            //$this->client->fetch_access_token( $token );
-        }
-        //$data = $this->client->search_console_data();
-        ?>
-
-        <div class="wrap">
-            <h2><?php echo get_admin_page_title(); ?></h2>
-            <?php if ( $data['authorized'] ) { ?>
-                <p><?php _e('Authorized!', 'mts-giapi'); ?></p>
-                <?php echo "</div>"; return; ?>
-            <?php } ?>
-            <form id="mts-giapi-settings" class="wpform" method="post">
-                <a href="<?php // echo $this->client->get_console_auth_url(); ?>" id="giapi-submit" class="button button-secondary"><?php _e('Get Code', 'mts-giapi'); ?></a><br><br>
-                <label for="giapi-token"><?php _e('Auth Code', 'mts-giapi'); ?></label><br>
-                <input type="text" name="token" id="giapi-token" class="regular-text code" style="" value=""> 
-                <input type="submit" id="giapi-submit" class="button button-primary" value="<?php esc_attr_e('Authorize', 'mts-giapi'); ?>">
-            </form>
-        </div>
-
-        <script type="text/javascript">
-            jQuery(document).ready(function($) {
-                $('#mts-giapi').submit(function(event) {
-                    event.preventDefault();
-
-                });
-            });        
-        </script>
-        <?php
-    }
-
-
     public function ui_onload() {
         
-    }
-
-    /**
-     * Disconnect client connection.
-     */
-    public function disconnect() {
-        //$this->client->search_console_data( false );
-        add_option( 'mtsgiapi_data', array(
-            'authorized' => false,
-            'profiles'   => array(),
-        ) );
-        //$this->client->set_data();
     }
 
 }
