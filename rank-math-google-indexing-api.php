@@ -66,7 +66,7 @@ class RM_GIAPI {
             if ( $action == 'getstatus' ) {
                 $request_part = $service->urlNotifications->getMetadata( array( 'url' => $url ) );
             } else {
-                $postBody->setType( $request['body']['type'] );
+                $postBody->setType( $action == 'update' ? 'URL_UPDATED' : 'URL_DELETED' );
                 $postBody->setUrl( $url );
                 $request_part = $service->urlNotifications->publish( $postBody );
             }
@@ -100,19 +100,22 @@ class RM_GIAPI {
     }
 
     function admin_menu() {
-        // Add the new admin menu and page and save the returned hook suffix    
+        // If Rank Math is not installed: add Rank Math > Dashboard & Indexing API subpages
+
+        // If Rank Math is installed: add as module
         $this->menu_hook_suffix = add_management_page(__('Google Indexing API', 'rm-giapi'), __('Indexing API', 'rm-giapi'), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi', array( $this, 'show_ui' ) );
         add_action( 'load-' . $this->menu_hook_suffix , array( $this, 'ui_onload' ) );
     
     }
     
-
     function admin_init() {        
         
     }
 
     function admin_enqueue_scripts( $hook_suffix ) {
-        
+        if ( ! $hook_suffix == $this->menu_hook_suffix ) {
+            return;
+        }
     }
     
     public function show_ui() {
@@ -120,6 +123,14 @@ class RM_GIAPI {
         ?>
         <div class="wrap">
             <h2><?php echo get_admin_page_title(); ?></h2>
+
+            <div class="giapi-limits">
+                <p class="" style="line-height: 1.8"><a href="https://developers.google.com/search/apis/indexing-api/v3/quota-pricing" target="_blank"><strong><?php _e('API Limits:', 'rm-giapi'); ?></strong></a><br>
+                <code>PublishRequestsPerDayPerProject = <strong>200</strong></code><br>
+                <code>RequestsPerMinutePerProject = <strong>600</strong></code><br>
+                <code>MetadataRequestsPerMinutePerProject = <strong>180</strong></code></p>
+            </div>
+
             <form id="rm-giapi" class="wpform" method="post">
                 <label for="giapi-url"><?php _e('URLs (one per line, up to 100):', 'rm-giapi'); ?></label><br>
                 <textarea name="url" id="giapi-url" class="regular-text code" style="min-width: 600px;" rows="5"><?php echo esc_textarea( home_url( '/' ) ); ?></textarea>
@@ -130,16 +141,20 @@ class RM_GIAPI {
                 <label><input type="radio" name="api_action" value="getstatus" class="giapi-action"> <?php _e('Get status', 'rm-giapi'); ?></label><br><br>
                 <input type="submit" id="giapi-submit" class="button button-primary" value="<?php esc_attr_e('Send to API', 'rm-giapi'); ?>">
             </form>
-            <div style="display: none;" id="giapi-response-wrapper">
-                <br><hr><br>
+            <div id="giapi-response-userfriendly" class="not-ready">
+                <br>
+                <hr>
+                <div class="response-box">
+                    <code class="response-id"></code>
+                    <h4 class="response-status"></h4>
+                    <p class="response-message"></p>
+                </div>
+                <a href="#" id="giapi-response-trigger" class="button button-secondary"><?php _e( 'Show Raw Response', 'rm-giapi' ); ?> <span class="dashicons dashicons-arrow-down-alt2" style="margin-top: 3px;"></span></a>
+            </div>
+            <div id="giapi-response-wrapper">
+                <br>
                 <textarea id="giapi-response" class="large-text code" rows="10" placeholder="<?php esc_attr_e('Response...', 'rm-giapi'); ?>"></textarea>
             </div>
-            <br>
-            <br>
-            <p class="" style="line-height: 1.8"><a href="https://developers.google.com/search/apis/indexing-api/v3/quota-pricing" target="_blank"><strong><?php _e('API Limits:', 'rm-giapi'); ?></strong></a><br>
-            <code>PublishRequestsPerDayPerProject = <strong>200</strong></code><br>
-            <code>RequestsPerMinutePerProject = <strong>600</strong></code><br>
-            <code>MetadataRequestsPerMinutePerProject = <strong>180</strong></code></p>
         </div>
 
         <script type="text/javascript">
@@ -148,38 +163,62 @@ class RM_GIAPI {
                 var $submitButton = $('#giapi-submit');
                 var $urlField = $('#giapi-url');
                 var $actionRadio = $('.giapi-action');
-                var logResponse = function( info ) {
+                var $ufResponse = $('#giapi-response-userfriendly');
+                var logResponse = function( info, url ) {
                     var d = new Date();
                     var n = d.toLocaleTimeString();
                     var urls = $urlField.val().split('\n').filter(Boolean);
                     var urls_str = urls[0];
                     var is_batch = false;
+                    var action = $actionRadio.filter(':checked').val();
                     if ( urls.length > 1 ) {
                         urls_str = '(batch)';
                         is_batch = true;
                     }
 
-                    info = n + " " + $actionRadio.filter(':checked').val() + " " + urls_str + "\n" + info + "\n" + "-".repeat(56);
+                    $ufResponse.removeClass('not-ready fail success').addClass('ready').find('.response-id').html('<strong>' + action + '</strong>' + ' ' + urls_str);
+                    if ( ! is_batch ) {
+                        if ( typeof info.error !== 'undefined' ) {
+                            $ufResponse.addClass('fail').find('.response-status').text('<?php echo esc_js( __( 'Error', 'rm-giapi' ) ); ?> '+info.error.code).siblings('.response-message').text(info.error.message);
+                        } else {
+                            var base = info;
+                            if ( typeof info.urlNotificationMetadata != 'undefined' ) {
+                                base = info.urlNotificationMetadata;
+                            }
+                            var d = new Date(base.latestUpdate.notifyTime);
+                            $ufResponse.addClass('success').find('.response-status').text('<?php echo esc_js( __( 'Success', 'rm-giapi' ) ); ?> ').siblings('.response-message').text('<?php echo esc_js( __( 'Last updated ', 'rm-giapi' ) ); ?> ' + d.toString());
+                        }
+                    } else {
+                        $ufResponse.addClass('success').find('.response-status').text('<?php echo esc_js( __( 'Success', 'rm-giapi' ) ); ?> ').siblings('.response-message').text('<?php echo esc_js( __( 'See response for details.', 'rm-giapi' ) ); ?>');
+                        $.each(info, function(index, val) {
+                            if ( typeof val.error !== 'undefined' ) {
+                                $ufResponse.addClass('fail').find('.response-status').text('<?php echo esc_js( __( 'Error', 'rm-giapi' ) ); ?> '+val.error.code).siblings('.response-message').text(val.error.message);
+                            }
+                        });
+                    }
+
+                    var rawdata = n + " " + action + " " + urls_str + "\n" + JSON.stringify(info, null, 2) + "\n" + "-".repeat(56);
                     var current = $responseTextarea.val();
-                    $responseTextarea.val(info + "\n" + current);
+                    $responseTextarea.val(rawdata + "\n" + current);
                 };
+
+                $('#giapi-response-trigger').click(function(e) {
+                    e.preventDefault();
+                    $(this).find('.dashicons').toggleClass('dashicons-arrow-down-alt2 dashicons-arrow-up-alt2')
+                    $('#giapi-response-wrapper').toggle();
+                });
 
                 $('#rm-giapi').submit(function(event) {
                     event.preventDefault();
                     $submitButton.attr('disabled', 'disabled');
-                    $('#giapi-response-wrapper').show();
+                    var input_url = $urlField.val();
                     $.ajax({
                         url: ajaxurl,
                         type: 'POST',
                         dataType: 'json',
-                        data: { action: 'rm_giapi', url: $urlField.val(), api_action: $actionRadio.filter(':checked').val() },
-                    })
-                    .done(function(data) {
-                        logResponse(JSON.stringify(data, null, 2));
-                    })
-                    .fail(function() {
-                        logResponse('HTTP Error, check console.');
-                    }).always(function() {
+                        data: { action: 'rm_giapi', url: input_url, api_action: $actionRadio.filter(':checked').val() },
+                    }).always(function(data) {
+                        logResponse( data, input_url );
                         $submitButton.removeAttr('disabled');
                     });
                     
@@ -192,6 +231,62 @@ class RM_GIAPI {
                 <?php } ?>
             });        
         </script>
+        <style type="text/css">
+            #giapi-response-wrapper, #giapi-response-userfriendly {
+                display: none;
+            }
+            #giapi-response-userfriendly.ready {
+                display: block;
+            }
+            #giapi-response-trigger {
+
+            }
+            .giapi-limits {
+                width: 420px;
+                float: right;
+            }
+            .response-box {
+                background: #fff;
+                padding: 18px 20px;
+                margin: 20px 0;
+                text-align: center;
+            }
+
+            .response-box .response-id {}
+
+            .response-box .response-status {
+                font-size: 24px;
+                line-height: 1.5;
+                margin: 0 0 10px 0;
+            }
+
+            .response-box .response-message {
+                margin: 0;
+            }
+
+            .response-box .response-status:after {
+                font-family: dashicons;
+                font-size: 28px;
+                position: relative;
+                top: 5px;
+            }
+
+            .success .response-status:after {
+                content: "\f147";
+            }
+
+            .fail .response-status:after {
+                content: "\f158";
+            }
+
+            .success .response-status {
+                color: #156115;
+            }
+
+            .fail .response-status {
+                color: #bb2b2b;
+            }
+        </style>
         <?php
 
     }
