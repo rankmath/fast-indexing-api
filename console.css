@@ -1,0 +1,57 @@
+#giapi-response-wrapper, #giapi-response-userfriendly {
+    display: none;
+}
+#giapi-response-userfriendly.ready {
+    display: block;
+}
+#giapi-response-trigger {
+
+}
+.giapi-limits {
+    width: 420px;
+    float: right;
+}
+.response-box {
+    background: #fff;
+    padding: 18px 20px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.response-box .response-id {
+
+}
+
+.response-box .response-status {
+    font-size: 24px;
+    line-height: 1.5;
+    margin: 0 0 10px 0;
+}
+
+.response-box .response-message {
+    margin: 0;
+}
+
+.response-box .response-status:before {
+    font-family: dashicons;
+    font-size: 28px;
+    position: relative;
+    top: 5px;
+    margin-right: 2px;
+}
+
+.success .response-status:before {
+    content: "\f147";
+}
+
+.fail .response-status:before {
+    content: "\f158";
+}
+
+.success .response-status {
+    color: #156115;
+}
+
+.fail .response-status {
+    color: #bb2b2b;
+}
