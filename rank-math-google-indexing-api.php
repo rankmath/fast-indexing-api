@@ -13,18 +13,28 @@ defined('ABSPATH') or die;
 
 class RM_GIAPI {
 
+    public $dashboard_menu_hook_suffix = '';
+    public $console_menu_hook_suffix = '';
+    public $settings_menu_hook_suffix = '';
+
     function __construct() {
-        add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+        add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
+        add_action( 'admin_footer', array( $this, 'admin_footer' ), 20 );
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
         add_action( 'wp_ajax_rm_giapi',array( $this,'ajax_rm_giapi' ) );
         add_action( 'wp_ajax_rm_giapi_deauth',array( $this,'ajax_rm_giapi_deauth' ) );
+        add_action( 'admin_notices', array( $this, 'rm_missing_admin_notice_error' ), 10, 1 );
         
-        $post_types = apply_filters( 'rmgiapi_post_types', array( 'post', 'page' ) );
+        $post_types = apply_filters( 'rmgiapi_post_types', $this->get_enabled_post_types() );
         foreach ( $post_types as $pt ) {
-            add_filter( $pt.'_row_actions', array( $this, 'send_to_api_link' ), 10, 2 );
+            add_filter( $pt . '_row_actions', array( $this, 'send_to_api_link' ), 10, 2 );
+            add_filter( 'publish_' . $pt, array( $this, 'publish_post' ), 10, 2 );
+            add_filter( 'delete_' . $pt, array( $this, 'delete_post' ), 10, 2 );
         }
         // localization
         add_action( 'plugins_loaded', array( $this, 'mythemeshop_giapi_load_textdomain' ) );
+        
+        add_filter( 'rank_math/modules', array( $this, 'add_rm_module' ), 25 );
     }
 
     function send_to_api_link( $actions, $post ) {
@@ -96,7 +106,7 @@ class RM_GIAPI {
 
     function admin_menu() {
         // If Rank Math is not active: add Rank Math & Dashboard & Indexing API subpages
-        if ( ! class_exists( 'Rank_Math' ) ) {
+        if ( ! class_exists( 'RankMath' ) ) {
             $this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-dashboard', null, 'dashicons-chart-area', 76 );
             $this->dashboard_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', 'Rank Math', __( 'Dashboard', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
             $this->console_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi'), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
@@ -105,8 +115,8 @@ class RM_GIAPI {
         }
 
         // If Rank Math is installed: add module control + settings & console pages
-        
-    
+        $this->console_menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi'), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
+        $this->settings_menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi'), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
     }
     
     public function show_console() {
@@ -239,9 +249,8 @@ class RM_GIAPI {
         ?>
         <div class="wrap rank-math-wrap">
             <h1><?php _e('Indexing API Settings', 'rm-giapi' ); ?></h1>
-            <form method="POST" action="options.php">
-                <?php settings_fields( 'indexing-api-settings' ); ?>
-                <?php do_settings_sections( 'indexing-api-settings' ); ?>
+            <form method="POST" action="">
+                <?php wp_nonce_field( 'giapi-save', '_wpnonce', true, true ); ?>
                 <table class="form-table">
                   <tr valign="top">
                         <th scope="row">
@@ -271,6 +280,13 @@ class RM_GIAPI {
         <?php
     }
 
+    function save_settings() {
+        if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
+            return;
+        }
+
+    }
+
     public function post_types_checkboxes() {
         $settings = array( 'post' => 1, 'page' => '0' );
         $post_types = get_post_types( array( 'public' => true ), 'objects' );
@@ -280,6 +296,10 @@ class RM_GIAPI {
             <label><input type="checkbox" name="giapi_settings[post_types][<?php echo esc_attr( $post_type->name ); ?>]" value="1" <?php checked( ! empty( $settings[$post_type->name] ) ); ?>> <?php echo $post_type->label; ?></label><br>
             <?php
         }
+    }
+
+    public function get_enabled_post_types() {
+        return array( 'post' );
     }
 
     public function show_dashboard() {
@@ -722,11 +742,11 @@ class RM_GIAPI {
                 })
 
                 // Enable/Disable Modules
-                $( '.module-listing .rank-math-box' ).on( 'click', function(e) {
+                $( '.module-listing .rank-math-box label' ).on( 'click', function(e) {
                     e.preventDefault();
 
                     if ( 'module-indexing-api' === $( this ).attr( 'for' ) ) {
-                        return;
+                        return false;
                     }
                     $( '#rank-math-feedback-form' ).fadeIn();
 
@@ -738,11 +758,78 @@ class RM_GIAPI {
                         $( this ).find( '.button-close' ).trigger( 'click' );
                     }
                 });
+
+                $('a.nav-tab').not('.nav-tab-active').click(function(event) {
+                    $( '#rank-math-feedback-form' ).fadeIn();
+                });
             });
         </script>
         <?php
     }
 
+
+    function add_rm_module( $modules ) {
+        $modules['indexing-api'] = array(
+            'id'            => 'indexing-api',
+            'title'         => esc_html__( 'Google Indexing API (Beta)', 'rank-math' ),
+            'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="https://rankmath.com/?p=392599&preview=1&_ppp=f0a6794314" target="_blank">' . __('Read our setup guide', 'rm-giapi' ) . '</a>',
+            'class'         => 'RM_GIAPI_Module',
+            'icon'          => 'dashicons-admin-site-alt3',
+            'settings_link' => admin_url( 'admin.php?page=rm-giapi-settings' ),
+        );
+        return $modules;
+    }
+
+    function admin_footer( $hook_suffix ) {
+        $screen = get_current_screen();
+        if ( $screen->id != 'toplevel_page_rank-math' ) {
+            return;
+        }
+        ?>
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $('#module-indexing-api')
+                    .prop('checked', true)
+                    .prop('readonly', true)
+                    .closest('.rank-math-switch')
+                    .css({opacity: 0.7})
+                    .closest('div.status')
+                    .css({pointerEvents: 'none'})
+                    .find('.active-text')
+                    .text('<?php echo esc_js( __('Active (Plugin)', 'rm-giapi' ) ); ?>')
+                    .closest('.rank-math-box')
+                    .addClass('active');
+            });
+        </script>
+        <?php
+    }
+
+    function rm_missing_admin_notice_error() {
+        if ( class_exists( 'RankMath' ) ) {
+            return;
+        }
+        $screen = get_current_screen();
+        $show_on = array( 'rank-math_page_rm-giapi-console', 'rank-math_page_rm-giapi-settings', 'rank-math_page_rm-giapi-dashboard' );
+        if ( ! in_array( $screen->id, $show_on ) ) {
+            return;
+        }
+
+        $class = 'notice notice-error rm-giapi-notice';
+        $message = sprintf(__( 'It is recommended to use %s along with the Indexing API plugin.', 'sample-text-domain' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">'.__('Rank Math SEO').'</a>');
+
+        printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message ); 
+    }
+
+    function publish_post() {
+
+    }
+
+    function delete_post() {
+
+    }
+
 }
+
+class RM_GIAPI_Module {}
 
 $rm_giapi = new RM_GIAPI();
