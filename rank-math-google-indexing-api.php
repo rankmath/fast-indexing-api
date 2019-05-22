@@ -16,6 +16,9 @@ class RM_GIAPI {
     public $dashboard_menu_hook_suffix = '';
     public $console_menu_hook_suffix = '';
     public $settings_menu_hook_suffix = '';
+    public $notices = array();
+    public $debug = false;
+    public $setup_guide_url = 'https://rankmath.com/?p=392599&preview=1&_ppp=f0a6794314';
 
     function __construct() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
@@ -23,14 +26,22 @@ class RM_GIAPI {
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
         add_action( 'wp_ajax_rm_giapi',array( $this,'ajax_rm_giapi' ) );
         add_action( 'wp_ajax_rm_giapi_deauth',array( $this,'ajax_rm_giapi_deauth' ) );
-        add_action( 'admin_notices', array( $this, 'rm_missing_admin_notice_error' ), 10, 1 );
+        add_action( 'admin_init', array( $this, 'rm_missing_admin_notice_error' ), 20, 1 );
+        add_action( 'admin_notices', array( $this, 'display_notices' ), 10, 1 );
+        add_action( 'load-rank-math_page_rm-giapi-settings', array( $this, 'save_settings' ), 10, 1 );
         
-        $post_types = apply_filters( 'rmgiapi_post_types', $this->get_enabled_post_types() );
-        foreach ( $post_types as $pt ) {
-            add_filter( $pt . '_row_actions', array( $this, 'send_to_api_link' ), 10, 2 );
-            add_filter( 'publish_' . $pt, array( $this, 'publish_post' ), 10, 2 );
-            add_filter( 'delete_' . $pt, array( $this, 'delete_post' ), 10, 2 );
+        if ( $this->get_setting( 'json_key' ) ) {
+            $post_types = $this->get_setting( 'post_types', array() );
+            foreach ( $post_types as $post_type => $enabled ) {
+                if ( ! $enabled ) {
+                    continue;
+                }
+                add_filter( $post_type . '_row_actions', array( $this, 'send_to_api_link' ), 10, 2 );
+                add_action( 'save_post_' . $post_type, array( $this, 'publish_post' ), 10, 2 );
+            }
+            add_action( 'trashed_post', array( $this, 'delete_post' ), 10, 1);
         }
+        
         // localization
         add_action( 'plugins_loaded', array( $this, 'mythemeshop_giapi_load_textdomain' ) );
         
@@ -42,8 +53,8 @@ class RM_GIAPI {
             return $actions;
         }
         $nonce = wp_create_nonce( 'giapi-action' );
-        $actions['rmgiapi_update'] = '<a href="' . admin_url( 'tools.php?page=rm-giapi&apiaction=update&_wpnonce='.$nonce.'&apiurl='.rawurlencode( get_permalink( $post) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __('Indexing API: Update', 'rm-giapi') . '</a>';
-        $actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'tools.php?page=rm-giapi&apiaction=getstatus&_wpnonce='.$nonce.'&apiurl='.rawurlencode( get_permalink( $post) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __('Indexing API: Get Status', 'rm-giapi') . '</a>';
+        $actions['rmgiapi_update'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=update&_wpnonce='.$nonce.'&apiurl='.rawurlencode( get_permalink( $post) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __('Indexing API: Update', 'rm-giapi') . '</a>';
+        $actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=getstatus&_wpnonce='.$nonce.'&apiurl='.rawurlencode( get_permalink( $post) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __('Indexing API: Get Status', 'rm-giapi') . '</a>';
         return $actions;
     }
     
@@ -55,16 +66,25 @@ class RM_GIAPI {
         if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
             die('0');
         }
+        $url_input = $this->get_input_urls();
+        $action = sanitize_title( $_POST['api_action'] );
+        header("Content-type: application/json");
+
+        $result = $this->send_to_api( $url_input, $action );
+        wp_send_json( $result );
+        exit();
+    
+    }
+
+    function send_to_api( $url_input, $action ) {
+        $url_input = (array) $url_input;
 
         include_once 'vendor/autoload.php';
         $this->client = new Google_Client();
-        $this->client->setAuthConfig(plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json');
+        $this->client->setAuthConfig( json_decode( $this->get_setting( 'json_key' ), true ) );
         $this->client->setConfig('base_path', 'https://indexing.googleapis.com');
         $this->client->addScope( 'https://www.googleapis.com/auth/indexing' );
 
-        header("Content-type: application/json");
-        $action = sanitize_title( $_POST['api_action'] );
-        $url_input = $this->get_input_urls();
         // Batch request
         $this->client->setUseBatch(true);
         //init google batch and set root URL
@@ -95,9 +115,12 @@ class RM_GIAPI {
                 $data = $data[substr( $id, 9 )];
             }
         }
-        wp_send_json( $data );
-        exit();
-    
+
+        if ( $this->debug ) {
+            error_log( 'RM GI API result: ' . print_r( $data, true ) );
+        }
+        
+        return $data;
     }
 
     function get_input_urls() {
@@ -123,6 +146,15 @@ class RM_GIAPI {
         ?>
         <div class="wrap">
             <h2><?php echo get_admin_page_title(); ?></h2>
+
+            <?php 
+            if ( ! $this->get_setting( 'json_key' ) ) { 
+                ?>
+                <p class="description"><?php printf( __( 'Please navigate to the %s page to configure the plugin.', 'rm-giapi' ), '<a href="' . admin_url( 'admin.php?page=rm-giapi-settings' ) . '">' . __('Indexing API Settings', 'rm-giapi' ) . '</a>' ); ?></p>
+                <?php 
+                return;
+            } 
+            ?>
 
             <div class="giapi-limits">
                 <p class="" style="line-height: 1.8"><a href="https://developers.google.com/search/apis/indexing-api/v3/quota-pricing" target="_blank"><strong><?php _e('API Limits:', 'rm-giapi'); ?></strong></a><br>
@@ -249,21 +281,28 @@ class RM_GIAPI {
         ?>
         <div class="wrap rank-math-wrap">
             <h1><?php _e('Indexing API Settings', 'rm-giapi' ); ?></h1>
-            <form method="POST" action="">
+            <form enctype="multipart/form-data" method="POST" action="">
                 <?php wp_nonce_field( 'giapi-save', '_wpnonce', true, true ); ?>
                 <table class="form-table">
                   <tr valign="top">
                         <th scope="row">
                             <?php _e('JSON Key:', 'rm-giapi' ); ?>
                             <p class="description"><?php _e('Upload the Service Account JSON key file you obtained from Google API Console or paste its contents in the field.', 'rm-giapi' ); ?></p>
+                            <div style="display: inline-block; border: 1px solid #ccc; background: #fafafa; padding: 10px 10px 10px 6px; margin-top: 8px;"><span class="dashicons dashicons-editor-help"></span> <a href="<?php echo $this->setup_guide_url; ?>" target="_blank"><?php _e('Read our setup guide', 'rm-giapi' ); ?></a></div>
                         </th>
                         <td>
-                            <textarea name="giapi_settings[json_key]" class="large-text" rows="8"></textarea>
-                            <br>
-                            <label>
-                                <?php _e('Or upload JSON file: ', 'rm-giapi' ); ?>
-                                <input type="file" name="json_file" />
-                            </label>
+                            <?php if ( file_exists( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' ) ) { ?>
+                                <textarea name="giapi_settings[json_key]" class="large-text" rows="8" readonly="readonly"><?php echo esc_textarea( file_get_contents( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' ) ); ?></textarea>
+                                <br>
+                                <p class="description"><?php _e('<code>rank-math-835b6feb842b.json</code> file found in the plugin folder. You cannot change the JSON key from here until you delete or remame this file.', 'rm-giapi' ); ?></p>
+                            <?php } else { ?>
+                                <textarea name="giapi_settings[json_key]" class="large-text" rows="8"><?php echo esc_textarea( $this->get_setting( 'json_key' ) ); ?></textarea>
+                                <br>
+                                <label>
+                                    <?php _e('Or upload JSON file: ', 'rm-giapi' ); ?>
+                                    <input type="file" name="json_file" />
+                                </label>
+                            <?php } ?>
                         </td>
                   </tr>
                   <tr valign="top">
@@ -274,6 +313,7 @@ class RM_GIAPI {
                       <td><?php $this->post_types_checkboxes(); ?></td>
                   </tr>
                 </table>
+                
                 <?php submit_button(); ?>
             </form>
         </div>
@@ -281,14 +321,44 @@ class RM_GIAPI {
     }
 
     function save_settings() {
+        if ( ! isset( $_POST['giapi_settings'] ) ) {
+            return;
+        }
+        if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'giapi-save' ) ) {
+            return;
+        }
         if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
             return;
         }
 
+        $json = stripslashes( $_POST['giapi_settings']['json_key'] );
+        if ( isset( $_FILES['json_file'] ) && isset( $_FILES['json_file']['tmp_name'] ) && file_exists( $_FILES['json_file']['tmp_name'] ) ) {
+            $json = file_get_contents( $_FILES['json_file']['tmp_name'] );
+        }
+
+        $post_types = (array) $_POST['giapi_settings']['post_types'];
+
+        update_option( 'giapi_settings', array( 'json_key' => $json, 'post_types' => $post_types ) );
+        $this->add_notice( __('Settings updated.', 'rm-giapi' ), 'notice-success' );
+    }
+
+    function add_notice( $message, $class = '', $show_on = null ) {
+        $this->notices[] = array( 'message' => $message, 'class' => $class, 'show_on' => $show_on );
+    }
+
+    function display_notices() {
+        $screen = get_current_screen();
+        foreach ( $this->notices as $notice ) {
+            if ( ! empty( $notice['show_on'] ) && is_array( $notice['show_on'] ) && ! in_array( $screen->id, $notice['show_on'] ) ) {
+                return;
+            }
+            $class = 'notice rm-giapi-notice ' . $notice['class'];
+            printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $notice['message'] ); 
+        }
     }
 
     public function post_types_checkboxes() {
-        $settings = array( 'post' => 1, 'page' => '0' );
+        $settings = $this->get_setting( 'post_types', array() );
         $post_types = get_post_types( array( 'public' => true ), 'objects' );
         foreach ( $post_types as $post_type ) {
             ?>
@@ -298,8 +368,21 @@ class RM_GIAPI {
         }
     }
 
-    public function get_enabled_post_types() {
-        return array( 'post' );
+    public function get_setting( $setting, $default = null ) {
+        $defaults = array(
+            'json_key' => '',
+            'post_types' => array( 'post' ),
+        );
+        $settings = get_option( 'giapi_settings', array() );
+        $settings = array_merge( $defaults, $settings );
+
+        if ( $setting == 'json_key' ) {
+            if ( file_exists( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' ) ) {
+                return file_get_contents( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' );
+            }
+        }
+
+        return ( isset( $settings[$setting] ) ? $settings[$setting] : $default );
     }
 
     public function show_dashboard() {
@@ -333,7 +416,7 @@ class RM_GIAPI {
                         <header>
                             <h3><?php _e('Indexing API (Beta)', 'rm-giapi' ); ?></h3>
 
-                            <p><em><?php _e('Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rm-giapi' ); ?> <a href="https://rankmath.com/?p=392599&preview=1&_ppp=f0a6794314" target="_blank"><?php _e('Read our setup guide', 'rm-giapi' ); ?></a></em></p>
+                            <p><em><?php _e('Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rm-giapi' ); ?> <a href="<?php echo $this->setup_guide_url; ?>" target="_blank"><?php _e('Read our setup guide', 'rm-giapi' ); ?></a></em></p>
 
                                                             <a class="module-settings" href="<?php echo admin_url( 'admin.php?page=rm-giapi-settings' ); ?>"><?php _e('Settings', 'rm-giapi' ); ?></a>
                             
@@ -772,7 +855,7 @@ class RM_GIAPI {
         $modules['indexing-api'] = array(
             'id'            => 'indexing-api',
             'title'         => esc_html__( 'Google Indexing API (Beta)', 'rank-math' ),
-            'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="https://rankmath.com/?p=392599&preview=1&_ppp=f0a6794314" target="_blank">' . __('Read our setup guide', 'rm-giapi' ) . '</a>',
+            'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __('Read our setup guide', 'rm-giapi' ) . '</a>',
             'class'         => 'RM_GIAPI_Module',
             'icon'          => 'dashicons-admin-site-alt3',
             'settings_link' => admin_url( 'admin.php?page=rm-giapi-settings' ),
@@ -808,24 +891,28 @@ class RM_GIAPI {
         if ( class_exists( 'RankMath' ) ) {
             return;
         }
-        $screen = get_current_screen();
+
+        $message = sprintf(__( 'It is recommended to use %s along with the Indexing API plugin.', 'sample-text-domain' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">'.__('Rank Math SEO').'</a>');
+        $class = 'notice-error';
         $show_on = array( 'rank-math_page_rm-giapi-console', 'rank-math_page_rm-giapi-settings', 'rank-math_page_rm-giapi-dashboard' );
-        if ( ! in_array( $screen->id, $show_on ) ) {
+
+        $this->add_notice( $message, $class, $show_on );
+    }
+
+    function publish_post( $post_id ) {
+        $post = get_post( $post_id );
+        if ( $post->post_status == 'publish' ) {
+            $this->send_to_api( get_permalink( $post ), 'update' );
+        }
+    }
+
+    function delete_post( $post_id ) {
+        $post_types = $this->get_setting( 'post_types', array() );
+        $post = get_post( $post_id );
+        if ( empty( $post_types[$post->post_type] ) ) {
             return;
         }
-
-        $class = 'notice notice-error rm-giapi-notice';
-        $message = sprintf(__( 'It is recommended to use %s along with the Indexing API plugin.', 'sample-text-domain' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">'.__('Rank Math SEO').'</a>');
-
-        printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message ); 
-    }
-
-    function publish_post() {
-
-    }
-
-    function delete_post() {
-
+        $this->send_to_api( get_permalink( $post ), 'delete' );
     }
 
 }

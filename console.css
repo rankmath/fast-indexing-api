@@ -10,6 +10,12 @@
 .giapi-limits {
     width: 420px;
     float: right;
+    padding: 14px 20px 16px;
+    border: 1px solid #ccc;
+    background: #fafafa;
+}
+.giapi-limits p {
+    margin: 0;
 }
 .response-box {
     background: #fff;
