@@ -27,7 +27,7 @@ class RM_GIAPI {
         add_action( 'admin_footer', array( $this, 'admin_footer' ), 20 );
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
         add_action( 'wp_ajax_rm_giapi',array( $this,'ajax_rm_giapi' ) );
-        add_action( 'wp_ajax_rm_giapi_deauth',array( $this,'ajax_rm_giapi_deauth' ) );
+        add_action( 'wp_ajax_rm_giapi_limits',array( $this,'ajax_get_limits' ) );
         add_action( 'admin_init', array( $this, 'rm_missing_admin_notice_error' ), 20, 1 );
         add_action( 'admin_notices', array( $this, 'display_notices' ), 10, 1 );
         add_action( 'load-rank-math_page_rm-giapi-settings', array( $this, 'save_settings' ), 10, 1 );
@@ -118,11 +118,69 @@ class RM_GIAPI {
             }
         }
 
+        $this->log_request( $action );
+
         if ( $this->debug ) {
             error_log( 'RM GI API result: ' . print_r( $data, true ) );
         }
         
         return $data;
+    }
+
+    function log_request( $type ) {
+        $requests_log = get_option( 'giapi_requests', array( 'update' => array(), 'delete' => array(), 'getstatus' => array() ) );
+        $requests_log[$type][] = time();
+        if ( count( $requests_log[$type] ) > 600 ) {
+            $requests_log[$type] = array_slice( $requests_log[$type], -600, 600, true );
+        }
+        update_option( 'giapi_requests', $requests_log );
+    }
+
+    function get_limits() {
+        $current_limits = array(
+            'publishperday' => 0,
+            'permin' => 0,
+            'metapermin' => 0
+        );
+
+        $limit_publishperday = 200;
+        $limit_permin = 600;
+        $limit_metapermin = 180;
+        $requests_log = get_option( 'giapi_requests', array( 'update' => array(), 'delete' => array(), 'getstatus' => array() ) );
+        $timestamp_1day_ago = strtotime('-1 day');
+        $timestamp_1min_ago = strtotime('-1 minute');
+
+        $publish_1day = 0;
+        $all_1min = 0;
+        $meta_1min = 0;
+        foreach ( $requests_log['update'] as $time ) {
+            if ( $time > $timestamp_1day_ago ) {
+                $publish_1day++;
+            }
+            if ( $time > $timestamp_1min_ago ) {
+                $all_1min++;
+            }
+        }
+        foreach ( $requests_log['delete'] as $time ) {
+            if ( $time > $timestamp_1min_ago ) {
+                $all_1min++;
+            }
+        }
+        foreach ( $requests_log['getstatus'] as $time ) {
+            if ( $time > $timestamp_1min_ago ) {
+                $all_1min++;
+                $meta_1min++;
+            }
+        }
+        $current_limits['publishperday'] = 200 - $publish_1day;
+        $current_limits['permin'] = 600 - $all_1min;
+        $current_limits['metapermin'] = 180 - $meta_1min;
+
+        return $current_limits;
+    }
+
+    function ajax_get_limits() {
+        wp_send_json( $this->get_limits() );
     }
 
     function get_input_urls() {
@@ -145,6 +203,7 @@ class RM_GIAPI {
     }
     
     public function show_console() {
+        $limits = $this->get_limits();
         ?>
         <div class="wrap">
             <h2><?php echo get_admin_page_title(); ?></h2>
@@ -160,9 +219,9 @@ class RM_GIAPI {
 
             <div class="giapi-limits">
                 <p class="" style="line-height: 1.8"><a href="https://developers.google.com/search/apis/indexing-api/v3/quota-pricing" target="_blank"><strong><?php _e('API Limits:', 'rm-giapi'); ?></strong></a><br>
-                <code>PublishRequestsPerDayPerProject = <strong id="giapi-limit-perday">200</strong></code><br>
-                <code>RequestsPerMinutePerProject = <strong id="giapi-limit-permin">600</strong></code><br>
-                <code>MetadataRequestsPerMinutePerProject = <strong id="giapi-limit-metapermin">180</strong></code></p>
+                <code>PublishRequestsPerDayPerProject = <strong id="giapi-limit-publishperday"><?php echo $limits['publishperday']; ?></strong></code><br>
+                <code>RequestsPerMinutePerProject = <strong id="giapi-limit-permin"><?php echo $limits['permin']; ?></strong></code><br>
+                <code>MetadataRequestsPerMinutePerProject = <strong id="giapi-limit-metapermin"><?php echo $limits['metapermin']; ?></strong></code></p>
             </div>
 
             <form id="rm-giapi" class="wpform" method="post">
@@ -254,6 +313,18 @@ class RM_GIAPI {
                     }).always(function(data) {
                         logResponse( data, input_url );
                         $submitButton.removeAttr('disabled');
+                        $.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { action: 'rm_giapi_limits' },
+                        })
+                        .done(function( data ) {
+                            $.each( data, function(index, val) {
+                                 $('#giapi-limit-'+index).text(val);
+                            });
+                        });
+                        
                     });
                     
                 });
