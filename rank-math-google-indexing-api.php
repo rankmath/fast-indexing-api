@@ -18,9 +18,11 @@ class RM_GIAPI {
     public $settings_menu_hook_suffix = '';
     public $notices = array();
     public $debug = false;
-    public $setup_guide_url = 'https://rankmath.com/?p=392599&preview=1&_ppp=f0a6794314';
+    public $setup_guide_url = 'https://rankmath.com/blog/google-indexing-api/';
 
     function __construct() {
+        $this->debug = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
+
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
         add_action( 'admin_footer', array( $this, 'admin_footer' ), 20 );
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
@@ -269,6 +271,7 @@ class RM_GIAPI {
 
     function admin_enqueue_scripts( $hook_suffix ) {
         if ( $hook_suffix == $this->dashboard_menu_hook_suffix ) {
+            wp_enqueue_script( 'updates' );
             wp_enqueue_style( 'rm-giapi-dashboard', plugin_dir_url( __FILE__ ) . 'dashboard.css' );
         } elseif ( $hook_suffix == $this->console_menu_hook_suffix ) {
             wp_enqueue_style( 'rm-giapi-console', plugin_dir_url( __FILE__ ) . 'console.css' );
@@ -371,7 +374,7 @@ class RM_GIAPI {
     public function get_setting( $setting, $default = null ) {
         $defaults = array(
             'json_key' => '',
-            'post_types' => array( 'post' ),
+            'post_types' => array( 'post' => 1, 'page' => 1 ),
         );
         $settings = get_option( 'giapi_settings', array() );
         $settings = array_merge( $defaults, $settings );
@@ -423,8 +426,8 @@ class RM_GIAPI {
                         </header>
                         <div class="status wp-clearfix">
                             <span class="rank-math-switch">
-                                <input type="checkbox" class="rank-math-modules" id="module-indexing-api" name="modules[]" value="indexing-api" checked="checked">
-                                <label for="module-indexing-api" class="">
+                                <input type="checkbox" class="rank-math-modules" id="module-indexing-api" name="modules[]" value="indexing-api" checked="checked" readonly="readonly">
+                                <label for="module-indexing-api" class="indexing-api-label">
                                     <?php _e('Toggle', 'rm-giapi' ); ?>
                                 </label>
                                 <span class="input-loading"></span>
@@ -756,16 +759,18 @@ class RM_GIAPI {
 
         <?php 
         if ( file_exists( WP_PLUGIN_DIR . '/seo-by-rank-math' ) ) {
-            $text = __( 'Activate Now', '404-monitor' );
-            $path = 'seo-by-rank-math/rank-math.php';
-            $link = wp_nonce_url( self_admin_url( 'plugins.php?action=activate&plugin=' . $path ), 'activate-plugin_' . $path );
+            $text         = __( 'Activate Now', 'schema-markup' );
+            $path         = 'seo-by-rank-math/rank-math.php';
+            $link         = wp_nonce_url( self_admin_url( 'plugins.php?action=activate&plugin=' . $path ), 'activate-plugin_' . $path );
+            $button_class = 'activate-now';
         } else {
-            $text = __( 'Install for Free', '404-monitor' );
-            $link = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=seo-by-rank-math' ), 'install-plugin_seo-by-rank-math' );
+            $text         = __( 'Install for Free', 'schema-markup' );
+            $link         = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=seo-by-rank-math' ), 'install-plugin_seo-by-rank-math' );
+            $button_class = 'install-now';
         }
 
          ?>
-        <div class="rank-math-feedback-modal rank-math-ui" id="rank-math-feedback-form">
+        <div class="rank-math-feedback-modal rank-math-ui try-rankmath-panel" id="rank-math-feedback-form">
             <div class="rank-math-feedback-content">
 
                 <?php /*<header>
@@ -807,7 +812,7 @@ class RM_GIAPI {
                         <div class="column-compatibility">
                             <span class="compatibility-compatible"><strong><?php esc_html_e( 'Compatible', '404-monitor' ); ?></strong> <?php esc_html_e( 'with your version of WordPress', '404-monitor' ); ?></span>
                         </div>
-                        <a href="<?php echo $link; ?>" class="button button-primary install-button"><?php echo $text; ?></a>
+                        <a href="<?php echo $link; ?>" class="button button-primary <?php echo $button_class; ?>" data-slug="seo-by-rank-math" data-name="Rank Math"><?php echo $text; ?></a>
                     </div>
                 </div>
 
@@ -825,12 +830,9 @@ class RM_GIAPI {
                 })
 
                 // Enable/Disable Modules
-                $( '.module-listing .rank-math-box label' ).on( 'click', function(e) {
+                $( '.module-listing .rank-math-box:not(.active)' ).on( 'click', function(e) {
                     e.preventDefault();
 
-                    if ( 'module-indexing-api' === $( this ).attr( 'for' ) ) {
-                        return false;
-                    }
                     $( '#rank-math-feedback-form' ).fadeIn();
 
                     return false;
@@ -845,6 +847,27 @@ class RM_GIAPI {
                 $('a.nav-tab').not('.nav-tab-active').click(function(event) {
                     $( '#rank-math-feedback-form' ).fadeIn();
                 });
+
+                // Install & Activate Rank Math from modal.
+                var tryRankmathPanel = $( '.try-rankmath-panel' ),
+                    installRankmathSuccess;
+
+                installRankmathSuccess = function( response ) {
+                    response.activateUrl += '&from=schema-try-rankmath';
+                    response.activateLabel = wp.updates.l10n.activatePluginLabel.replace( '%s', response.pluginName );
+                    tryRankmathPanel.find('.install-now').text('Activating...');
+                    window.location.href = response.activateUrl;
+                };
+
+                tryRankmathPanel.on( 'click', '.install-now', function( e ) {
+                    e.preventDefault();
+                    var args = {
+                            slug: $( e.target ).data( 'slug' ),
+                            success: installRankmathSuccess
+                    };
+                    wp.updates.installPlugin( args );
+                } );
+            
             });
         </script>
         <?php

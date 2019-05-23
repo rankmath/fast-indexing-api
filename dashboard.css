@@ -89,10 +89,14 @@ body .rank-math-wrap h2.nav-tab-wrapper{margin-bottom:15px;}
 .rank-math-feedback-content .name.column-name{margin-right:0;}
 .rank-math-feedback-content .plugin-card .desc{margin-right:0;}
 .rank-math-feedback-content .plugin-card .desc p{font-size:14px;padding-left:0;padding-right:0;}
-.rank-math-feedback-content .install-button{float:right;}
+.rank-math-feedback-content .button{float:right;}
 .rank-math-feedback-content .vers.column-rating{max-width:100%;width:100%;float:none;margin-left:5px;}
 .rank-math-feedback-content .vers.column-rating a{color:inherit;text-decoration:none;}
 .rank-math-feedback-content .num-ratings{font-size:14px;font-weight:normal;vertical-align:3px;margin-left:5px;}
 .rank-math-feedback-content .star-rating{display:inline-block;margin-top:0;}
 .rank-math-feedback-content .plugin-icon{top:24px;}
+}
+
+.indexing-api-label {
+    pointer-events: none;
 }
