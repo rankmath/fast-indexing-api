@@ -1,3 +1,6 @@
+.rank-math-wrap {
+    max-width: 1080px;
+}
 #giapi-response-wrapper, #giapi-response-userfriendly {
     display: none;
 }

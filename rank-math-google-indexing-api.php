@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Rank Math Google Indexing API
- * Plugin URI: https://rankmath.com
+ * Plugin URI: https://s.rankmath.com/indexing-api
  * Description: Crawl pages instantly with the indexing API.
  * Version: 1.1
  * Author: Rank Math
@@ -18,7 +18,7 @@ class RM_GIAPI {
     public $settings_menu_hook_suffix = '';
     public $notices = array();
     public $debug = false;
-    public $setup_guide_url = 'https://rankmath.com/blog/google-indexing-api/';
+    public $setup_guide_url = 'https://s.rankmath.com/indexing-api';
 
     function __construct() {
         $this->debug = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
@@ -35,12 +35,15 @@ class RM_GIAPI {
         if ( $this->get_setting( 'json_key' ) ) {
             $post_types = $this->get_setting( 'post_types', array() );
             foreach ( $post_types as $post_type => $enabled ) {
-                if ( ! $enabled ) {
+                if ( empty( $enabled ) ) {
                     continue;
                 }
-                add_filter( $post_type . '_row_actions', array( $this, 'send_to_api_link' ), 10, 2 );
                 add_action( 'save_post_' . $post_type, array( $this, 'publish_post' ), 10, 2 );
+                add_filter( 'bulk_actions-edit-' . $post_type, array( $this, 'register_bulk_actions' ) );
+                add_filter( 'handle_bulk_actions-edit-' . $post_type, array( $this, 'bulk_action_handler' ), 10, 3 );
             }
+            add_filter( 'post_row_actions', array( $this, 'send_to_api_link' ), 10, 2 );
+            add_filter( 'page_row_actions', array( $this, 'send_to_api_link' ), 10, 2 );
             add_action( 'trashed_post', array( $this, 'delete_post' ), 10, 1);
         }
         
@@ -50,10 +53,41 @@ class RM_GIAPI {
         add_filter( 'rank_math/modules', array( $this, 'add_rm_module' ), 25 );
     }
 
+    function register_bulk_actions( $bulk_actions ) {
+        $bulk_actions['giapi_update'] = __( 'Indexing API: Update', 'rm-giapi');
+        $bulk_actions['giapi_getstatus'] = __( 'Indexing API: Get Status', 'rm-giapi');
+        return $bulk_actions;
+    }
+
+    function bulk_action_handler( $redirect_to, $doaction, $post_ids ) {
+        if ( $doaction != 'giapi_update' && $doaction != 'giapi_getstatus' ) {
+            return $redirect_to;
+        }
+
+        $nonce = wp_create_nonce( 'giapi-action' );
+        $redirect_to = add_query_arg( array(
+            'page' => 'rm-giapi-console',
+            'apiaction' => substr( $doaction, 6 ),
+            'apipostid' => $post_ids,
+            '_wpnonce' => $nonce
+
+        ), admin_url( 'admin.php' ) );
+        return $redirect_to;
+    }
+
     function send_to_api_link( $actions, $post ) {
         if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
             return $actions;
         }
+        $post_types = $this->get_setting( 'post_types', array() );
+        if ( empty( $post_types[$post->post_type] ) ) {
+            return $actions;
+        }
+
+        if ( $post->post_status != 'publish' ) {
+            return $actions;
+        }
+        
         $nonce = wp_create_nonce( 'giapi-action' );
         $actions['rmgiapi_update'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=update&_wpnonce='.$nonce.'&apiurl='.rawurlencode( get_permalink( $post) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __('Indexing API: Update', 'rm-giapi') . '</a>';
         $actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=getstatus&_wpnonce='.$nonce.'&apiurl='.rawurlencode( get_permalink( $post) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __('Indexing API: Get Status', 'rm-giapi') . '</a>';
@@ -108,20 +142,22 @@ class RM_GIAPI {
         $data = array();
         $rc = count( $results );
         foreach ( $results as $id => $response ) {
+            // Change "response-url-1" to "url-1".
+            $local_id = substr( $id, 9 );
             if ( is_a( $response, 'Google_Service_Exception' ) ) {
-                $data[substr( $id, 9 )] = json_decode( $response->getMessage() );
+                $data[$local_id] = json_decode( $response->getMessage() );
             } else {
-                $data[substr( $id, 9 )] = (array) $response->toSimpleObject();
+                $data[$local_id] = (array) $response->toSimpleObject();
             }
             if ( $rc === 1 ) {
-                $data = $data[substr( $id, 9 )];
+                $data = $data[$local_id];
             }
         }
 
         $this->log_request( $action );
 
         if ( $this->debug ) {
-            error_log( 'RM GI API result: ' . print_r( $data, true ) );
+            error_log( 'RM GI API: ' . $action . ' ' . $url_input[0] . ( count( $url_input ) > 1 ? ' (+)' : '' ) . "\n" . print_r( $data, true ) );
         }
         
         return $data;
@@ -204,8 +240,21 @@ class RM_GIAPI {
     
     public function show_console() {
         $limits = $this->get_limits();
+        $urls = home_url( '/' );
+        if ( isset( $_GET['apiurl'] ) ) {
+            $urls = esc_url_raw( $_GET['apiurl'] );
+        } elseif ( isset( $_GET['apipostid'] ) ) {
+            $ids = (array) $_GET['apipostid'];
+            $ids = array_map( 'absint', $ids );
+            $urls = '';
+            foreach ( $ids as $id ) {
+                if ( get_post_status( $id ) == 'publish' ) {
+                    $urls .= get_permalink( $id ) . "\n";
+                }
+            }
+        }
         ?>
-        <div class="wrap">
+        <div class="wrap rank-math-wrap">
             <h2><?php echo get_admin_page_title(); ?></h2>
 
             <?php 
@@ -226,7 +275,7 @@ class RM_GIAPI {
 
             <form id="rm-giapi" class="wpform" method="post">
                 <label for="giapi-url"><?php _e('URLs (one per line, up to 100):', 'rm-giapi'); ?></label><br>
-                <textarea name="url" id="giapi-url" class="regular-text code" style="min-width: 600px;" rows="5"><?php echo esc_textarea( home_url( '/' ) ); ?></textarea>
+                <textarea name="url" id="giapi-url" class="regular-text code" style="min-width: 600px;" rows="5" data-gramm="false"><?php echo esc_textarea( $urls ); ?></textarea>
                 <br><br>
                 <label><?php _e('Action:', 'rm-giapi'); ?></label><br>
                 <label><input type="radio" name="api_action" value="update" checked="checked" class="giapi-action"> <?php _e('Publish/update', 'rm-giapi'); ?></label><br>
@@ -329,8 +378,7 @@ class RM_GIAPI {
                     
                 });
 
-                <?php if ( ! empty( $_GET['apiaction'] ) && ! empty( $_GET['apiurl'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'giapi-action' ) ) { ?>
-                    $('#giapi-url').val('<?php echo esc_url_raw( $_GET['apiurl'] ); ?>');
+                <?php if ( ! empty( $_GET['apiaction'] ) && ( ! empty( $_GET['apiurl'] ) || ! empty( $_GET['apipostid'] ) ) && wp_verify_nonce( $_GET['_wpnonce'], 'giapi-action' ) ) { ?>
                     $('#rm-giapi').find('input.giapi-action[value="<?php echo sanitize_title( $_GET['apiaction'] ); ?>"]').prop('checked', true);
                     $('#rm-giapi').submit();
                 <?php } ?>
@@ -416,12 +464,21 @@ class RM_GIAPI {
         $this->add_notice( __('Settings updated.', 'rm-giapi' ), 'notice-success' );
     }
 
-    function add_notice( $message, $class = '', $show_on = null ) {
+    function add_notice( $message, $class = '', $show_on = null, $persist = false ) {
+        if ( $persist ) {
+            $notices = get_option( 'giapi_notices', array() );
+            $notices[] = array( 'message' => $message, 'class' => $class, 'show_on' => $show_on );
+            update_option( 'giapi_notices', $notices );
+            return;
+        }
         $this->notices[] = array( 'message' => $message, 'class' => $class, 'show_on' => $show_on );
     }
 
     function display_notices() {
         $screen = get_current_screen();
+        $stored = get_option( 'giapi_notices', array() );
+        $this->notices = array_merge( $stored, $this->notices );
+        delete_option( 'giapi_notices' );
         foreach ( $this->notices as $notice ) {
             if ( ! empty( $notice['show_on'] ) && is_array( $notice['show_on'] ) && ! in_array( $screen->id, $notice['show_on'] ) ) {
                 return;
@@ -995,8 +1052,12 @@ class RM_GIAPI {
 
     function publish_post( $post_id ) {
         $post = get_post( $post_id );
+        if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+            return;
+        }
         if ( $post->post_status == 'publish' ) {
             $this->send_to_api( get_permalink( $post ), 'update' );
+            $this->add_notice(  __('The post was automatically submitted to the Google Indexing API for indexation.', 'rm-giapi' ), 'notice-info', null, true );
         }
     }
 
@@ -1007,6 +1068,7 @@ class RM_GIAPI {
             return;
         }
         $this->send_to_api( get_permalink( $post ), 'delete' );
+        $this->add_notice(  __('The post was automatically submitted to the Google Indexing API for deletion.', 'rm-giapi' ), 'notice-info', null, true );
     }
 
 }
