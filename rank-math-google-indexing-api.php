@@ -56,8 +56,8 @@ class RM_GIAPI {
 	}
 
 	function register_bulk_actions( $bulk_actions ) {
-		$bulk_actions['giapi_update']    = __( 'Indexing API: Update', 'rm-giapi');
-		$bulk_actions['giapi_getstatus'] = __( 'Indexing API: Get Status', 'rm-giapi');
+		$bulk_actions['giapi_update']    = __( 'Indexing API: Update', 'rm-giapi' );
+		$bulk_actions['giapi_getstatus'] = __( 'Indexing API: Get Status', 'rm-giapi' );
 		return $bulk_actions;
 	}
 
@@ -67,13 +67,16 @@ class RM_GIAPI {
 		}
 
 		$nonce       = wp_create_nonce( 'giapi-action' );
-		$redirect_to = add_query_arg( array(
-			'page'      => 'rm-giapi-console',
-			'apiaction' => substr( $doaction, 6 ),
-			'apipostid' => $post_ids,
-			'_wpnonce'  => $nonce,
+		$redirect_to = add_query_arg(
+			array(
+				'page'      => 'rm-giapi-console',
+				'apiaction' => substr( $doaction, 6 ),
+				'apipostid' => $post_ids,
+				'_wpnonce'  => $nonce,
 
-		), admin_url( 'admin.php' ) );
+			),
+			admin_url( 'admin.php' )
+		);
 		return $redirect_to;
 	}
 
@@ -82,7 +85,7 @@ class RM_GIAPI {
 			return $actions;
 		}
 		$post_types = $this->get_setting( 'post_types', array() );
-		if ( empty( $post_types[$post->post_type] ) ) {
+		if ( empty( $post_types[ $post->post_type ] ) ) {
 			return $actions;
 		}
 
@@ -91,8 +94,8 @@ class RM_GIAPI {
 		}
 
 		$nonce                        = wp_create_nonce( 'giapi-action' );
-		$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __('Indexing API: Update', 'rm-giapi') . '</a>';
-		$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __('Indexing API: Get Status', 'rm-giapi') . '</a>';
+		$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Indexing API: Update', 'rm-giapi' ) . '</a>';
+		$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Indexing API: Get Status', 'rm-giapi' ) . '</a>';
 		return $actions;
 	}
 
@@ -151,7 +154,7 @@ class RM_GIAPI {
 				$data[ $local_id ] = (array) $response->toSimpleObject();
 			}
 			if ( $rc === 1 ) {
-				$data = $data[$local_id];
+				$data = $data[ $local_id ];
 			}
 		}
 
@@ -165,7 +168,14 @@ class RM_GIAPI {
 	}
 
 	function log_request( $type ) {
-		$requests_log            = get_option( 'giapi_requests', array( 'update' => array(), 'delete' => array(), 'getstatus' => array() ) );
+		$requests_log            = get_option(
+			'giapi_requests',
+			array(
+				'update'    => array(),
+				'delete'    => array(),
+				'getstatus' => array(),
+			)
+		);
 		$requests_log[ $type ][] = time();
 		if ( count( $requests_log[ $type ] ) > 600 ) {
 			$requests_log[ $type ] = array_slice( $requests_log[ $type ], -600, 600, true );
@@ -183,11 +193,14 @@ class RM_GIAPI {
 		$limit_publishperday = 200;
 		$limit_permin        = 600;
 		$limit_metapermin    = 180;
-		$requests_log        = get_option( 'giapi_requests', array(
-			'update'    => array(),
-			'delete'    => array(),
-			'getstatus' => array(),
-		) );
+		$requests_log        = get_option(
+			'giapi_requests',
+			array(
+				'update'    => array(),
+				'delete'    => array(),
+				'getstatus' => array(),
+			)
+		);
 		$timestamp_1day_ago  = strtotime( '-1 day' );
 		$timestamp_1min_ago  = strtotime( '-1 minute' );
 
@@ -233,14 +246,14 @@ class RM_GIAPI {
 		if ( ! class_exists( 'RankMath' ) ) {
 			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-dashboard', null, 'dashicons-chart-area', 76 );
 			$this->dashboard_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', 'Rank Math', __( 'Dashboard', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
-			$this->console_menu_hook_suffix   = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi'), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
-			$this->settings_menu_hook_suffix  = add_submenu_page( 'rm-giapi-dashboard', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi'), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
+			$this->console_menu_hook_suffix   = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
+			$this->settings_menu_hook_suffix  = add_submenu_page( 'rm-giapi-dashboard', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
 			return;
 		}
 
 		// If Rank Math is installed: add module control + settings & console pages.
-		$this->console_menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi'), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
-		$this->settings_menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi'), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
+		$this->console_menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
+		$this->settings_menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
 	}
 
 	public function show_console() {
@@ -265,7 +278,7 @@ class RM_GIAPI {
 			<?php
 			if ( ! $this->get_setting( 'json_key' ) ) {
 				?>
-				<p class="description"><?php printf( __( 'Please navigate to the %s page to configure the plugin.', 'rm-giapi' ), '<a href="' . admin_url( 'admin.php?page=rm-giapi-settings' ) . '">' . __('Indexing API Settings', 'rm-giapi' ) . '</a>' ); ?></p>
+				<p class="description"><?php printf( __( 'Please navigate to the %s page to configure the plugin.', 'rm-giapi' ), '<a href="' . admin_url( 'admin.php?page=rm-giapi-settings' ) . '">' . __( 'Indexing API Settings', 'rm-giapi' ) . '</a>' ); ?></p>
 				<?php
 				return;
 			}
@@ -412,8 +425,8 @@ class RM_GIAPI {
 					<tr valign="top">
 						<th scope="row">
 							<?php _e( 'JSON Key:', 'rm-giapi' ); ?>
-							<p class="description"><?php _e('Upload the Service Account JSON key file you obtained from Google API Console or paste its contents in the field.', 'rm-giapi' ); ?></p>
-							<div style="display: inline-block; border: 1px solid #ccc; background: #fafafa; padding: 10px 10px 10px 6px; margin-top: 8px;"><span class="dashicons dashicons-editor-help"></span> <a href="<?php echo $this->setup_guide_url; ?>" target="_blank"><?php _e('Read our setup guide', 'rm-giapi' ); ?></a></div>
+							<p class="description"><?php _e( 'Upload the Service Account JSON key file you obtained from Google API Console or paste its contents in the field.', 'rm-giapi' ); ?></p>
+							<div style="display: inline-block; border: 1px solid #ccc; background: #fafafa; padding: 10px 10px 10px 6px; margin-top: 8px;"><span class="dashicons dashicons-editor-help"></span> <a href="<?php echo $this->setup_guide_url; ?>" target="_blank"><?php _e( 'Read our setup guide', 'rm-giapi' ); ?></a></div>
 						</th>
 						<td>
 							<?php if ( file_exists( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' ) ) { ?>
@@ -424,7 +437,7 @@ class RM_GIAPI {
 								<textarea name="giapi_settings[json_key]" class="large-text" rows="8"><?php echo esc_textarea( $this->get_setting( 'json_key' ) ); ?></textarea>
 								<br>
 								<label>
-									<?php _e('Or upload JSON file: ', 'rm-giapi' ); ?>
+									<?php _e( 'Or upload JSON file: ', 'rm-giapi' ); ?>
 									<input type="file" name="json_file" />
 								</label>
 							<?php } ?>
@@ -463,8 +476,14 @@ class RM_GIAPI {
 
 		$post_types = (array) $_POST['giapi_settings']['post_types'];
 
-		update_option( 'giapi_settings', array( 'json_key' => $json, 'post_types' => $post_types ) );
-		$this->add_notice( __('Settings updated.', 'rm-giapi' ), 'notice-success' );
+		update_option(
+			'giapi_settings',
+			array(
+				'json_key'   => $json,
+				'post_types' => $post_types,
+			)
+		);
+		$this->add_notice( __( 'Settings updated.', 'rm-giapi' ), 'notice-success' );
 	}
 
 	function add_notice( $message, $class = '', $show_on = null, $persist = false ) {
@@ -478,7 +497,11 @@ class RM_GIAPI {
 			update_option( 'giapi_notices', $notices );
 			return;
 		}
-		$this->notices[] = array( 'message' => $message, 'class' => $class, 'show_on' => $show_on );
+		$this->notices[] = array(
+			'message' => $message,
+			'class'   => $class,
+			'show_on' => $show_on,
+		);
 	}
 
 	function display_notices() {
@@ -523,7 +546,7 @@ class RM_GIAPI {
 			}
 		}
 
-		return ( isset( $settings[$setting] ) ? $settings[$setting] : $default );
+		return ( isset( $settings[ $setting ] ) ? $settings[ $setting ] : $default );
 	}
 
 	public function show_dashboard() {
@@ -567,7 +590,7 @@ class RM_GIAPI {
 									</span>
 									<label>
 										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e( 'Active', 'rm-giapi' ); ?></span>
-										<span class="module-status inactive-text"><?php _e('Active', 'rm-giapi' ); ?></span>
+										<span class="module-status inactive-text"><?php _e( 'Active', 'rm-giapi' ); ?></span>
 									</label>
 								</div>
 							</div>
@@ -607,7 +630,7 @@ class RM_GIAPI {
 								<div class="status wp-clearfix">
 									<span class="rank-math-switch">
 										<input type="checkbox" class="rank-math-modules" id="module-amp" name="modules[]" value="amp">
-										<label for="module-amp" class=""><?php _e('Toggle', 'rm-giapi' ); ?></label>
+										<label for="module-amp" class=""><?php _e( 'Toggle', 'rm-giapi' ); ?></label>
 										<span class="input-loading"></span>
 									</span>
 									<label>
@@ -635,7 +658,7 @@ class RM_GIAPI {
 									</span>
 									<label>
 										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e( 'Active', 'rm-giapi' ); ?></span>
-										<span class="module-status inactive-text"><?php _e('Inactive', 'rm-giapi' ); ?> </span>
+										<span class="module-status inactive-text"><?php _e( 'Inactive', 'rm-giapi' ); ?> </span>
 									</label>
 								</div>
 							</div>
@@ -651,12 +674,12 @@ class RM_GIAPI {
 								<div class="status wp-clearfix">
 									<span class="rank-math-switch">
 										<input type="checkbox" class="rank-math-modules" id="module-link-counter" name="modules[]" value="link-counter">
-										<label for="module-link-counter" class=""><?php _e('Toggle', 'rm-giapi' ); ?>                                                                    </label>
+										<label for="module-link-counter" class=""><?php _e( 'Toggle', 'rm-giapi' ); ?>                                                                    </label>
 										<span class="input-loading"></span>
 									</span>
 									<label>
-										<?php _e('Status:', 'rm-giapi' ); ?>                             <span class="module-status active-text"><?php _e('Active', 'rm-giapi' ); ?> </span>
-										<span class="module-status inactive-text"><?php _e('Inactive', 'rm-giapi' ); ?> </span>
+										<?php _e( 'Status:', 'rm-giapi' ); ?>                             <span class="module-status active-text"><?php _e( 'Active', 'rm-giapi' ); ?> </span>
+										<span class="module-status inactive-text"><?php _e( 'Inactive', 'rm-giapi' ); ?> </span>
 									</label>
 								</div>
 							</div>
@@ -666,19 +689,19 @@ class RM_GIAPI {
 							<div class="rank-math-box">
 								<span class="dashicons dashicons-location-alt"></span>
 								<header>
-									<h3><?php _e('Local SEO &amp; Google Knowledge Graph', 'rm-giapi' ); ?></h3>
-									<p><em><?php _e('Dominate the search results for local audience by optimizing your website and posts using this Rank Math module.', 'rm-giapi' ); ?></em></p>
+									<h3><?php _e( 'Local SEO &amp; Google Knowledge Graph', 'rm-giapi' ); ?></h3>
+									<p><em><?php _e( 'Dominate the search results for local audience by optimizing your website and posts using this Rank Math module.', 'rm-giapi' ); ?></em></p>
 									<a class="module-settings" href="#"><?php _e( 'Settings', 'rm-giapi' ); ?></a>
 								</header>
 								<div class="status wp-clearfix">
 									<span class="rank-math-switch">
 										<input type="checkbox" class="rank-math-modules" id="module-local-seo" name="modules[]" value="local-seo">
-										<label for="module-local-seo" class=""><?php _e('Toggle', 'rm-giapi' ); ?>                                                                   </label>
+										<label for="module-local-seo" class=""><?php _e( 'Toggle', 'rm-giapi' ); ?>                                                                   </label>
 										<span class="input-loading"></span>
 									</span>
 									<label>
 										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e( 'Active', 'rm-giapi' ); ?></span>
-										<span class="module-status inactive-text"><?php _e('Inactive', 'rm-giapi' ); ?></span>
+										<span class="module-status inactive-text"><?php _e( 'Inactive', 'rm-giapi' ); ?></span>
 									</label>
 								</div>
 							</div>
@@ -700,7 +723,7 @@ class RM_GIAPI {
 									</span>
 									<label>
 										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e( 'Active', 'rm-giapi' ); ?></span>
-										<span class="module-status inactive-text"><?php _e('Inactive', 'rm-giapi' ); ?></span>
+										<span class="module-status inactive-text"><?php _e( 'Inactive', 'rm-giapi' ); ?></span>
 									</label>
 								</div>
 							</div>
@@ -717,12 +740,12 @@ class RM_GIAPI {
 								<div class="status wp-clearfix">
 									<span class="rank-math-switch">
 										<input type="checkbox" class="rank-math-modules" id="module-rich-snippet" name="modules[]" value="rich-snippet">
-										<label for="module-rich-snippet" class=""><?php _e('Toggle', 'rm-giapi' ); ?></label>
+										<label for="module-rich-snippet" class=""><?php _e( 'Toggle', 'rm-giapi' ); ?></label>
 										<span class="input-loading"></span>
 									</span>
 									<label>
 										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e( 'Active', 'rm-giapi' ); ?></span>
-										<span class="module-status inactive-text"><?php _e('Inactive', 'rm-giapi' ); ?></span>
+										<span class="module-status inactive-text"><?php _e( 'Inactive', 'rm-giapi' ); ?></span>
 									</label>
 								</div>
 							</div>
@@ -761,11 +784,11 @@ class RM_GIAPI {
 								<div class="status wp-clearfix">
 									<span class="rank-math-switch">
 										<input type="checkbox" class="rank-math-modules" id="module-search-console" name="modules[]" value="search-console">
-										<label for="module-search-console" class=""><?php _e('Toggle', 'rm-giapi' ); ?>                                                                  </label>
+										<label for="module-search-console" class=""><?php _e( 'Toggle', 'rm-giapi' ); ?>                                                                  </label>
 										<span class="input-loading"></span>
 									</span>
 									<label>
-										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e('Active', 'rm-giapi' ); ?></span>
+										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e( 'Active', 'rm-giapi' ); ?></span>
 										<span class="module-status inactive-text"><?php _e( 'Inactive', 'rm-giapi' ); ?></span>
 									</label>
 								</div>
@@ -830,8 +853,8 @@ class RM_GIAPI {
 										<span class="input-loading"></span>
 									</span>
 									<label>
-										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e('Active', 'rm-giapi' ); ?></span>
-										<span class="module-status inactive-text"><?php _e('Inactive', 'rm-giapi' ); ?> </span>
+										<?php _e( 'Status:', 'rm-giapi' ); ?><span class="module-status active-text"><?php _e( 'Active', 'rm-giapi' ); ?></span>
+										<span class="module-status inactive-text"><?php _e( 'Inactive', 'rm-giapi' ); ?> </span>
 									</label>
 								</div>
 							</div>
@@ -857,11 +880,14 @@ class RM_GIAPI {
 		<div class="rank-math-feedback-modal rank-math-ui try-rankmath-panel" id="rank-math-feedback-form">
 			<div class="rank-math-feedback-content">
 
-				<?php /*<header>
+				<?php
+				/*
+				<header>
 					<h2>
 						<?php echo __( 'Rank Math SEO Suite', '404-monitor' ); ?>
 					</h2>
-				</header> */ ?>
+				</header> */
+				?>
 
 				<div class="plugin-card plugin-card-seo-by-rank-math">
 					<span class="button-close dashicons dashicons-no-alt alignright"></span>
@@ -959,7 +985,7 @@ class RM_GIAPI {
 		$modules['indexing-api'] = array(
 			'id'            => 'indexing-api',
 			'title'         => esc_html__( 'Google Indexing API (Beta)', 'rank-math' ),
-			'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __('Read our setup guide', 'rm-giapi' ) . '</a>',
+			'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'rm-giapi' ) . '</a>',
 			'class'         => 'RM_GIAPI_Module',
 			'icon'          => 'dashicons-admin-site-alt3',
 			'settings_link' => admin_url( 'admin.php?page=rm-giapi-settings' ),
@@ -983,7 +1009,7 @@ class RM_GIAPI {
 					.closest('div.status')
 					.css({pointerEvents: 'none'})
 					.find('.active-text')
-					.text('<?php echo esc_js( __('Active (Plugin)', 'rm-giapi' ) ); ?>')
+					.text('<?php echo esc_js( __( 'Active (Plugin)', 'rm-giapi' ) ); ?>')
 					.closest('.rank-math-box')
 					.addClass('active');
 			});
@@ -996,7 +1022,7 @@ class RM_GIAPI {
 			return;
 		}
 
-		$message = sprintf( __( 'It is recommended to use %s along with the Indexing API plugin.', 'sample-text-domain' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __('Rank Math SEO') . '</a>' );
+		$message = sprintf( __( 'It is recommended to use %s along with the Indexing API plugin.', 'sample-text-domain' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO' ) . '</a>' );
 		$class   = 'notice-error';
 		$show_on = array( 'rank-math_page_rm-giapi-console', 'rank-math_page_rm-giapi-settings', 'rank-math_page_rm-giapi-dashboard' );
 
@@ -1010,7 +1036,7 @@ class RM_GIAPI {
 		}
 		if ( $post->post_status == 'publish' ) {
 			$this->send_to_api( get_permalink( $post ), 'update' );
-			$this->add_notice( __('The post was automatically submitted to the Google Indexing API for indexation.', 'rm-giapi' ), 'notice-info', null, true );
+			$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for indexation.', 'rm-giapi' ), 'notice-info', null, true );
 		}
 	}
 
@@ -1021,7 +1047,7 @@ class RM_GIAPI {
 			return;
 		}
 		$this->send_to_api( get_permalink( $post ), 'delete' );
-		$this->add_notice( __('The post was automatically submitted to the Google Indexing API for deletion.', 'rm-giapi' ), 'notice-info', null, true );
+		$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for deletion.', 'rm-giapi' ), 'notice-info', null, true );
 	}
 
 }
