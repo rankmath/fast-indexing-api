@@ -1,3 +1,11 @@
+<?php
+/**
+ * Indexing API Console page contents.
+ *
+ * @package RM_GIAPI
+ */
+
+?>
 <div class="wrap rank-math-wrap">
 	<h2><?php echo get_admin_page_title(); ?></h2>
 
@@ -12,9 +20,9 @@
 
 	<div class="giapi-limits">
 		<p class="" style="line-height: 1.8"><a href="https://developers.google.com/search/apis/indexing-api/v3/quota-pricing" target="_blank"><strong><?php _e( 'API Limits:', 'rm-giapi' ); ?></strong></a><br>
-		<code>PublishRequestsPerDayPerProject = <strong id="giapi-limit-publishperday"><?php echo $limits['publishperday']; ?></strong></code><br>
-		<code>RequestsPerMinutePerProject = <strong id="giapi-limit-permin"><?php echo $limits['permin']; ?></strong></code><br>
-		<code>MetadataRequestsPerMinutePerProject = <strong id="giapi-limit-metapermin"><?php echo $limits['metapermin']; ?></strong></code></p>
+		<code>PublishRequestsPerDayPerProject = <strong id="giapi-limit-publishperday"><?php echo $limits['publishperday']; ?></strong> / 200</code><br>
+		<code>RequestsPerMinutePerProject = <strong id="giapi-limit-permin"><?php echo $limits['permin']; ?></strong> / 600</code><br>
+		<code>MetadataRequestsPerMinutePerProject = <strong id="giapi-limit-metapermin"><?php echo $limits['metapermin']; ?></strong> / 180</code></p>
 	</div>
 
 	<form id="rm-giapi" class="wpform" method="post">

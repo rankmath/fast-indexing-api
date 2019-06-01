@@ -1,6 +1,17 @@
 <?php
-
+/**
+ * Main plugin class.
+ *
+ * @package RM_GIAPI
+ */
 class RM_GIAPI {
+
+	/**
+	 * Plugin version.
+	 *
+	 * @var string
+	 */
+	public $version = '1.2';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -120,6 +131,13 @@ class RM_GIAPI {
 		return $redirect_to;
 	}
 
+	/**
+	 * Add new action links for the post listing screen.
+	 *
+	 * @param  array  $actions Current action links.
+	 * @param  object $post    WP_Post object.
+	 * @return array  $actions New action links.
+	 */
 	public function send_to_api_link( $actions, $post ) {
 		if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
 			return $actions;
@@ -129,7 +147,7 @@ class RM_GIAPI {
 			return $actions;
 		}
 
-		if ( $post->post_status != 'publish' ) {
+		if ( $post->post_status !== 'publish' ) {
 			return $actions;
 		}
 
@@ -139,16 +157,26 @@ class RM_GIAPI {
 		return $actions;
 	}
 
+	/**
+	 * Load text-domain.
+	 *
+	 * @return void
+	 */
 	public function mythemeshop_giapi_load_textdomain() {
 		load_plugin_textdomain( 'mythemeshop-giapi', false, dirname( plugin_basename( __FILE__ ) ) . '/language/' );
 	}
 
+	/**
+	 * AJAX handler for the console.
+	 *
+	 * @return void
+	 */
 	public function ajax_rm_giapi() {
 		if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
 			die( '0' );
 		}
 		$url_input = $this->get_input_urls();
-		$action    = sanitize_title( $_POST['api_action'] );
+		$action    = sanitize_title( wp_unslash( $_POST['api_action'] ) );
 		header( 'Content-type: application/json' );
 
 		$result = $this->send_to_api( $url_input, $action );
@@ -156,6 +184,13 @@ class RM_GIAPI {
 		exit();
 	}
 
+	/**
+	 * Submit one or more URLs to Google's API using their API library.
+	 *
+	 * @param  array  $url_input URLs.
+	 * @param  string $action    API action.
+	 * @return array  $data      Result of the API call.
+	 */
 	public function send_to_api( $url_input, $action ) {
 		$url_input = (array) $url_input;
 
@@ -171,13 +206,13 @@ class RM_GIAPI {
 		$service = new Google_Service_Indexing( $this->client );
 		$batch   = new Google_Http_Batch( $this->client, false, 'https://indexing.googleapis.com' );
 		foreach ( $url_input as $i => $url ) {
-			$postBody = new Google_Service_Indexing_UrlNotification();
-			if ( $action == 'getstatus' ) {
-				$request_part = $service->urlNotifications->getMetadata( array( 'url' => $url ) );
+			$post_body = new Google_Service_Indexing_UrlNotification();
+			if ( $action === 'getstatus' ) {
+				$request_part = $service->urlNotifications->getMetadata( array( 'url' => $url ) ); // phpcs:ignore
 			} else {
-				$postBody->setType( $action == 'update' ? 'URL_UPDATED' : 'URL_DELETED' );
-				$postBody->setUrl( $url );
-				$request_part = $service->urlNotifications->publish( $postBody );
+				$post_body->setType( $action === 'update' ? 'URL_UPDATED' : 'URL_DELETED' );
+				$post_body->setUrl( $url );
+				$request_part = $service->urlNotifications->publish( $post_body ); // phpcs:ignore
 			}
 			$batch->add( $request_part, 'url-' . $i );
 		}
@@ -201,12 +236,18 @@ class RM_GIAPI {
 		$this->log_request( $action );
 
 		if ( $this->debug ) {
-			error_log( 'RM GI API: ' . $action . ' ' . $url_input[0] . ( count( $url_input ) > 1 ? ' (+)' : '' ) . "\n" . print_r( $data, true ) );
+			error_log( 'RM GI API: ' . $action . ' ' . $url_input[0] . ( count( $url_input ) > 1 ? ' (+)' : '' ) . "\n" . print_r( $data, true ) ); // phpcs:ignore
 		}
 
 		return $data;
 	}
 
+	/**
+	 * Log request type & timestamp to keep track of remaining quota.
+	 *
+	 * @param  string $type API action.
+	 * @return void
+	 */
 	public function log_request( $type ) {
 		$requests_log            = get_option(
 			'giapi_requests',
@@ -223,6 +264,11 @@ class RM_GIAPI {
 		update_option( 'giapi_requests', $requests_log );
 	}
 
+	/**
+	 * Get current quota (limits minus usage).
+	 *
+	 * @return array Current quota.
+	 */
 	public function get_limits() {
 		$current_limits = array(
 			'publishperday' => 0,
@@ -273,16 +319,31 @@ class RM_GIAPI {
 		return $current_limits;
 	}
 
+	/**
+	 * AJAX handler to get current quota in JSON format.
+	 *
+	 * @return void
+	 */
 	public function ajax_get_limits() {
 		wp_send_json( $this->get_limits() );
+		die();
 	}
 
+	/**
+	 * Normalize input URLs.
+	 *
+	 * @return array Input URLs.
+	 */
 	public function get_input_urls() {
-		return array_values( array_filter( array_map( 'trim', explode( "\n", $_POST['url'] ) ) ) );
+		return array_values( array_filter( array_map( 'trim', explode( "\n", sanitize_textarea_field( wp_unslash( $_POST['url'] ) ) ) ) ) );
 	}
 
+	/**
+	 * Add admin menu items.
+	 *
+	 * @return void
+	 */
 	public function admin_menu() {
-		// If Rank Math is not active: add Rank Math & Dashboard & Indexing API subpages.
 		if ( ! class_exists( 'RankMath' ) ) {
 			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-dashboard', null, 'dashicons-chart-area', 76 );
 			$this->dashboard_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', 'Rank Math', __( 'Dashboard', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
@@ -291,62 +352,83 @@ class RM_GIAPI {
 			return;
 		}
 
-		// If Rank Math is installed: add module control + settings & console pages.
 		$this->console_menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
 		$this->settings_menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
 	}
 
+	/**
+	 * Output Indexing API Console page contents.
+	 *
+	 * @return void
+	 */
 	public function show_console() {
 		$limits = $this->get_limits();
 		$urls   = home_url( '/' );
 		if ( isset( $_GET['apiurl'] ) ) {
-			$urls = esc_url_raw( $_GET['apiurl'] );
+			$urls = esc_url_raw( wp_unslash( $_GET['apiurl'] ) );
 		} elseif ( isset( $_GET['apipostid'] ) ) {
-			$ids  = (array) $_GET['apipostid'];
-			$ids  = array_map( 'absint', $ids );
+			$ids  = (array) wp_unslash( $_GET['apipostid'] ); // phpcs:ignore
+			$ids  = array_map( 'absint', $ids ); // We sanitize it here.
 			$urls = '';
 			foreach ( $ids as $id ) {
-				if ( get_post_status( $id ) == 'publish' ) {
+				if ( get_post_status( $id ) === 'publish' ) {
 					$urls .= get_permalink( $id ) . "\n";
 				}
 			}
 		}
 
-		include_once '../views/console.php';
+		include_once RM_GIAPI_FILE . 'views/console.php';
 	}
 
+	/**
+	 * Enqueue CSS & JS for the admin pages.
+	 *
+	 * @param  string $hook_suffix Hook suffix of the current page.
+	 * @return void
+	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		if ( $hook_suffix == $this->dashboard_menu_hook_suffix ) {
+		if ( $hook_suffix === $this->dashboard_menu_hook_suffix ) {
 			wp_enqueue_script( 'updates' );
-			wp_enqueue_style( 'rm-giapi-dashboard', plugin_dir_url( __FILE__ ) . 'dashboard.css' );
-		} elseif ( $hook_suffix == $this->console_menu_hook_suffix ) {
-			wp_enqueue_style( 'rm-giapi-console', plugin_dir_url( __FILE__ ) . 'console.css' );
-		} elseif ( $hook_suffix == $this->settings_menu_hook_suffix ) {
-			wp_enqueue_style( 'rm-giapi-settings', plugin_dir_url( __FILE__ ) . 'settings.css' );
+			wp_enqueue_style( 'rm-giapi-dashboard', RM_GIAPI_URL . 'assets/css/dashboard.css', array(), $this->version );
+		} elseif ( $hook_suffix === $this->console_menu_hook_suffix ) {
+			wp_enqueue_style( 'rm-giapi-console', RM_GIAPI_URL . 'assets/css/console.css', array(), $this->version );
+		} elseif ( $hook_suffix === $this->settings_menu_hook_suffix ) {
+			wp_enqueue_style( 'rm-giapi-settings', RM_GIAPI_URL . 'assets/css/settings.css', array(), $this->version );
 		}
 	}
 
+	/**
+	 * Output Indexing API Settings page contents.
+	 *
+	 * @return void
+	 */
 	public function show_settings() {
-		include_once '../views/settings.php';
+		include_once RM_GIAPI_FILE . 'views/settings.php';
 	}
 
+	/**
+	 * Handle settings save.
+	 *
+	 * @return void
+	 */
 	public function save_settings() {
 		if ( ! isset( $_POST['giapi_settings'] ) ) {
 			return;
 		}
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'giapi-save' ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_title( wp_unslash( $_POST['_wpnonce'] ) ), 'giapi-save' ) ) {
 			return;
 		}
 		if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
 			return;
 		}
 
-		$json = stripslashes( $_POST['giapi_settings']['json_key'] );
-		if ( isset( $_FILES['json_file'] ) && isset( $_FILES['json_file']['tmp_name'] ) && file_exists( $_FILES['json_file']['tmp_name'] ) ) {
-			$json = file_get_contents( $_FILES['json_file']['tmp_name'] );
+		$json = sanitize_textarea_field( wp_unslash( $_POST['giapi_settings']['json_key'] ) );
+		if ( isset( $_FILES['json_file'] ) && isset( $_FILES['json_file']['tmp_name'] ) && file_exists( sanitize_file_name( wp_unslash( $_FILES['json_file']['tmp_name'] ) ) ) ) {
+			$json = file_get_contents( $_FILES['json_file']['tmp_name'] ); // phpcs:ignore
 		}
 
-		$post_types = (array) $_POST['giapi_settings']['post_types'];
+		$post_types = (array) $_POST['giapi_settings']['post_types']; // phpcs:ignore
+		$post_types = array_map( 'sanitize_title', $post_types );
 
 		update_option(
 			'giapi_settings',
@@ -358,6 +440,15 @@ class RM_GIAPI {
 		$this->add_notice( __( 'Settings updated.', 'rm-giapi' ), 'notice-success' );
 	}
 
+	/**
+	 * Add a notice message to internal list, to be displayed on the next page load.
+	 *
+	 * @param string  $message Meaningful message.
+	 * @param string  $class   Additional class for the notice element.
+	 * @param array   $show_on Admin page IDs where the notice should be displayed.
+	 * @param boolean $persist Whether the notice should be stored in the database until it is displayed.
+	 * @return void
+	 */
 	public function add_notice( $message, $class = '', $show_on = null, $persist = false ) {
 		if ( $persist ) {
 			$notices   = get_option( 'giapi_notices', array() );
@@ -376,31 +467,48 @@ class RM_GIAPI {
 		);
 	}
 
+	/**
+	 * Output notices from internal list.
+	 *
+	 * @return void
+	 */
 	public function display_notices() {
 		$screen        = get_current_screen();
 		$stored        = get_option( 'giapi_notices', array() );
 		$this->notices = array_merge( $stored, $this->notices );
 		delete_option( 'giapi_notices' );
 		foreach ( $this->notices as $notice ) {
-			if ( ! empty( $notice['show_on'] ) && is_array( $notice['show_on'] ) && ! in_array( $screen->id, $notice['show_on'] ) ) {
+			if ( ! empty( $notice['show_on'] ) && is_array( $notice['show_on'] ) && ! in_array( $screen->id, $notice['show_on'], true ) ) {
 				return;
 			}
 			$class = 'notice rm-giapi-notice ' . $notice['class'];
-			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $notice['message'] );
+			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), wp_kses_post( $notice['message'] ) );
 		}
 	}
 
+	/**
+	 * Output checkbox inputs for the registered post types.
+	 *
+	 * @return void
+	 */
 	public function post_types_checkboxes() {
 		$settings   = $this->get_setting( 'post_types', array() );
 		$post_types = get_post_types( array( 'public' => true ), 'objects' );
 		foreach ( $post_types as $post_type ) {
 			?>
 			<input type="hidden" name="giapi_settings[post_types][<?php echo esc_attr( $post_type->name ); ?>]" value="0">
-			<label><input type="checkbox" name="giapi_settings[post_types][<?php echo esc_attr( $post_type->name ); ?>]" value="1" <?php checked( ! empty( $settings[ $post_type->name ] ) ); ?>> <?php echo $post_type->label; ?></label><br>
+			<label><input type="checkbox" name="giapi_settings[post_types][<?php echo esc_attr( $post_type->name ); ?>]" value="1" <?php checked( ! empty( $settings[ $post_type->name ] ) ); ?>> <?php echo esc_html( $post_type->label ); ?></label><br>
 			<?php
 		}
 	}
 
+	/**
+	 * Get a specific plugin setting.
+	 *
+	 * @param  string $setting Setting name.
+	 * @param  string $default Default value if setting is not found.
+	 * @return string Setting value or default.
+	 */
 	public function get_setting( $setting, $default = null ) {
 		$defaults = array(
 			'json_key'   => '',
@@ -412,7 +520,7 @@ class RM_GIAPI {
 		$settings = get_option( 'giapi_settings', array() );
 		$settings = array_merge( $defaults, $settings );
 
-		if ( $setting == 'json_key' ) {
+		if ( $setting === 'json_key' ) {
 			if ( file_exists( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' ) ) {
 				return file_get_contents( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' );
 			}
@@ -421,11 +529,21 @@ class RM_GIAPI {
 		return ( isset( $settings[ $setting ] ) ? $settings[ $setting ] : $default );
 	}
 
+	/**
+	 * Output Rank Math Dashboard page contents
+	 *
+	 * @return void
+	 */
 	public function show_dashboard() {
-		include_once '../views/dashboard.php';
+		include_once RM_GIAPI_FILE . 'views/dashboard.php';
 	}
 
-
+	/**
+	 * Add Rank Math module.
+	 *
+	 * @param array $modules Current modules.
+	 * @return array $modules New modules.
+	 */
 	public function add_rm_module( $modules ) {
 		$modules['indexing-api'] = array(
 			'id'            => 'indexing-api',
@@ -438,9 +556,15 @@ class RM_GIAPI {
 		return $modules;
 	}
 
+	/**
+	 * Add Javascript to the Dashboard.
+	 *
+	 * @param  string $hook_suffix Hook suffix of the current admin page.
+	 * @return void
+	 */
 	public function admin_footer( $hook_suffix ) {
 		$screen = get_current_screen();
-		if ( $screen->id != 'toplevel_page_rank-math' ) {
+		if ( $screen->id !== 'toplevel_page_rank-math' ) {
 			return;
 		}
 		?>
@@ -462,11 +586,17 @@ class RM_GIAPI {
 		<?php
 	}
 
+	/**
+	 * Add admin notice about Rank Math if it's not installed.
+	 *
+	 * @return void
+	 */
 	public function rm_missing_admin_notice_error() {
 		if ( class_exists( 'RankMath' ) ) {
 			return;
 		}
 
+		/* translators: %s is a link to Rank Math plugin page */
 		$message = sprintf( __( 'It is recommended to use %s along with the Indexing API plugin.', 'rm-giapi' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO' ) . '</a>' );
 		$class   = 'notice-error';
 		$show_on = array( 'rank-math_page_rm-giapi-console', 'rank-math_page_rm-giapi-settings', 'rank-math_page_rm-giapi-dashboard' );
@@ -474,17 +604,32 @@ class RM_GIAPI {
 		$this->add_notice( $message, $class, $show_on );
 	}
 
+	/**
+	 * When a post from a watched post type is published, submit its URL
+	 * to the API and add notice about it.
+	 *
+	 * @param  int $post_id Post ID.
+	 * @return void
+	 */
 	public function publish_post( $post_id ) {
 		$post = get_post( $post_id );
 		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 			return;
 		}
-		if ( $post->post_status == 'publish' ) {
+
+		if ( $post->post_status === 'publish' ) {
 			$this->send_to_api( get_permalink( $post ), 'update' );
 			$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for indexation.', 'rm-giapi' ), 'notice-info', null, true );
 		}
 	}
 
+	/**
+	 * When a post is deleted, check its post type and submit its URL
+	 * to the API if appropriate, then add notice about it.
+	 *
+	 * @param  int $post_id Post ID.
+	 * @return void
+	 */
 	public function delete_post( $post_id ) {
 		$post_types = $this->get_setting( 'post_types', array() );
 		$post       = get_post( $post_id );

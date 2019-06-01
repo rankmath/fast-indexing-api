@@ -1,3 +1,11 @@
+<?php
+/**
+ * Rank Math Dashboard page contents.
+ *
+ * @package RM_GIAPI
+ */
+
+?>
 <div class="rank-math-page">
 	<div class="wrap rank-math-wrap">
 

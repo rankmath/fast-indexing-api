@@ -1,3 +1,11 @@
+<?php
+/**
+ * Indexing API Settings page contents.
+ *
+ * @package RM_GIAPI
+ */
+
+?>
 <div class="wrap rank-math-wrap">
 	<h1><?php _e( 'Indexing API Settings', 'rm-giapi' ); ?></h1>
 	<form enctype="multipart/form-data" method="POST" action="">

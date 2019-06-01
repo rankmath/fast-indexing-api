@@ -13,6 +13,9 @@
 
 defined( 'ABSPATH' ) || die;
 
+define( 'RM_GIAPI_FILE', plugin_dir_path( __FILE__ ) );
+define( 'RM_GIAPI_URL', plugin_dir_url( __FILE__ ) );
+
 /**
  * Require Rank Math module class.
  */
