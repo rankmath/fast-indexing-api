@@ -139,7 +139,7 @@ class RM_GIAPI {
 	 * @return array  $actions New action links.
 	 */
 	public function send_to_api_link( $actions, $post ) {
-		if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
+		if ( ! current_user_can( apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ) ) ) {
 			return $actions;
 		}
 		$post_types = $this->get_setting( 'post_types', array() );
@@ -172,7 +172,7 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function ajax_rm_giapi() {
-		if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
+		if ( ! current_user_can( apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ) ) ) {
 			die( '0' );
 		}
 		$url_input = $this->get_input_urls();
@@ -194,7 +194,7 @@ class RM_GIAPI {
 	public function send_to_api( $url_input, $action ) {
 		$url_input = (array) $url_input;
 
-		include_once 'vendor/autoload.php';
+		include_once RM_GIAPI_FILE . 'vendor/autoload.php';
 		$this->client = new Google_Client();
 		$this->client->setAuthConfig( json_decode( $this->get_setting( 'json_key' ), true ) );
 		$this->client->setConfig( 'base_path', 'https://indexing.googleapis.com' );
@@ -217,9 +217,9 @@ class RM_GIAPI {
 			$batch->add( $request_part, 'url-' . $i );
 		}
 
-		$results = $batch->execute();
-		$data    = array();
-		$rc      = count( $results );
+		$results   = $batch->execute();
+		$data      = array();
+		$res_count = count( $results );
 		foreach ( $results as $id => $response ) {
 			// Change "response-url-1" to "url-1".
 			$local_id = substr( $id, 9 );
@@ -228,7 +228,7 @@ class RM_GIAPI {
 			} else {
 				$data[ $local_id ] = (array) $response->toSimpleObject();
 			}
-			if ( $rc === 1 ) {
+			if ( $res_count === 1 ) {
 				$data = $data[ $local_id ];
 			}
 		}
@@ -345,15 +345,15 @@ class RM_GIAPI {
 	 */
 	public function admin_menu() {
 		if ( ! class_exists( 'RankMath' ) ) {
-			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-dashboard', null, 'dashicons-chart-area', 76 );
-			$this->dashboard_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', 'Rank Math', __( 'Dashboard', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
-			$this->console_menu_hook_suffix   = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
-			$this->settings_menu_hook_suffix  = add_submenu_page( 'rm-giapi-dashboard', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
+			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-dashboard', null, 'dashicons-chart-area', 76 );
+			$this->dashboard_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', 'Rank Math', __( 'Dashboard', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
+			$this->console_menu_hook_suffix   = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
+			$this->settings_menu_hook_suffix  = add_submenu_page( 'rm-giapi-dashboard', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
 			return;
 		}
 
-		$this->console_menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
-		$this->settings_menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rmgiapi_capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
+		$this->console_menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
+		$this->settings_menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
 	}
 
 	/**
@@ -376,6 +376,10 @@ class RM_GIAPI {
 				}
 			}
 		}
+		$selected_action = 'update';
+		if ( isset( $_GET['apiaction'] ) ) {
+			$selected_action = sanitize_title( wp_unslash( $_GET['apiaction'] ) );
+		}
 
 		include_once RM_GIAPI_FILE . 'views/console.php';
 	}
@@ -391,7 +395,23 @@ class RM_GIAPI {
 			wp_enqueue_script( 'updates' );
 			wp_enqueue_style( 'rm-giapi-dashboard', RM_GIAPI_URL . 'assets/css/dashboard.css', array(), $this->version );
 		} elseif ( $hook_suffix === $this->console_menu_hook_suffix ) {
+			wp_enqueue_script( 'rm-giapi-console', RM_GIAPI_URL . 'assets/js/console.js', array( 'jquery' ), $this->version );
 			wp_enqueue_style( 'rm-giapi-console', RM_GIAPI_URL . 'assets/css/console.css', array(), $this->version );
+			$submit_onload = false;
+			if ( ! empty( $_GET['apiaction'] ) && ( ! empty( $_GET['apiurl'] ) || ! empty( $_GET['apipostid'] ) ) && wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'giapi-action' ) ) {
+				$submit_onload = true;
+			}
+			wp_localize_script(
+				'rm-giapi-console',
+				'rm_giapi',
+				array(
+					'submit_onload'     => $submit_onload,
+					'l10n_success'      => __( 'Success', 'rm-giapi' ),
+					'l10n_error'        => __( 'Error', 'rm-giapi' ),
+					'l10n_last_updated' => __( 'Last updated ', 'rm-giapi' ),
+					'l10n_see_response' => __( 'See response for details.', 'rm-giapi' ),
+				)
+			);
 		} elseif ( $hook_suffix === $this->settings_menu_hook_suffix ) {
 			wp_enqueue_style( 'rm-giapi-settings', RM_GIAPI_URL . 'assets/css/settings.css', array(), $this->version );
 		}
@@ -418,7 +438,7 @@ class RM_GIAPI {
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_title( wp_unslash( $_POST['_wpnonce'] ) ), 'giapi-save' ) ) {
 			return;
 		}
-		if ( ! current_user_can( apply_filters( 'rmgiapi_capability', 'manage_options' ) ) ) {
+		if ( ! current_user_can( apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ) ) ) {
 			return;
 		}
 
@@ -449,22 +469,24 @@ class RM_GIAPI {
 	 * @param boolean $persist Whether the notice should be stored in the database until it is displayed.
 	 * @return void
 	 */
-	public function add_notice( $message, $class = '', $show_on = null, $persist = false ) {
-		if ( $persist ) {
-			$notices   = get_option( 'giapi_notices', array() );
-			$notices[] = array(
-				'message' => $message,
-				'class'   => $class,
-				'show_on' => $show_on,
-			);
-			update_option( 'giapi_notices', $notices );
-			return;
-		}
-		$this->notices[] = array(
+	public function add_notice( $message, $class = '', $show_on = null, $persist = false, $id = '' ) {
+		$notice = array(
 			'message' => $message,
 			'class'   => $class,
 			'show_on' => $show_on,
 		);
+
+		if ( ! $id ) {
+			$id = md5( serialize( $notice ) );
+		}
+
+		if ( $persist ) {
+			$notices        = get_option( 'giapi_notices', array() );
+			$notices[ $id ] = $notice;
+			update_option( 'giapi_notices', $notices );
+			return;
+		}
+		$this->notices[ $id ] = $notice;
 	}
 
 	/**
@@ -617,8 +639,14 @@ class RM_GIAPI {
 			return;
 		}
 
+		$send_url = apply_filters( 'rank_math/indexing_api/publish_url', get_permalink( $post ), $post );
+		// Early exit if filter is set to false.
+		if ( ! $send_url ) {
+			return;
+		}
+
 		if ( $post->post_status === 'publish' ) {
-			$this->send_to_api( get_permalink( $post ), 'update' );
+			$this->send_to_api( $send_url, 'update' );
 			$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for indexation.', 'rm-giapi' ), 'notice-info', null, true );
 		}
 	}
@@ -636,7 +664,14 @@ class RM_GIAPI {
 		if ( empty( $post_types[ $post->post_type ] ) ) {
 			return;
 		}
-		$this->send_to_api( get_permalink( $post ), 'delete' );
+
+		$send_url = apply_filters( 'rank_math/indexing_api/delete_url', get_permalink( $post ), $post );
+		// Early exit if filter is set to false.
+		if ( ! $send_url ) {
+			return;
+		}
+
+		$this->send_to_api( $send_url, 'delete' );
 		$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for deletion.', 'rm-giapi' ), 'notice-info', null, true );
 	}
 

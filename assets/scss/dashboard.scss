@@ -1,0 +1,556 @@
+// compileCompressed: ../css/dashboard.css
+
+/*! CSS Used from: https://rankmath.com/wp-content/plugins/seo-by-rank-math/assets/admin/css/common.css?ver=1.0.24 ; media=all */
+@media all {
+	.rank-math-page {
+		h2.nav-tab-wrapper {
+			margin-bottom: 40px !important;
+			background-color: transparent !important;
+			border-top: none !important;
+			border-bottom: 1px solid #ccc !important;
+		}
+
+		.nav-tab {
+			background: #ccc;
+			padding: 5px 15px;
+			color: #000;
+			font-weight: 600;
+			margin-left: 0.5em !important;
+			border: 1px solid #ccc;
+			border-bottom: none;
+		}
+
+		.nav-tab-active {
+			border-bottom-color: #e1e1e1;
+			background: #e1e1e1;
+
+			&:hover {
+				border-bottom-color: #e1e1e1;
+				background: #e1e1e1;
+			}
+
+			&:focus {
+				border-bottom-color: #e1e1e1;
+				background: #e1e1e1;
+
+				&:active {
+					border-bottom-color: #e1e1e1;
+					background: #e1e1e1;
+				}
+			}
+		}
+	}
+
+	.rank-math-wrap {
+		font-size: 15px;
+		position: relative;
+		margin: 25px 40px 0 20px;
+
+		p {
+			font-size: 14px;
+			line-height: 1.5;
+		}
+
+		h1 {
+			font-size: 2.8em;
+			font-weight: 400;
+			line-height: 1.2em;
+			margin: 0.2em 200px 0 0;
+			padding: 0;
+			color: #32373c;
+		}
+
+		h2 {
+			font-size: 2.7em;
+			font-weight: 300;
+			line-height: 1.3;
+			margin: 40px 0 0.6em;
+			text-align: center;
+		}
+
+		h3 {
+			font-size: 1.4em;
+			line-height: 1.5;
+			margin: 1.25em 0 0.6em;
+		}
+
+		.rank-math-text {
+			font-size: 19px;
+			font-weight: 400;
+			line-height: 1.6em;
+			min-height: 40px;
+			margin: 1.4em 200px 1em 0;
+			color: #555d66;
+		}
+
+		.nav-tab {
+			font-size: 18px;
+			padding-right: 15px;
+			padding-left: 15px;
+		}
+	}
+	@media only screen and (max-width: 500px) {
+		.rank-math-wrap {
+			margin-right: 20px;
+			margin-left: 10px;
+
+			h1 {
+				margin-right: 0;
+			}
+
+			.rank-math-text {
+				margin-right: 0;
+				margin-bottom: 0.25em;
+			}
+		}
+	}
+
+	.two-col {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-pack: justify;
+		-ms-flex-pack: justify;
+		-ms-flex-wrap: wrap;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
+		.col {
+			-webkit-box-flex: 1;
+			-ms-flex: 1;
+			flex: 1;
+			min-width: 49%;
+			max-width: 49%;
+		}
+	}
+	@media only screen and (max-width: 500px) {
+		.two-col .col {
+			min-width: 100% !important;
+		}
+	}
+
+	.rank-math-box {
+		position: relative;
+		margin-bottom: 30px;
+		background: #fff;
+
+		header {
+			line-height: 55px;
+			padding: 14px 20px;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			border-bottom: 1px solid #e5e5e5;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+			h3 {
+				position: relative;
+				z-index: 1;
+				margin: 0;
+				vertical-align: middle;
+			}
+
+			p {
+				margin-top: 0;
+			}
+		}
+	}
+
+	.rank-math-tooltip {
+		position: relative;
+		cursor: pointer;
+		color: #069de3;
+
+		> span {
+			font-size: 11px;
+			font-weight: 400;
+			line-height: 1.5;
+			width: 200px;
+			padding: 8px 10px;
+			-webkit-transition: all 0.3s ease-in-out;
+			transition: all 0.3s ease-in-out;
+			-webkit-transform: translate3d(-50%, 0, 0);
+			transform: translate3d(-50%, 0, 0);
+			text-align: center;
+			pointer-events: none;
+			opacity: 0;
+			color: #fff;
+			border-radius: 3px;
+			background: #555d66;
+			position: absolute;
+			bottom: 100%;
+			left: 50%;
+
+			&:after {
+				content: '';
+				-webkit-transform: translate3d(-50%, 0, 0);
+				transform: translate3d(-50%, 0, 0);
+				position: absolute;
+				top: 100%;
+				left: 50%;
+				border-style: solid;
+				height: 0;
+				width: 0;
+				border-color: #555d66 transparent transparent;
+				border-width: 8px 7px 0;
+			}
+		}
+
+		&:hover span {
+			bottom: 130%;
+			opacity: 1;
+		}
+	}
+
+	.input-loading {
+		background: url("https://rankmath.com/wp-content/plugins/seo-by-rank-math/assets/admin/img/ajax-loader.gif") no-repeat 98% center;
+	}
+
+	span.input-loading {
+		display: inline-block;
+		margin: 10px 0 0 7px;
+		height: 16px;
+		width: 16px;
+	}
+	@media screen and (max-width: 1020px) {
+		body .rank-math-wrap {
+			.rank-math-text,
+			h1 {
+				margin-right: 0;
+			}
+
+			.nav-tab {
+				margin-bottom: 10px;
+				border-bottom: 1px solid #ccc;
+			}
+		}
+	}
+	@media screen and (max-width: 782px) {
+		body .rank-math-wrap {
+			input[type=checkbox]:checked:before {
+				font-size: 30px;
+			}
+
+			.module-listing .two-col .col {
+				width: 100%;
+				min-width: 100%;
+				max-width: 100%;
+			}
+		}
+	}
+	@media only screen and (max-width: 595px) {
+		body .rank-math-wrap {
+			h1 {
+				font-size: 30px;
+			}
+
+			.rank-math-text {
+				font-size: 15px;
+				margin-top: 10px;
+			}
+
+			h2.nav-tab-wrapper {
+				margin-bottom: 15px;
+			}
+		}
+	}
+}
+/*! CSS Used from: https://rankmath.com/wp-content/plugins/seo-by-rank-math/assets/admin/css/dashboard.css?ver=1.0.24 ; media=all */
+@media all {
+	.rank-math-switch {
+		input[type=checkbox] {
+			visibility: hidden;
+			height: 0;
+			width: 0;
+		}
+
+		label {
+			position: relative;
+			display: block;
+			cursor: pointer;
+			text-indent: -9999px;
+			border-radius: 100px;
+			background: #ddd;
+			height: 24px;
+			width: 44px;
+
+			&:after {
+				position: absolute;
+				top: 2px;
+				left: 2px;
+				content: '';
+				-webkit-transition: 0.4s;
+				transition: 0.4s;
+				border-radius: 90px;
+				background: #fff;
+				height: 20px;
+				width: 20px;
+			}
+		}
+
+		input:checked + label {
+			background: #528fcc;
+
+			&:after {
+				-webkit-transform: translateX(100%);
+				transform: translateX(100%);
+			}
+		}
+	}
+
+	.module-listing .rank-math-box {
+		min-height: 155px;
+		padding: 35px 17px 17px;
+		border: 1px solid #d8d8d8;
+
+		> .dashicons {
+			font-size: 60px;
+			float: left;
+			color: #ccc;
+			height: 60px;
+			width: 60px;
+		}
+
+		header {
+			overflow: hidden;
+			padding: 2px 0 0 20px;
+			border: 0;
+		}
+
+		.module-settings {
+			display: none;
+			font-size: 17px;
+			line-height: 1.2;
+		}
+
+		.status {
+			clear: both;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			height: 52px;
+			margin-top: 20px;
+			padding: 6px 15px;
+			border: 1px solid #e5e5e5;
+			border-radius: 3px;
+			background: #f9f9f9;
+
+			label {
+				line-height: 40px;
+				color: #77797c;
+
+				span {
+					color: #bebfc0;
+
+					&.active-text {
+						display: none;
+					}
+				}
+
+				&.rank-math-tooltip span {
+					text-indent: 0;
+					color: #fff;
+				}
+			}
+
+			.rank-math-switch {
+				float: right;
+				padding: 10px 0;
+
+				input {
+					display: none;
+
+					&:checked + label {
+						background: #58bb58;
+
+						&:after {
+							left: 6px;
+						}
+					}
+				}
+
+				label {
+					float: right;
+					height: 18px;
+					width: 36px;
+
+					&:after {
+						height: 14px;
+						width: 14px;
+					}
+				}
+
+				.rank-math-tooltip {
+					span {
+						top: 50%;
+						right: 45px;
+						bottom: auto;
+						left: auto;
+						width: 110px;
+						-webkit-transform: translate3d(-70%, -50%, 0);
+						transform: translate3d(-70%, -50%, 0);
+
+						&:after {
+							top: 50%;
+							right: -8px;
+							left: auto;
+							width: 0;
+							height: 0;
+							content: '';
+							-webkit-transform: translate3d(0, -50%, 0);
+							transform: translate3d(0, -50%, 0);
+							border-width: 7px 0 7px 8px;
+							border-style: solid;
+							border-color: transparent transparent transparent #555d66;
+						}
+					}
+
+					&:hover span {
+						bottom: auto;
+						-webkit-transform: translate3d(0, -50%, 0);
+						transform: translate3d(0, -50%, 0);
+						opacity: 1;
+					}
+				}
+
+				.input-loading {
+					display: none;
+				}
+			}
+		}
+
+		&.active {
+			.module-settings {
+				display: block;
+			}
+
+			label span {
+				&.active-text {
+					display: inline-block;
+					color: #58bb58;
+				}
+
+				&.inactive-text {
+					display: none;
+				}
+			}
+		}
+	}
+}
+/*! CSS Used from: http://local.local/wp-content/plugins/404-monitor/assets/admin/css/modal.css?ver=1.0.1 ; media=all */
+@media all {
+	.rank-math-feedback-modal {
+		z-index: 11000;
+		display: none;
+		background: rgba(0, 0, 0, 0.8);
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+
+		p {
+			padding: 15px 20px;
+			color: #21262b;
+		}
+
+		.button-close {
+			cursor: pointer;
+			position: absolute;
+			right: 5px;
+			top: 5px;
+			z-index: 10;
+		}
+	}
+
+	.rank-math-feedback-content {
+		width: 500px;
+		max-width: 100%;
+		margin: auto;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		border-radius: 4px;
+		background: #fff;
+		-webkit-box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.3);
+		box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.3);
+		position: absolute;
+		top: 50%;
+		left: 50%;
+
+		.plugin-card.plugin-card-seo-by-rank-math {
+			width: 100%;
+			margin: 0;
+			border: 0;
+		}
+
+		.column-compatibility {
+			float: left;
+			width: auto;
+			margin-top: 6px;
+		}
+
+		p {
+			padding: 0 20px;
+		}
+
+		h3 {
+			margin-bottom: 5px;
+
+			a {
+				color: inherit;
+				text-decoration: none;
+				font-size: 22px;
+			}
+		}
+
+		.name.column-name {
+			margin-right: 0;
+		}
+
+		.plugin-card .desc {
+			margin-right: 0;
+
+			p {
+				font-size: 14px;
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+
+		.button {
+			float: right;
+		}
+
+		.vers.column-rating {
+			max-width: 100%;
+			width: 100%;
+			float: none;
+			margin-left: 5px;
+
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+		}
+
+		.num-ratings {
+			font-size: 14px;
+			font-weight: normal;
+			vertical-align: 3px;
+			margin-left: 5px;
+		}
+
+		.star-rating {
+			display: inline-block;
+			margin-top: 0;
+		}
+
+		.plugin-icon {
+			top: 24px;
+		}
+	}
+}
+
+.indexing-api-label {
+	pointer-events: none;
+}
