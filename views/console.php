@@ -14,11 +14,11 @@
 		?>
 		<p class="description">
 			<?php
-			wp_kses_post(
+			echo wp_kses_post(
 				sprintf(
-					/* translators: %s is a link to the plugin settings. */
-					__( 'Please navigate to the %s page to configure the plugin.', 'rm-giapi' ),
-					'<a href="' . esc_url( admin_url( 'admin.php?page=rm-giapi-settings' ) ) . '">' . __( 'Indexing API Settings', 'rm-giapi' ) . '</a>'
+					/* translators: %s is a link to the plugin settings tab. */
+					__( 'Please navigate to the %s tab to configure the plugin.', 'rm-giapi' ),
+					'<a href="' . esc_url( admin_url( 'admin.php?page=rm-giapi' ) ) . '">' . __( 'Settings', 'rm-giapi' ) . '</a>'
 				)
 			);
 			?>

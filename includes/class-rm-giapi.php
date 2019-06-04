@@ -89,7 +89,7 @@ class RM_GIAPI {
 		add_action( 'wp_ajax_rm_giapi_limits', array( $this, 'ajax_get_limits' ) );
 		add_action( 'admin_init', array( $this, 'rm_missing_admin_notice_error' ), 20, 1 );
 		add_action( 'admin_notices', array( $this, 'display_notices' ), 10, 1 );
-		add_action( 'load-rank-math_page_rm-giapi-settings', array( $this, 'save_settings' ), 10, 1 );
+		add_action( 'load-rank-math_page_rm-giapi', array( $this, 'save_settings' ), 10, 1 );
 
 		if ( $this->get_setting( 'json_key' ) ) {
 			$post_types = $this->get_setting( 'post_types', array() );
