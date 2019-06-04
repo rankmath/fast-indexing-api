@@ -21,18 +21,32 @@ class RM_GIAPI {
 	public $dashboard_menu_hook_suffix = '';
 
 	/**
-	 * Holds the admin menu hook suffix for Rank Math > Indexing API Console.
+	 * Holds the admin menu hook suffix for Rank Math > Indexing API.
 	 *
 	 * @var string
 	 */
-	public $console_menu_hook_suffix = '';
+	public $menu_hook_suffix = '';
 
 	/**
-	 * Holds the admin menu hook suffix for Rank Math > Indexing API Settings.
+	 * The default tab when visiting the admin page.
 	 *
 	 * @var string
 	 */
-	public $settings_menu_hook_suffix = '';
+	public $default_nav_tab = 'settings';
+
+	/**
+	 * Holds the current admin tab.
+	 *
+	 * @var string
+	 */
+	public $current_nav_tab = '';
+
+	/**
+	 * Holds the admin tabs.
+	 *
+	 * @var string
+	 */
+	public $nav_tabs = array();
 
 	/**
 	 * Holds the admin notice messages.
@@ -59,8 +73,15 @@ class RM_GIAPI {
 	 * Constructor method.
 	 */
 	public function __construct() {
-		$this->debug = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
-
+		$this->debug    = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
+		$this->nav_tabs = array(
+			'settings' => __( 'Settings', 'rm-giapi' ),
+			'console'  => __( 'Console', 'rm-giapi' ),
+		);
+		$this->current_nav_tab = $this->default_nav_tab;
+		if ( isset( $_GET['tab'] ) && isset( $this->nav_tabs[ $_GET['tab'] ] ) ) {
+			$this->current_nav_tab = $_GET['tab']; //phpcs:ignore
+		}
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 		add_action( 'admin_footer', array( $this, 'admin_footer' ), 20 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
@@ -347,13 +368,11 @@ class RM_GIAPI {
 		if ( ! class_exists( 'RankMath' ) ) {
 			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-dashboard', null, 'dashicons-chart-area', 76 );
 			$this->dashboard_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', 'Rank Math', __( 'Dashboard', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
-			$this->console_menu_hook_suffix   = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
-			$this->settings_menu_hook_suffix  = add_submenu_page( 'rm-giapi-dashboard', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
+			$this->menu_hook_suffix           = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi', array( $this, 'show_admin_page' ) );
 			return;
 		}
 
-		$this->console_menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API Console', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-console', array( $this, 'show_console' ) );
-		$this->settings_menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Rank Math Indexing API Settings', 'rm-giapi' ), __( 'Indexing API Settings', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-settings', array( $this, 'show_settings' ) );
+		$this->menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi', array( $this, 'show_admin_page' ) );
 	}
 
 	/**
@@ -385,6 +404,33 @@ class RM_GIAPI {
 	}
 
 	/**
+	 * Admin page content.
+	 *
+	 * @return void
+	 */
+	public function show_admin_page() {
+		$this->nav_tabs();
+
+		$method = 'show_' . $this->current_nav_tab;
+		if ( method_exists( $this, $method ) ) {
+			$this->$method();
+		}
+	}
+
+	/**
+	 * Admin page tabs.
+	 *
+	 * @return void
+	 */
+	public function nav_tabs() {
+		echo '<div class="nav-tab-wrapper">';
+		foreach ( $this->nav_tabs as $tab => $label ) {
+			echo '<a href="' . esc_url( add_query_arg( 'tab', $tab ) ) . '" class="nav-tab ' . ( $this->current_nav_tab == $tab ? 'nav-tab-active' : '' ) . '">' . esc_html( $label ) . '</a>';
+		}
+		echo '</div>';
+	}
+
+	/**
 	 * Enqueue CSS & JS for the admin pages.
 	 *
 	 * @param  string $hook_suffix Hook suffix of the current page.
@@ -394,7 +440,9 @@ class RM_GIAPI {
 		if ( $hook_suffix === $this->dashboard_menu_hook_suffix ) {
 			wp_enqueue_script( 'updates' );
 			wp_enqueue_style( 'rm-giapi-dashboard', RM_GIAPI_URL . 'assets/css/dashboard.css', array(), $this->version );
-		} elseif ( $hook_suffix === $this->console_menu_hook_suffix ) {
+		} elseif ( $hook_suffix === $this->menu_hook_suffix ) {
+			wp_enqueue_style( 'rm-giapi-settings', RM_GIAPI_URL . 'assets/css/settings.css', array(), $this->version );
+
 			wp_enqueue_script( 'rm-giapi-console', RM_GIAPI_URL . 'assets/js/console.js', array( 'jquery' ), $this->version );
 			wp_enqueue_style( 'rm-giapi-console', RM_GIAPI_URL . 'assets/css/console.css', array(), $this->version );
 			$submit_onload = false;
@@ -412,8 +460,6 @@ class RM_GIAPI {
 					'l10n_see_response' => __( 'See response for details.', 'rm-giapi' ),
 				)
 			);
-		} elseif ( $hook_suffix === $this->settings_menu_hook_suffix ) {
-			wp_enqueue_style( 'rm-giapi-settings', RM_GIAPI_URL . 'assets/css/settings.css', array(), $this->version );
 		}
 	}
 
