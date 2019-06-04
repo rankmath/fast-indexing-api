@@ -1,88 +1,112 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MyThemeShop Connect\n"
+"Project-Id-Version: Google Indexing API by Rank Math\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-07 11:49+0100\n"
-"PO-Revision-Date: 2017-02-07 11:49+0100\n"
-"Last-Translator: MyThemeShop <support-team@mythemeshop.com>\n"
-"Language-Team: MyThemeShop <support-team@mythemeshop.com>\n"
+"POT-Creation-Date: 2019-06-04 08:24+0100\n"
+"PO-Revision-Date: 2019-06-04 08:25+0100\n"
+"Last-Translator: \n"
+"Language-Team: Rank Math <support-team@rankmath.com>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 1.6.6\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../mythemeshop-connect.php:228
-msgid "<p>Login successful! Checking for theme updates...</p>"
+#: ../includes/class-rm-giapi.php:78
+msgid "Settings"
 msgstr ""
 
-#: ../mythemeshop-connect.php:229
-msgid "<p>Theme check done. Checking plugins...</p>"
+#: ../includes/class-rm-giapi.php:79
+msgid "Console"
 msgstr ""
 
-#: ../mythemeshop-connect.php:230
-msgid "<p>Plugin check done. Refreshing page...</p>"
+#: ../includes/class-rm-giapi.php:122 ../includes/class-rm-giapi.php:176
+msgid "Indexing API: Update"
 msgstr ""
 
-#: ../mythemeshop-connect.php:231 ../mythemeshop-connect.php:232
-msgid "Check for updates now"
+#: ../includes/class-rm-giapi.php:123 ../includes/class-rm-giapi.php:177
+msgid "Indexing API: Get Status"
 msgstr ""
 
-#: ../mythemeshop-connect.php:233
+#: ../includes/class-rm-giapi.php:370
+msgid "Dashboard"
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:371 ../includes/class-rm-giapi.php:375
+msgid "Google Indexing API"
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:371 ../includes/class-rm-giapi.php:375
+msgid "Indexing API"
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:457
+msgid "Success"
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:458
+msgid "Error"
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:459
+msgid "Last updated "
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:460
+msgid "See response for details."
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:506
+msgid "Settings updated."
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:619
+msgid "Read our setup guide"
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:649
+msgid "Active (Plugin)"
+msgstr ""
+
+#. translators: %s is a link to Rank Math plugin page
+#: ../includes/class-rm-giapi.php:668
+#, php-format
+msgid "It is recommended to use %s along with the Indexing API plugin."
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:668
+msgid "Rank Math SEO"
+msgstr ""
+
+#: ../includes/class-rm-giapi.php:696
 msgid ""
-"Please insert your MyThemeShop <strong>username</strong> instead of the "
-"email address you registered with."
+"The post was automatically submitted to the Google Indexing API for "
+"indexation."
 msgstr ""
 
-#: ../mythemeshop-connect.php:473
-msgid "Disconnected."
-msgstr ""
-
-#: ../mythemeshop-connect.php:477
-msgid "Notices reset."
-msgstr ""
-
-#: ../mythemeshop-connect.php:507
-msgid "MyThemeShop Connect"
-msgstr ""
-
-#: ../mythemeshop-connect.php:511
-msgid "Connected!"
-msgstr ""
-
-#: ../mythemeshop-connect.php:512
-msgid "MyThemeShop username:"
-msgstr ""
-
-#: ../mythemeshop-connect.php:513
-msgid "Disconnect"
-msgstr ""
-
-#: ../mythemeshop-connect.php:519
+#: ../includes/class-rm-giapi.php:721
 msgid ""
-"Enter your MyThemeShop Email/Username and Password to get free Theme/Plugin "
-"updates."
+"The post was automatically submitted to the Google Indexing API for deletion."
 msgstr ""
 
-#: ../mythemeshop-connect.php:520
-msgid "Email address or Username"
+#. translators: %s is a link to the plugin settings.
+#: ../views/console.php:20
+#, php-format
+msgid "Please navigate to the %s page to configure the plugin."
 msgstr ""
 
-#: ../mythemeshop-connect.php:522
-msgid "Password"
+#: ../views/console.php:21
+msgid "Indexing API Settings"
 msgstr ""
 
-#: ../mythemeshop-connect.php:525
-msgid "Connect"
+#: ../views/dashboard.php:324
+msgid "Activate Now"
 msgstr ""
 
-#: ../mythemeshop-connect.php:818
-msgid "Dissmiss Notice"
-msgstr ""
-
-#: ../mythemeshop-connect.php:819
-msgid "Dissmiss All Notices"
+#: ../views/dashboard.php:329
+msgid "Install for Free"
 msgstr ""
