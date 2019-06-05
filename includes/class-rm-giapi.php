@@ -90,6 +90,7 @@ class RM_GIAPI {
 		add_action( 'admin_init', array( $this, 'rm_missing_admin_notice_error' ), 20, 1 );
 		add_action( 'admin_notices', array( $this, 'display_notices' ), 10, 1 );
 		add_action( 'load-rank-math_page_rm-giapi', array( $this, 'save_settings' ), 10, 1 );
+		add_filter( 'plugin_action_links_' . RM_GIAPI_FILE, array( $this, 'plugin_action_links' ) );
 
 		if ( $this->get_setting( 'json_key' ) ) {
 			$post_types = $this->get_setting( 'post_types', array() );
@@ -215,7 +216,7 @@ class RM_GIAPI {
 	public function send_to_api( $url_input, $action ) {
 		$url_input = (array) $url_input;
 
-		include_once RM_GIAPI_FILE . 'vendor/autoload.php';
+		include_once RM_GIAPI_PATH . 'vendor/autoload.php';
 		$this->client = new Google_Client();
 		$this->client->setAuthConfig( json_decode( $this->get_setting( 'json_key' ), true ) );
 		$this->client->setConfig( 'base_path', 'https://indexing.googleapis.com' );
@@ -400,7 +401,7 @@ class RM_GIAPI {
 			$selected_action = sanitize_title( wp_unslash( $_GET['apiaction'] ) );
 		}
 
-		include_once RM_GIAPI_FILE . 'views/console.php';
+		include_once RM_GIAPI_PATH . 'views/console.php';
 	}
 
 	/**
@@ -446,7 +447,7 @@ class RM_GIAPI {
 			wp_enqueue_style( 'rm-giapi-dashboard', RM_GIAPI_URL . 'assets/css/dashboard.css', array(), $this->version );
 		} elseif ( $hook_suffix === $this->menu_hook_suffix ) {
 			wp_enqueue_script( 'rm-giapi-console', RM_GIAPI_URL . "assets/js/console{$min}.js", array( 'jquery' ), $this->version, true );
-			wp_enqueue_style( 'rm-giapi-settings', RM_GIAPI_URL . 'assets/css/admin.css', array(), $this->version );
+			wp_enqueue_style( 'rm-giapi-admin', RM_GIAPI_URL . 'assets/css/admin.css', array(), $this->version );
 
 			$submit_onload = false;
 			if ( ! empty( $_GET['apiaction'] ) && ( ! empty( $_GET['apiurl'] ) || ! empty( $_GET['apipostid'] ) ) && wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'giapi-action' ) ) {
@@ -472,7 +473,7 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function show_settings() {
-		include_once RM_GIAPI_FILE . 'views/settings.php';
+		include_once RM_GIAPI_PATH . 'views/settings.php';
 	}
 
 	/**
@@ -606,7 +607,7 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function show_dashboard() {
-		include_once RM_GIAPI_FILE . 'views/dashboard.php';
+		include_once RM_GIAPI_PATH . 'views/dashboard.php';
 	}
 
 	/**
@@ -622,7 +623,7 @@ class RM_GIAPI {
 			'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'rm-giapi' ) . '</a>',
 			'class'         => 'RM_GIAPI_Module',
 			'icon'          => 'dashicons-admin-site-alt3',
-			'settings_link' => admin_url( 'admin.php?page=rm-giapi-settings' ),
+			'settings_link' => admin_url( 'admin.php?page=rm-giapi' ),
 		);
 		return $modules;
 	}
@@ -670,7 +671,7 @@ class RM_GIAPI {
 		/* translators: %s is a link to Rank Math plugin page */
 		$message = sprintf( __( 'It is recommended to use %s along with the Indexing API plugin.', 'rm-giapi' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO' ) . '</a>' );
 		$class   = 'notice-error';
-		$show_on = array( 'rank-math_page_rm-giapi-console', 'rank-math_page_rm-giapi-settings', 'rank-math_page_rm-giapi-dashboard' );
+		$show_on = array( 'rank-math_page_rm-giapi', 'rank-math_page_rm-giapi-dashboard' );
 
 		$this->add_notice( $message, $class, $show_on );
 	}
@@ -722,6 +723,17 @@ class RM_GIAPI {
 
 		$this->send_to_api( $send_url, 'delete' );
 		$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for deletion.', 'rm-giapi' ), 'notice-info', null, true );
+	}
+
+	/**
+	 * Add Settings to plugin action links.
+	 *
+	 * @param  array $actions Original actions.
+	 * @return array $actions New actions.
+	 */
+	public function plugin_action_links( $actions ) {
+		$actions['settings'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi' ) . '">' . __( 'Settings', 'rm-giapi' ) . '</a>';
+		return $actions;
 	}
 
 }

@@ -13,7 +13,8 @@
 
 defined( 'ABSPATH' ) || die;
 
-define( 'RM_GIAPI_FILE', plugin_dir_path( __FILE__ ) );
+define( 'RM_GIAPI_PATH', plugin_dir_path( __FILE__ ) );
+define( 'RM_GIAPI_FILE', plugin_basename( __FILE__ ) );
 define( 'RM_GIAPI_URL', plugin_dir_url( __FILE__ ) );
 
 /**

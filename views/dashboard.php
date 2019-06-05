@@ -33,7 +33,7 @@
 					<header>
 						<h3><?php esc_html_e( 'Indexing API (Beta)', 'rm-giapi' ); ?></h3>
 						<p><em><?php esc_html_e( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rm-giapi' ); ?> <a href="<?php echo esc_url( $this->setup_guide_url ); ?>" target="_blank"><?php esc_html_e( 'Read our setup guide', 'rm-giapi' ); ?></a></em></p>
-						<a class="module-settings" href="<?php echo esc_url( admin_url( 'admin.php?page=rm-giapi-settings' ) ); ?>"><?php esc_html_e( 'Settings', 'rm-giapi' ); ?></a>
+						<a class="module-settings" href="<?php echo esc_url( admin_url( 'admin.php?page=rm-giapi' ) ); ?>"><?php esc_html_e( 'Settings', 'rm-giapi' ); ?></a>
 					</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
