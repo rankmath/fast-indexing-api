@@ -1,3 +1,4 @@
+// minifyOnSave
 jQuery(document).ready(function($) {
 	var $responseTextarea = $('#giapi-response');
 	var $submitButton = $('#giapi-submit');

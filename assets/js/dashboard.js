@@ -1,3 +1,4 @@
+// minifyOnSave
 jQuery(document).ready(function($) {
 	var dialog = $( '#rank-math-feedback-form' )
 

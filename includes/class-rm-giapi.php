@@ -437,13 +437,18 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
+		$min = '.min';
+		if ( $this->debug ) {
+			$min = '';
+		}
 		if ( $hook_suffix === $this->dashboard_menu_hook_suffix ) {
 			wp_enqueue_script( 'updates' );
 			wp_enqueue_style( 'rm-giapi-dashboard', RM_GIAPI_URL . 'assets/css/dashboard.css', array(), $this->version );
+			wp_enqueue_script( 'rm-giapi-dashboard', RM_GIAPI_URL . "assets/js/dashboard{$min}.js", array( 'jquery' ), $this->version, true );
 		} elseif ( $hook_suffix === $this->menu_hook_suffix ) {
 			wp_enqueue_style( 'rm-giapi-settings', RM_GIAPI_URL . 'assets/css/settings.css', array(), $this->version );
 
-			wp_enqueue_script( 'rm-giapi-console', RM_GIAPI_URL . 'assets/js/console.js', array( 'jquery' ), $this->version );
+			wp_enqueue_script( 'rm-giapi-console', RM_GIAPI_URL . "assets/js/console{$min}.js", array( 'jquery' ), $this->version, true );
 			wp_enqueue_style( 'rm-giapi-console', RM_GIAPI_URL . 'assets/css/console.css', array(), $this->version );
 			$submit_onload = false;
 			if ( ! empty( $_GET['apiaction'] ) && ( ! empty( $_GET['apiurl'] ) || ! empty( $_GET['apipostid'] ) ) && wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'giapi-action' ) ) {
