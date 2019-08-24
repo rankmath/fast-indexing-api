@@ -4,6 +4,7 @@
 *.php text eol=lf
 
 # Export Ignore Files
+*.map export-ignore
 .babelrc export-ignore
 .codeclimate.yml export-ignore
 .csscomb.json export-ignore
