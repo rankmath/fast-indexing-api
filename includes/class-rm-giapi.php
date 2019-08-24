@@ -75,8 +75,8 @@ class RM_GIAPI {
 	public function __construct() {
 		$this->debug    = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
 		$this->nav_tabs = array(
-			'settings' => __( 'Settings', 'rm-giapi' ),
-			'console'  => __( 'Console', 'rm-giapi' ),
+			'settings' => __( 'Settings', 'google-indexing-api-by-rank-math' ),
+			'console'  => __( 'Console', 'google-indexing-api-by-rank-math' ),
 		);
 		$this->current_nav_tab = $this->default_nav_tab;
 		if ( isset( $_GET['tab'] ) && isset( $this->nav_tabs[ $_GET['tab'] ] ) ) {
@@ -120,8 +120,8 @@ class RM_GIAPI {
 	 * @return array $bulk_actions
 	 */
 	public function register_bulk_actions( $bulk_actions ) {
-		$bulk_actions['giapi_update']    = __( 'Indexing API: Update', 'rm-giapi' );
-		$bulk_actions['giapi_getstatus'] = __( 'Indexing API: Get Status', 'rm-giapi' );
+		$bulk_actions['giapi_update']    = __( 'Indexing API: Update', 'google-indexing-api-by-rank-math' );
+		$bulk_actions['giapi_getstatus'] = __( 'Indexing API: Get Status', 'google-indexing-api-by-rank-math' );
 		return $bulk_actions;
 	}
 
@@ -174,8 +174,8 @@ class RM_GIAPI {
 		}
 
 		$nonce                        = wp_create_nonce( 'giapi-action' );
-		$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Indexing API: Update', 'rm-giapi' ) . '</a>';
-		$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Indexing API: Get Status', 'rm-giapi' ) . '</a>';
+		$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Indexing API: Update', 'google-indexing-api-by-rank-math' ) . '</a>';
+		$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi-console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Indexing API: Get Status', 'google-indexing-api-by-rank-math' ) . '</a>';
 		return $actions;
 	}
 
@@ -368,12 +368,12 @@ class RM_GIAPI {
 	public function admin_menu() {
 		if ( ! class_exists( 'RankMath' ) ) {
 			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-dashboard', null, 'dashicons-chart-area', 76 );
-			$this->dashboard_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', 'Rank Math', __( 'Dashboard', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
-			$this->menu_hook_suffix           = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi', array( $this, 'show_admin_page' ) );
+			$this->dashboard_menu_hook_suffix = add_submenu_page( 'rm-giapi-dashboard', 'Rank Math', __( 'Dashboard', 'google-indexing-api-by-rank-math' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
+			$this->menu_hook_suffix           = add_submenu_page( 'rm-giapi-dashboard', __( 'Google Indexing API', 'google-indexing-api-by-rank-math' ), __( 'Indexing API', 'google-indexing-api-by-rank-math' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi', array( $this, 'show_admin_page' ) );
 			return;
 		}
 
-		$this->menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'rm-giapi' ), __( 'Indexing API', 'rm-giapi' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi', array( $this, 'show_admin_page' ) );
+		$this->menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Google Indexing API', 'google-indexing-api-by-rank-math' ), __( 'Indexing API', 'google-indexing-api-by-rank-math' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'rm-giapi', array( $this, 'show_admin_page' ) );
 	}
 
 	/**
@@ -458,10 +458,10 @@ class RM_GIAPI {
 				'rm_giapi',
 				array(
 					'submit_onload'     => $submit_onload,
-					'l10n_success'      => __( 'Success', 'rm-giapi' ),
-					'l10n_error'        => __( 'Error', 'rm-giapi' ),
-					'l10n_last_updated' => __( 'Last updated ', 'rm-giapi' ),
-					'l10n_see_response' => __( 'See response for details.', 'rm-giapi' ),
+					'l10n_success'      => __( 'Success', 'google-indexing-api-by-rank-math' ),
+					'l10n_error'        => __( 'Error', 'google-indexing-api-by-rank-math' ),
+					'l10n_last_updated' => __( 'Last updated ', 'google-indexing-api-by-rank-math' ),
+					'l10n_see_response' => __( 'See response for details.', 'google-indexing-api-by-rank-math' ),
 				)
 			);
 		}
@@ -507,7 +507,7 @@ class RM_GIAPI {
 				'post_types' => $post_types,
 			)
 		);
-		$this->add_notice( __( 'Settings updated.', 'rm-giapi' ), 'notice-success' );
+		$this->add_notice( __( 'Settings updated.', 'google-indexing-api-by-rank-math' ), 'notice-success' );
 	}
 
 	/**
@@ -620,7 +620,7 @@ class RM_GIAPI {
 		$modules['indexing-api'] = array(
 			'id'            => 'indexing-api',
 			'title'         => esc_html__( 'Google Indexing API (Beta)', 'rank-math' ),
-			'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'rm-giapi' ) . '</a>',
+			'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'google-indexing-api-by-rank-math' ) . '</a>',
 			'class'         => 'RM_GIAPI_Module',
 			'icon'          => 'dashicons-admin-site-alt3',
 			'settings_link' => admin_url( 'admin.php?page=rm-giapi' ),
@@ -650,7 +650,7 @@ class RM_GIAPI {
 					.closest('div.status')
 					.css({pointerEvents: 'none'})
 					.find('.active-text')
-					.text('<?php echo esc_js( __( 'Active (Plugin)', 'rm-giapi' ) ); ?>')
+					.text('<?php echo esc_js( __( 'Active (Plugin)', 'google-indexing-api-by-rank-math' ) ); ?>')
 					.closest('.rank-math-box')
 					.addClass('active');
 			});
@@ -669,7 +669,7 @@ class RM_GIAPI {
 		}
 
 		/* translators: %s is a link to Rank Math plugin page */
-		$message = sprintf( __( 'It is recommended to use %s along with the Indexing API plugin.', 'rm-giapi' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO' ) . '</a>' );
+		$message = sprintf( __( 'It is recommended to use %s along with the Indexing API plugin.', 'google-indexing-api-by-rank-math' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO' ) . '</a>' );
 		$class   = 'notice-error';
 		$show_on = array( 'rank-math_page_rm-giapi', 'rank-math_page_rm-giapi-dashboard' );
 
@@ -697,7 +697,7 @@ class RM_GIAPI {
 
 		if ( $post->post_status === 'publish' ) {
 			$this->send_to_api( $send_url, 'update' );
-			$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for indexation.', 'rm-giapi' ), 'notice-info', null, true );
+			$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for indexation.', 'google-indexing-api-by-rank-math' ), 'notice-info', null, true );
 		}
 	}
 
@@ -722,7 +722,7 @@ class RM_GIAPI {
 		}
 
 		$this->send_to_api( $send_url, 'delete' );
-		$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for deletion.', 'rm-giapi' ), 'notice-info', null, true );
+		$this->add_notice( __( 'The post was automatically submitted to the Google Indexing API for deletion.', 'google-indexing-api-by-rank-math' ), 'notice-info', null, true );
 	}
 
 	/**
@@ -732,7 +732,7 @@ class RM_GIAPI {
 	 * @return array $actions New actions.
 	 */
 	public function plugin_action_links( $actions ) {
-		$actions['settings'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi' ) . '">' . __( 'Settings', 'rm-giapi' ) . '</a>';
+		$actions['settings'] = '<a href="' . admin_url( 'admin.php?page=rm-giapi' ) . '">' . __( 'Settings', 'google-indexing-api-by-rank-math' ) . '</a>';
 		return $actions;
 	}
 
