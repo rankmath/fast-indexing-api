@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: Google Indexing API by Rank Math
+ * Plugin Name: Instant Indexing Google Bing
  * Plugin URI: https://s.rankmath.com/indexing-api
- * Description: Crawl pages instantly with the Google Indexing API.
+ * Description: Crawl pages instantly with the Google & Bing Indexing API.
  * Version: 1.2
  * Author: Rank Math
  * Author URI: https://s.rankmath.com/home
  * License: GPLv2
- * Text Domain: google-indexing-api-by-rank-math
+ * Text Domain: instant-indexing-google-bing
  * Domain Path: /languages
  *
  * @package Google Indexing API

@@ -1,4 +1,4 @@
-=== Google Indexing API by Rank Math ===
+=== Instant Indexing Google Bing ===
 Contributors: rankmath
 Plugin link: https://s.rankmath.com/homepage
 Tags: google indexing, instant indexing, live index, job index, indexing api
@@ -29,13 +29,13 @@ We understand this is not for everyone 🙂
 === From within WordPress ===
 
 1. Visit 'Plugins > Add New'
-2. Search for 'Google Indexing API by Rank Math'
+2. Search for 'Instant Indexing Google Bing'
 3. Install and activate the plugin once it appears
 5. Go to "after activation" below.
 
 === Manually ===
 
-1. Upload the `google-indexing-api-by-rank-math` folder to the `/wp-content/plugins/` directory
+1. Upload the `instant-indexing-google-bing` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to "after activation" below.
 
