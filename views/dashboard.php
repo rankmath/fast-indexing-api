@@ -11,17 +11,17 @@
 
 		<span class="wp-header-end"></span>
 
-		<h1><?php esc_html_e( 'Welcome to Rank Math!', 'instant-indexing-google-bing' ); ?></h1>
+		<h1><?php esc_html_e( 'Welcome to Rank Math!', 'instant-indexing' ); ?></h1>
 
 		<div class="rank-math-text">
-			<?php esc_html_e( 'The most complete WordPress SEO plugin to convert your website into a traffic generating machine.', 'instant-indexing-google-bing' ); ?>
+			<?php esc_html_e( 'The most complete WordPress SEO plugin to convert your website into a traffic generating machine.', 'instant-indexing' ); ?>
 		</div>
 
 
 		<h2 class="nav-tab-wrapper">
-			<a class="nav-tab nav-tab-active" href="#" title="<?php esc_attr_e( 'Modules', 'instant-indexing-google-bing' ); ?>"><?php esc_html_e( 'Modules', 'instant-indexing-google-bing' ); ?></a>
-			<a class="nav-tab" href="#" title="<?php esc_attr_e( 'Setup Wizard', 'instant-indexing-google-bing' ); ?>"><?php esc_html_e( 'Setup Wizard', 'instant-indexing-google-bing' ); ?></a>
-			<a class="nav-tab" href="#" title="<?php esc_attr_e( 'Import &amp; Export', 'instant-indexing-google-bing' ); ?>"><?php esc_html_e( 'Import &amp; Export', 'instant-indexing-google-bing' ); ?></a>
+			<a class="nav-tab nav-tab-active" href="#" title="<?php esc_attr_e( 'Modules', 'instant-indexing' ); ?>"><?php esc_html_e( 'Modules', 'instant-indexing' ); ?></a>
+			<a class="nav-tab" href="#" title="<?php esc_attr_e( 'Setup Wizard', 'instant-indexing' ); ?>"><?php esc_html_e( 'Setup Wizard', 'instant-indexing' ); ?></a>
+			<a class="nav-tab" href="#" title="<?php esc_attr_e( 'Import &amp; Export', 'instant-indexing' ); ?>"><?php esc_html_e( 'Import &amp; Export', 'instant-indexing' ); ?></a>
 		</h2>
 
 		<div class="rank-math-ui module-listing">
@@ -31,21 +31,21 @@
 				<div class="rank-math-box active">
 					<span class="dashicons dashicons-admin-site-alt3"></span>
 					<header>
-						<h3><?php esc_html_e( 'Indexing API (Beta)', 'instant-indexing-google-bing' ); ?></h3>
-						<p><em><?php esc_html_e( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'instant-indexing-google-bing' ); ?> <a href="<?php echo esc_url( $this->setup_guide_url ); ?>" target="_blank"><?php esc_html_e( 'Read our setup guide', 'instant-indexing-google-bing' ); ?></a></em></p>
-						<a class="module-settings" href="<?php echo esc_url( admin_url( 'admin.php?page=rm-giapi' ) ); ?>"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+						<h3><?php esc_html_e( 'Instant Indexing', 'instant-indexing' ); ?></h3>
+						<p><em><?php esc_html_e( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'instant-indexing' ); ?> <a href="<?php echo esc_url( $this->setup_guide_url ); ?>" target="_blank"><?php esc_html_e( 'Read our setup guide', 'instant-indexing' ); ?></a></em></p>
+						<a class="module-settings" href="<?php echo esc_url( admin_url( 'admin.php?page=instant-indexing' ) ); ?>"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 					</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-indexing-api" name="modules[]" value="indexing-api" checked="checked" readonly="readonly">
 								<label for="module-indexing-api" class="indexing-api-label">
-									<?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?>
+									<?php esc_html_e( 'Toggle', 'instant-indexing' ); ?>
 								</label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
 							</label>
 						</div>
 					</div>
@@ -55,21 +55,21 @@
 					<div class="rank-math-box ">
 						<span class="dashicons dashicons-dismiss"></span>
 							<header>
-								<h3><?php esc_html_e( '404 Monitor', 'instant-indexing-google-bing' ); ?></h3>
-								<p><em><?php esc_html_e( 'Records the URLs on which visitors &amp; search engines run into 404 Errors. You can also turn on Redirections to redirect the error causing URLs to other URLs.', 'instant-indexing-google-bing' ); ?></em></p>
-								<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+								<h3><?php esc_html_e( '404 Monitor', 'instant-indexing' ); ?></h3>
+								<p><em><?php esc_html_e( 'Records the URLs on which visitors &amp; search engines run into 404 Errors. You can also turn on Redirections to redirect the error causing URLs to other URLs.', 'instant-indexing' ); ?></em></p>
+								<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 							</header>
 							<div class="status wp-clearfix">
 								<span class="rank-math-switch">
 									<input type="checkbox" class="rank-math-modules" id="module-404-monitor" name="modules[]" value="404-monitor">
 									<label for="module-404-monitor" class="">
-										<?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?>
+										<?php esc_html_e( 'Toggle', 'instant-indexing' ); ?>
 									</label>
 									<span class="input-loading"></span>
 								</span>
 								<label>
-									<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-									<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?></span>
+									<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+									<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?></span>
 								</label>
 							</div>
 						</div>
@@ -79,18 +79,18 @@
 					<div class="rank-math-box ">
 						<span class="dashicons dashicons-smartphone"></span>
 						<header>
-							<h3><?php esc_html_e( 'AMP', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'Install the AMP plugin from WordPress.org to make Rank Math work with Accelerated Mobile Pages. It is required because AMP are different than WordPress pages and our plugin doesn\'t work with them out-of-the-box.', 'instant-indexing-google-bing' ); ?></em></p>
+							<h3><?php esc_html_e( 'AMP', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'Install the AMP plugin from WordPress.org to make Rank Math work with Accelerated Mobile Pages. It is required because AMP are different than WordPress pages and our plugin doesn\'t work with them out-of-the-box.', 'instant-indexing' ); ?></em></p>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-amp" name="modules[]" value="amp">
-								<label for="module-amp" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?></label>
+								<label for="module-amp" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?></label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?> </span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?> </span>
 							</label>
 						</div>
 					</div>
@@ -101,19 +101,19 @@
 						<span class="dashicons dashicons-cart"></span>
 
 						<header>
-							<h3><?php esc_html_e( 'bbPress', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'Add required meta tags on bbPress pages.', 'instant-indexing-google-bing' ); ?></em></p>
+							<h3><?php esc_html_e( 'bbPress', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'Add required meta tags on bbPress pages.', 'instant-indexing' ); ?></em></p>
 						</header>
 
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-bbpress" name="modules[]" value="bbpress" disabled="disabled">
-								<label for="module-bbpress" class="rank-math-tooltip"><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?><span><?php esc_html_e( 'Please activate bbPress plugin to use this module.', 'instant-indexing-google-bing' ); ?></span>                             </label>
+								<label for="module-bbpress" class="rank-math-tooltip"><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?><span><?php esc_html_e( 'Please activate bbPress plugin to use this module.', 'instant-indexing' ); ?></span>                             </label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?> </span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?> </span>
 							</label>
 						</div>
 					</div>
@@ -123,18 +123,18 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-admin-links"></span>
 						<header>
-							<h3><?php esc_html_e( 'Link Counter', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'Counts the total number of internal, external links, to and from links inside your posts.', 'instant-indexing-google-bing' ); ?></em></p>
+							<h3><?php esc_html_e( 'Link Counter', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'Counts the total number of internal, external links, to and from links inside your posts.', 'instant-indexing' ); ?></em></p>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-link-counter" name="modules[]" value="link-counter">
-								<label for="module-link-counter" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?>                                                                    </label>
+								<label for="module-link-counter" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?>                                                                    </label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?>                             <span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?> </span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?> </span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?>                             <span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?> </span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?> </span>
 							</label>
 						</div>
 					</div>
@@ -144,19 +144,19 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-location-alt"></span>
 						<header>
-							<h3><?php esc_html_e( 'Local SEO &amp; Google Knowledge Graph', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'Dominate the search results for local audience by optimizing your website and posts using this Rank Math module.', 'instant-indexing-google-bing' ); ?></em></p>
-							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+							<h3><?php esc_html_e( 'Local SEO &amp; Google Knowledge Graph', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'Dominate the search results for local audience by optimizing your website and posts using this Rank Math module.', 'instant-indexing' ); ?></em></p>
+							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-local-seo" name="modules[]" value="local-seo">
-								<label for="module-local-seo" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?>                                                                   </label>
+								<label for="module-local-seo" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?>                                                                   </label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?></span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?></span>
 							</label>
 						</div>
 					</div>
@@ -166,19 +166,19 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-randomize"></span>
 						<header>
-							<h3><?php esc_html_e( 'Redirections', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'Redirect non-existent content easily with 301 and 302 status code. This can help reduce errors and improve your site ranking.', 'instant-indexing-google-bing' ); ?></em></p>
-							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+							<h3><?php esc_html_e( 'Redirections', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'Redirect non-existent content easily with 301 and 302 status code. This can help reduce errors and improve your site ranking.', 'instant-indexing' ); ?></em></p>
+							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-redirections" name="modules[]" value="redirections">
-								<label for="module-redirections" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?>                                                                    </label>
+								<label for="module-redirections" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?>                                                                    </label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?></span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?></span>
 							</label>
 						</div>
 					</div>
@@ -188,19 +188,19 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-awards"></span>
 						<header>
-							<h3><?php esc_html_e( 'Rich Snippets', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'Enable support for the Rich Snippets, which adds metadata to your website, resulting in rich search results and more traffic.', 'instant-indexing-google-bing' ); ?></em></p>
-							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+							<h3><?php esc_html_e( 'Rich Snippets', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'Enable support for the Rich Snippets, which adds metadata to your website, resulting in rich search results and more traffic.', 'instant-indexing' ); ?></em></p>
+							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-rich-snippet" name="modules[]" value="rich-snippet">
-								<label for="module-rich-snippet" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?></label>
+								<label for="module-rich-snippet" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?></label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?></span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?></span>
 							</label>
 						</div>
 					</div>
@@ -210,19 +210,19 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-admin-users"></span>
 						<header>
-							<h3><?php esc_html_e( 'Role Manager', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'The Role Manager allows you to use internal WordPress\' roles to control which of your site admins can change Rank Math\'s settings', 'instant-indexing-google-bing' ); ?></em></p>
-							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+							<h3><?php esc_html_e( 'Role Manager', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'The Role Manager allows you to use internal WordPress\' roles to control which of your site admins can change Rank Math\'s settings', 'instant-indexing' ); ?></em></p>
+							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-role-manager" name="modules[]" value="role-manager">
-								<label for="module-role-manager" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?></label>
+								<label for="module-role-manager" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?></label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?></span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?></span>
 							</label>
 						</div>
 					</div>
@@ -232,19 +232,19 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-search"></span>
 						<header>
-							<h3><?php esc_html_e( 'Search Console', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'Connect Rank Math with Google Search Console to see the most important information from Google directly in your WordPress dashboard.', 'instant-indexing-google-bing' ); ?></em></p>
-							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+							<h3><?php esc_html_e( 'Search Console', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'Connect Rank Math with Google Search Console to see the most important information from Google directly in your WordPress dashboard.', 'instant-indexing' ); ?></em></p>
+							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-search-console" name="modules[]" value="search-console">
-								<label for="module-search-console" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?>                                                                  </label>
+								<label for="module-search-console" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?>                                                                  </label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?></span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?></span>
 							</label>
 						</div>
 					</div>
@@ -254,19 +254,19 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-chart-bar"></span>
 							<header>
-								<h3><?php esc_html_e( 'SEO Analysis', 'instant-indexing-google-bing' ); ?></h3>
-								<p><em><?php esc_html_e( 'Let Rank Math analyze your website and your website\'s content using 70+ different tests to provide tailor-made SEO Analysis to you.', 'instant-indexing-google-bing' ); ?></em></p>
-								<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+								<h3><?php esc_html_e( 'SEO Analysis', 'instant-indexing' ); ?></h3>
+								<p><em><?php esc_html_e( 'Let Rank Math analyze your website and your website\'s content using 70+ different tests to provide tailor-made SEO Analysis to you.', 'instant-indexing' ); ?></em></p>
+								<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 							</header>
 							<div class="status wp-clearfix">
 								<span class="rank-math-switch">
 									<input type="checkbox" class="rank-math-modules" id="module-seo-analysis" name="modules[]" value="seo-analysis">
-									<label for="module-seo-analysis" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?></label>
+									<label for="module-seo-analysis" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?></label>
 									<span class="input-loading"></span>
 								</span>
 								<label>
-									<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-									<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?> </span>
+									<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+									<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?> </span>
 								</label>
 							</div>
 					</div>
@@ -276,19 +276,19 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-networking"></span>
 						<header>
-							<h3><?php esc_html_e( 'Sitemap', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'Enable Rank Math\'s sitemap feature, which helps search engines index your website\'s content effectively.', 'instant-indexing-google-bing' ); ?></em></p>
-							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing-google-bing' ); ?></a>
+							<h3><?php esc_html_e( 'Sitemap', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'Enable Rank Math\'s sitemap feature, which helps search engines index your website\'s content effectively.', 'instant-indexing' ); ?></em></p>
+							<a class="module-settings" href="#"><?php esc_html_e( 'Settings', 'instant-indexing' ); ?></a>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-sitemap" name="modules[]" value="sitemap">
-								<label for="module-sitemap" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?></label>
+								<label for="module-sitemap" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?></label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?> </span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?> </span>
 							</label>
 						</div>
 					</div>
@@ -298,18 +298,18 @@
 					<div class="rank-math-box">
 						<span class="dashicons dashicons-cart"></span>
 						<header>
-							<h3><?php esc_html_e( 'WooCommerce', 'instant-indexing-google-bing' ); ?></h3>
-							<p><em><?php esc_html_e( 'WooCommerce module to use Rank Math to optimize WooCommerce Product Pages.', 'instant-indexing-google-bing' ); ?></em></p>
+							<h3><?php esc_html_e( 'WooCommerce', 'instant-indexing' ); ?></h3>
+							<p><em><?php esc_html_e( 'WooCommerce module to use Rank Math to optimize WooCommerce Product Pages.', 'instant-indexing' ); ?></em></p>
 						</header>
 						<div class="status wp-clearfix">
 							<span class="rank-math-switch">
 								<input type="checkbox" class="rank-math-modules" id="module-woocommerce" name="modules[]" value="woocommerce">
-								<label for="module-woocommerce" class=""><?php esc_html_e( 'Toggle', 'instant-indexing-google-bing' ); ?><span><?php esc_html_e( 'Please activate WooCommerce plugin to use this module.', 'instant-indexing-google-bing' ); ?></span>                             </label>
+								<label for="module-woocommerce" class=""><?php esc_html_e( 'Toggle', 'instant-indexing' ); ?><span><?php esc_html_e( 'Please activate WooCommerce plugin to use this module.', 'instant-indexing' ); ?></span>                             </label>
 								<span class="input-loading"></span>
 							</span>
 							<label>
-								<?php esc_html_e( 'Status:', 'instant-indexing-google-bing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing-google-bing' ); ?></span>
-								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing-google-bing' ); ?> </span>
+								<?php esc_html_e( 'Status:', 'instant-indexing' ); ?><span class="module-status active-text"><?php esc_html_e( 'Active', 'instant-indexing' ); ?></span>
+								<span class="module-status inactive-text"><?php esc_html_e( 'Inactive', 'instant-indexing' ); ?> </span>
 							</label>
 						</div>
 					</div>
@@ -352,7 +352,7 @@ if ( file_exists( WP_PLUGIN_DIR . '/seo-by-rank-math' ) ) {
 									<div class="star star-full" aria-hidden="true"></div>
 									<div class="star star-full" aria-hidden="true"></div>
 								</div>
-								<span class="num-ratings" aria-hidden="true">(195)</span>
+								<span class="num-ratings" aria-hidden="true">(543)</span>
 							</a>
 						</span>
 					</h3>

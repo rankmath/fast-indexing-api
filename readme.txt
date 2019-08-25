@@ -1,4 +1,4 @@
-=== Instant Indexing Google Bing ===
+=== Instant Indexing ===
 Contributors: rankmath
 Plugin link: https://s.rankmath.com/homepage
 Tags: google indexing, instant indexing, live index, job index, indexing api
@@ -17,7 +17,7 @@ Thanks to Google’s Indexing API, Rank Math SEO for WordPress and this guide we
 
 The process of setting this up isn’t typically very easy, but if you follow this step-by-step guide, you’ll be up and running (or, I guess you could say up and ranking) in no time! So, without further ado – let’s jump right in and take a look at how to set this up.
 
-[Google Indexing API Setup Guide](https://rankmath.com/blog/google-indexing-api/)
+[Instant Indexing Setup Guide](https://rankmath.com/blog/google-indexing-api/)
 
 **Note:** Google recommends that you use the Indexing API ONLY for Job Posting and Live Streaming websites. During our tests, we found that it works on any type of website with great results and created this plugin for testing.
 
@@ -29,13 +29,13 @@ We understand this is not for everyone 🙂
 === From within WordPress ===
 
 1. Visit 'Plugins > Add New'
-2. Search for 'Instant Indexing Google Bing'
+2. Search for 'Instant Indexing'
 3. Install and activate the plugin once it appears
 5. Go to "after activation" below.
 
 === Manually ===
 
-1. Upload the `instant-indexing-google-bing` folder to the `/wp-content/plugins/` directory
+1. Upload the `instant-indexing` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to "after activation" below.
 

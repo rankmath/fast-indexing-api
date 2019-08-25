@@ -61,7 +61,7 @@ jQuery(document).ready(function($) {
 			$('#giapi-response-wrapper').toggle();
 	});
 
-	$('#rm-giapi').submit(function(event) {
+	$('#instant-indexing').submit(function(event) {
 		event.preventDefault();
 		$submitButton.attr('disabled', 'disabled');
 		var input_url = $urlField.val();
@@ -88,6 +88,6 @@ jQuery(document).ready(function($) {
 	});
 
 	if ( rm_giapi.submit_onload ) {
-		$('#rm-giapi').submit();
+		$('#instant-indexing').submit();
 	}
 });

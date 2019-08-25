@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: Instant Indexing Google Bing
+ * Plugin Name: Instant Indexing
  * Plugin URI: https://s.rankmath.com/indexing-api
- * Description: Crawl pages instantly with the Google & Bing Indexing API.
+ * Description: Crawl pages instantly with the Google's Indexing API.
  * Version: 1.2
  * Author: Rank Math
  * Author URI: https://s.rankmath.com/home
  * License: GPLv2
- * Text Domain: instant-indexing-google-bing
+ * Text Domain: instant-indexing
  * Domain Path: /languages
  *
- * @package Google Indexing API
+ * @package Instant Indexing
  */
 
 defined( 'ABSPATH' ) || die;
@@ -22,12 +22,12 @@ define( 'RM_GIAPI_URL', plugin_dir_url( __FILE__ ) );
 /**
  * Require Rank Math module class.
  */
-require_once 'includes/class-rm-giapi-module.php';
+require_once 'includes/class-instant-indexing-module.php';
 
 /**
  * Require plugin class.
  */
-require_once 'includes/class-rm-giapi.php';
+require_once 'includes/class-instant-indexing.php';
 
 /**
  * Instantiate plugin.

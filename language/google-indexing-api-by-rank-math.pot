@@ -3,7 +3,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Instant Indexing Google Bing\n"
+"Project-Id-Version: Instant Indexing\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: includes/class-rm-giapi.php:78 includes/class-rm-giapi.php:735
+#: includes/class-instant-indexing.php:78 includes/class-instant-indexing.php:735
 #: views/console.php:21 views/dashboard.php:36 views/dashboard.php:60
 #: views/dashboard.php:149 views/dashboard.php:171 views/dashboard.php:193
 #: views/dashboard.php:215 views/dashboard.php:237 views/dashboard.php:259
@@ -27,82 +27,82 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/class-rm-giapi.php:79
+#: includes/class-instant-indexing.php:79
 msgid "Console"
 msgstr ""
 
-#: includes/class-rm-giapi.php:123 includes/class-rm-giapi.php:177
+#: includes/class-instant-indexing.php:123 includes/class-instant-indexing.php:177
 msgid "Indexing API: Update"
 msgstr ""
 
-#: includes/class-rm-giapi.php:124 includes/class-rm-giapi.php:178
+#: includes/class-instant-indexing.php:124 includes/class-instant-indexing.php:178
 msgid "Indexing API: Get Status"
 msgstr ""
 
-#: includes/class-rm-giapi.php:371
+#: includes/class-instant-indexing.php:371
 msgid "Dashboard"
 msgstr ""
 
-#: includes/class-rm-giapi.php:372 includes/class-rm-giapi.php:376
-msgid "Google Indexing API"
+#: includes/class-instant-indexing.php:372 includes/class-instant-indexing.php:376
+msgid "Instant Indexing"
 msgstr ""
 
-#: includes/class-rm-giapi.php:372 includes/class-rm-giapi.php:376
+#: includes/class-instant-indexing.php:372 includes/class-instant-indexing.php:376
 msgid "Indexing API"
 msgstr ""
 
-#: includes/class-rm-giapi.php:461
+#: includes/class-instant-indexing.php:461
 msgid "Success"
 msgstr ""
 
-#: includes/class-rm-giapi.php:462
+#: includes/class-instant-indexing.php:462
 msgid "Error"
 msgstr ""
 
-#: includes/class-rm-giapi.php:463
+#: includes/class-instant-indexing.php:463
 msgid "Last updated "
 msgstr ""
 
-#: includes/class-rm-giapi.php:464
+#: includes/class-instant-indexing.php:464
 msgid "See response for details."
 msgstr ""
 
-#: includes/class-rm-giapi.php:510
+#: includes/class-instant-indexing.php:510
 msgid "Settings updated."
 msgstr ""
 
-#: includes/class-rm-giapi.php:622
-msgid "Google Indexing API (Beta)"
+#: includes/class-instant-indexing.php:622
+msgid "Instant Indexing"
 msgstr ""
 
-#: includes/class-rm-giapi.php:623 views/dashboard.php:35
+#: includes/class-instant-indexing.php:623 views/dashboard.php:35
 msgid "Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data."
 msgstr ""
 
-#: includes/class-rm-giapi.php:623 views/dashboard.php:35 views/settings.php:18
+#: includes/class-instant-indexing.php:623 views/dashboard.php:35 views/settings.php:18
 msgid "Read our setup guide"
 msgstr ""
 
-#: includes/class-rm-giapi.php:653
+#: includes/class-instant-indexing.php:653
 msgid "Active (Plugin)"
 msgstr ""
 
 #. translators: %s is a link to Rank Math plugin page
-#: includes/class-rm-giapi.php:672
+#: includes/class-instant-indexing.php:672
 #, php-format
 msgid "It is recommended to use %s along with the Indexing API plugin."
 msgstr ""
 
-#: includes/class-rm-giapi.php:672 views/dashboard.php:344
+#: includes/class-instant-indexing.php:672 views/dashboard.php:344
 msgid "Rank Math SEO"
 msgstr ""
 
-#: includes/class-rm-giapi.php:700
-msgid "The post was automatically submitted to the Google Indexing API for indexation."
+#: includes/class-instant-indexing.php:700
+msgid "The post was automatically submitted to the Instant Indexing for indexation."
 msgstr ""
 
-#: includes/class-rm-giapi.php:725
-msgid "The post was automatically submitted to the Google Indexing API for deletion."
+#: includes/class-instant-indexing.php:725
+msgid "The post was automatically submitted to the Instant Indexing for deletion."
 msgstr ""
 
 #. translators: %s is a link to the plugin settings tab.
@@ -168,7 +168,7 @@ msgid "Import &amp; Export"
 msgstr ""
 
 #: views/dashboard.php:34
-msgid "Indexing API (Beta)"
+msgid "Indexing API"
 msgstr ""
 
 #: views/dashboard.php:42 views/dashboard.php:66 views/dashboard.php:88

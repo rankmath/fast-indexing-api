@@ -106,18 +106,17 @@
 	}
 
 	.two-col {
-		display: -webkit-box;
-		display: -ms-flexbox;
+		display: -webkit-flex;
 		display: flex;
 		-webkit-box-pack: justify;
 		-ms-flex-pack: justify;
-		-ms-flex-wrap: wrap;
+		-webkit-flex-wrap: wrap;
 		flex-wrap: wrap;
+		-webkit-justify-content: space-between;
 		justify-content: space-between;
 
 		.col {
-			-webkit-box-flex: 1;
-			-ms-flex: 1;
+			-webkit-flex: 1;
 			flex: 1;
 			min-width: 49%;
 			max-width: 49%;
@@ -168,7 +167,6 @@
 			line-height: 1.5;
 			width: 200px;
 			padding: 8px 10px;
-			-webkit-transition: all 0.3s ease-in-out;
 			transition: all 0.3s ease-in-out;
 			-webkit-transform: translate3d(-50%, 0, 0);
 			transform: translate3d(-50%, 0, 0);
@@ -280,7 +278,6 @@
 				top: 2px;
 				left: 2px;
 				content: '';
-				-webkit-transition: 0.4s;
 				transition: 0.4s;
 				border-radius: 90px;
 				background: #fff;
@@ -326,7 +323,6 @@
 
 		.status {
 			clear: both;
-			-webkit-box-sizing: border-box;
 			box-sizing: border-box;
 			height: 52px;
 			margin-top: 20px;
@@ -471,7 +467,6 @@
 		transform: translate(-50%, -50%);
 		border-radius: 4px;
 		background: #fff;
-		-webkit-box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.3);
 		box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.3);
 		position: absolute;
 		top: 50%;
@@ -543,6 +538,7 @@
 		.star-rating {
 			display: inline-block;
 			margin-top: 0;
+			letter-spacing: -1px;
 		}
 
 		.plugin-icon {
