@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Instant Indexing
+ * Plugin Name: Fast Indexing API
  * Plugin URI: https://s.rankmath.com/indexing-api
  * Description: Crawl pages instantly with the Google's Indexing API.
  * Version: 1.2
@@ -10,7 +10,7 @@
  * Text Domain: instant-indexing
  * Domain Path: /languages
  *
- * @package Instant Indexing
+ * @package Instant Indexing API
  */
 
 defined( 'ABSPATH' ) || die;

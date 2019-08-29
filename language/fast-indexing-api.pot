@@ -3,7 +3,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Instant Indexing\n"
+"Project-Id-Version: Fast Indexing API\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -33,12 +33,12 @@ msgstr ""
 
 #: includes/class-instant-indexing.php:123
 #: includes/class-instant-indexing.php:177
-msgid "Instant Indexing: Update"
+msgid "Instant Indexing API: Update"
 msgstr ""
 
 #: includes/class-instant-indexing.php:124
 #: includes/class-instant-indexing.php:178
-msgid "Instant Indexing: Get Status"
+msgid "Instant Indexing API: Get Status"
 msgstr ""
 
 #: includes/class-instant-indexing.php:371
@@ -48,7 +48,7 @@ msgstr ""
 #: includes/class-instant-indexing.php:372
 #: includes/class-instant-indexing.php:376
 #: includes/class-instant-indexing.php:622 views/dashboard.php:34
-msgid "Instant Indexing"
+msgid "Instant Indexing API"
 msgstr ""
 
 #: includes/class-instant-indexing.php:461
@@ -87,7 +87,7 @@ msgstr ""
 #. translators: %s is a link to Rank Math plugin page
 #: includes/class-instant-indexing.php:672
 #, php-format
-msgid "It is recommended to use %s along with the Instant Indexing plugin."
+msgid "It is recommended to use %s along with the Instant Indexing API plugin."
 msgstr ""
 
 #: includes/class-instant-indexing.php:672 views/dashboard.php:344
@@ -95,11 +95,11 @@ msgid "Rank Math SEO"
 msgstr ""
 
 #: includes/class-instant-indexing.php:700
-msgid "The post was automatically submitted to the Instant Indexing for indexation."
+msgid "The post was automatically submitted to the Instant Indexing API for indexation."
 msgstr ""
 
 #: includes/class-instant-indexing.php:725
-msgid "The post was automatically submitted to the Instant Indexing for deletion."
+msgid "The post was automatically submitted to the Instant Indexing API for deletion."
 msgstr ""
 
 #. translators: %s is a link to the plugin settings tab.
@@ -324,7 +324,7 @@ msgid "with your version of WordPress"
 msgstr ""
 
 #: views/settings.php:10
-msgid "Instant Indexing Settings"
+msgid "Instant Indexing API Settings"
 msgstr ""
 
 #: views/settings.php:16

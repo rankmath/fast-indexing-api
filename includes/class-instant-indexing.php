@@ -2,7 +2,7 @@
 /**
  * Main plugin class.
  *
- * @package RM_GIAPI
+ * @package Instant Indexing API
  */
 class RM_GIAPI {
 
@@ -21,7 +21,7 @@ class RM_GIAPI {
 	public $dashboard_menu_hook_suffix = '';
 
 	/**
-	 * Holds the admin menu hook suffix for Rank Math > Instant Indexing
+	 * Holds the admin menu hook suffix for Rank Math > Instant Indexing API
 	 *
 	 * @var string
 	 */
@@ -75,8 +75,8 @@ class RM_GIAPI {
 	public function __construct() {
 		$this->debug    = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
 		$this->nav_tabs = array(
-			'settings' => __( 'Settings', 'instant-indexing' ),
-			'console'  => __( 'Console', 'instant-indexing' ),
+			'settings' => __( 'Settings', 'fast-indexing-api' ),
+			'console'  => __( 'Console', 'fast-indexing-api' ),
 		);
 		$this->current_nav_tab = $this->default_nav_tab;
 		if ( isset( $_GET['tab'] ) && isset( $this->nav_tabs[ $_GET['tab'] ] ) ) {
@@ -120,8 +120,8 @@ class RM_GIAPI {
 	 * @return array $bulk_actions
 	 */
 	public function register_bulk_actions( $bulk_actions ) {
-		$bulk_actions['giapi_update']    = __( 'Instant Indexing: Update', 'instant-indexing' );
-		$bulk_actions['giapi_getstatus'] = __( 'Instant Indexing: Get Status', 'instant-indexing' );
+		$bulk_actions['giapi_update']    = __( 'Instant Indexing API: Update', 'fast-indexing-api' );
+		$bulk_actions['giapi_getstatus'] = __( 'Instant Indexing API: Get Status', 'fast-indexing-api' );
 		return $bulk_actions;
 	}
 
@@ -174,8 +174,8 @@ class RM_GIAPI {
 		}
 
 		$nonce                        = wp_create_nonce( 'giapi-action' );
-		$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=instant-indexing-console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Update', 'instant-indexing' ) . '</a>';
-		$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing-console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Get Status', 'instant-indexing' ) . '</a>';
+		$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=instant-indexing-console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing API: Update', 'fast-indexing-api' ) . '</a>';
+		$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing-console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing API: Get Status', 'fast-indexing-api' ) . '</a>';
 		return $actions;
 	}
 
@@ -185,7 +185,7 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function mythemeshop_giapi_load_textdomain() {
-		load_plugin_textdomain( 'mythemeshop-giapi', false, dirname( plugin_basename( __FILE__ ) ) . '/language/' );
+		load_plugin_textdomain( 'fast-indexing-api', false, dirname( plugin_basename( __FILE__ ) ) . '/language/' );
 	}
 
 	/**
@@ -368,12 +368,12 @@ class RM_GIAPI {
 	public function admin_menu() {
 		if ( ! class_exists( 'RankMath' ) ) {
 			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', null, 'dashicons-chart-area', 76 );
-			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'instant-indexing' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
-			$this->menu_hook_suffix           = add_submenu_page( 'instant-indexing-dashboard', __( 'Instant Indexing', 'instant-indexing' ), __( 'Instant Indexing', 'instant-indexing' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing', array( $this, 'show_admin_page' ) );
+			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
+			$this->menu_hook_suffix           = add_submenu_page( 'instant-indexing-dashboard', __( 'Instant Indexing API', 'fast-indexing-api' ), __( 'Instant Indexing API', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-api', array( $this, 'show_admin_page' ) );
 			return;
 		}
 
-		$this->menu_hook_suffix  = add_submenu_page( 'rank-math', __( 'Instant Indexing', 'instant-indexing' ), __( 'Instant Indexing', 'instant-indexing' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing', array( $this, 'show_admin_page' ) );
+		$this->menu_hook_suffix = add_submenu_page( 'rank-math', __( 'Instant Indexing API', 'fast-indexing-api' ), __( 'Instant Indexing API', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-api', array( $this, 'show_admin_page' ) );
 	}
 
 	/**
@@ -458,10 +458,10 @@ class RM_GIAPI {
 				'rm_giapi',
 				array(
 					'submit_onload'     => $submit_onload,
-					'l10n_success'      => __( 'Success', 'instant-indexing' ),
-					'l10n_error'        => __( 'Error', 'instant-indexing' ),
-					'l10n_last_updated' => __( 'Last updated ', 'instant-indexing' ),
-					'l10n_see_response' => __( 'See response for details.', 'instant-indexing' ),
+					'l10n_success'      => __( 'Success', 'fast-indexing-api' ),
+					'l10n_error'        => __( 'Error', 'fast-indexing-api' ),
+					'l10n_last_updated' => __( 'Last updated ', 'fast-indexing-api' ),
+					'l10n_see_response' => __( 'See response for details.', 'fast-indexing-api' ),
 				)
 			);
 		}
@@ -507,7 +507,7 @@ class RM_GIAPI {
 				'post_types' => $post_types,
 			)
 		);
-		$this->add_notice( __( 'Settings updated.', 'instant-indexing' ), 'notice-success' );
+		$this->add_notice( __( 'Settings updated.', 'fast-indexing-api' ), 'notice-success' );
 	}
 
 	/**
@@ -619,8 +619,8 @@ class RM_GIAPI {
 	public function add_rm_module( $modules ) {
 		$modules['indexing-api'] = array(
 			'id'            => 'indexing-api',
-			'title'         => esc_html__( 'Instant Indexing', 'rank-math' ),
-			'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'instant-indexing' ) . '</a>',
+			'title'         => esc_html__( 'Instant Indexing API', 'rank-math' ),
+			'desc'          => esc_html__( 'Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'fast-indexing-api' ) . '</a>',
 			'class'         => 'RM_GIAPI_Module',
 			'icon'          => 'dashicons-admin-site-alt3',
 			'settings_link' => admin_url( 'admin.php?page=instant-indexing' ),
@@ -650,7 +650,7 @@ class RM_GIAPI {
 					.closest('div.status')
 					.css({pointerEvents: 'none'})
 					.find('.active-text')
-					.text('<?php echo esc_js( __( 'Active (Plugin)', 'instant-indexing' ) ); ?>')
+					.text('<?php echo esc_js( __( 'Active (Plugin)', 'fast-indexing-api' ) ); ?>')
 					.closest('.rank-math-box')
 					.addClass('active');
 			});
@@ -669,7 +669,7 @@ class RM_GIAPI {
 		}
 
 		/* translators: %s is a link to Rank Math plugin page */
-		$message = sprintf( __( 'It is recommended to use %s along with the Instant Indexing plugin.', 'instant-indexing' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO' ) . '</a>' );
+		$message = sprintf( __( 'It is recommended to use %s along with the Instant Indexing API plugin.', 'fast-indexing-api' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO' ) . '</a>' );
 		$class   = 'notice-error';
 		$show_on = array( 'rank-math_page_instant-indexing', 'rank-math_page_instant-indexing-dashboard' );
 
@@ -697,7 +697,7 @@ class RM_GIAPI {
 
 		if ( $post->post_status === 'publish' ) {
 			$this->send_to_api( $send_url, 'update' );
-			$this->add_notice( __( 'The post was automatically submitted to the Instant Indexing for indexation.', 'instant-indexing' ), 'notice-info', null, true );
+			$this->add_notice( __( 'The post was automatically submitted to the Instant Indexing API for indexation.', 'fast-indexing-api' ), 'notice-info', null, true );
 		}
 	}
 
@@ -722,7 +722,7 @@ class RM_GIAPI {
 		}
 
 		$this->send_to_api( $send_url, 'delete' );
-		$this->add_notice( __( 'The post was automatically submitted to the Instant Indexing for deletion.', 'instant-indexing' ), 'notice-info', null, true );
+		$this->add_notice( __( 'The post was automatically submitted to the Instant Indexing API for deletion.', 'fast-indexing-api' ), 'notice-info', null, true );
 	}
 
 	/**
@@ -732,7 +732,7 @@ class RM_GIAPI {
 	 * @return array $actions New actions.
 	 */
 	public function plugin_action_links( $actions ) {
-		$actions['settings'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing' ) . '">' . __( 'Settings', 'instant-indexing' ) . '</a>';
+		$actions['settings'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing' ) . '">' . __( 'Settings', 'fast-indexing-api' ) . '</a>';
 		return $actions;
 	}
 
