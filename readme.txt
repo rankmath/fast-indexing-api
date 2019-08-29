@@ -47,7 +47,5 @@ We understand this is not for everyone 🙂
 
 == Changelog ==
 
-= 1.2 [Aug 26, 2019] =
+= 1.2 [Sep 01, 2019] =
 * Plugin Released on WordPress.org
-
-Full changelog can be found here - **[Rank Math SEO changelog](https://rankmath.com/changelog)**
