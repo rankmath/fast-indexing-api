@@ -341,7 +341,7 @@ if ( file_exists( WP_PLUGIN_DIR . '/seo-by-rank-math' ) ) {
 					<h3>
 						<a href="https://rankmath.com/wordpress/plugin/seo-suite/" target="_blank">
 						<?php esc_html_e( 'WordPress SEO Plugin – Rank Math', '404-monitor' ); ?>
-						<img src="https://ps.w.org/seo-by-rank-math/assets/icon.svg" class="plugin-icon" alt="<?php esc_html_e( 'Rank Math SEO', '404-monitor' ); ?>">
+						<img src="<?php echo esc_url( RM_GIAPI_URL . 'assets/img/icon.svg' ); ?>" class="plugin-icon" alt="<?php esc_html_e( 'Rank Math SEO', '404-monitor' ); ?>">
 						</a>
 						<span class="vers column-rating">
 							<a href="https://wordpress.org/support/plugin/seo-by-rank-math/reviews/" target="_blank">
@@ -352,7 +352,7 @@ if ( file_exists( WP_PLUGIN_DIR . '/seo-by-rank-math' ) ) {
 									<div class="star star-full" aria-hidden="true"></div>
 									<div class="star star-full" aria-hidden="true"></div>
 								</div>
-								<span class="num-ratings" aria-hidden="true">(543)</span>
+								<span class="num-ratings" aria-hidden="true">(381)</span>
 							</a>
 						</span>
 					</h3>
