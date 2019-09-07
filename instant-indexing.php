@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Fast Indexing API
  * Plugin URI: https://s.rankmath.com/indexing-api
- * Description: Crawl pages instantly with the Google's Indexing API.
+ * Description: Get pages crawled instantly with Google's Indexing API.
  * Version: 1.2
  * Author: Rank Math
  * Author URI: https://s.rankmath.com/home

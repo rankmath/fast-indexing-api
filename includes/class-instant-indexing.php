@@ -142,7 +142,8 @@ class RM_GIAPI {
 		$nonce       = wp_create_nonce( 'giapi-action' );
 		$redirect_to = add_query_arg(
 			array(
-				'page'      => 'instant-indexing-console',
+				'page'      => 'instant-indexing-api',
+				'tab'       => 'console',
 				'apiaction' => substr( $doaction, 6 ),
 				'apipostid' => $post_ids,
 				'_wpnonce'  => $nonce,
@@ -174,8 +175,8 @@ class RM_GIAPI {
 		}
 
 		$nonce                        = wp_create_nonce( 'giapi-action' );
-		$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=instant-indexing-console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing API: Update', 'fast-indexing-api' ) . '</a>';
-		$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing-console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing API: Get Status', 'fast-indexing-api' ) . '</a>';
+		$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=instant-indexing-api&tab=console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing API: Update', 'fast-indexing-api' ) . '</a>';
+		$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing-api&tab=console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing API: Get Status', 'fast-indexing-api' ) . '</a>';
 		return $actions;
 	}
 
@@ -298,9 +299,9 @@ class RM_GIAPI {
 			'metapermin'    => 0,
 		);
 
-		$limit_publishperday = 200;
-		$limit_permin        = 600;
-		$limit_metapermin    = 180;
+		$limit_publishperday = apply_filters( 'rank_math/indexing_api/limit_publishperday', 200 );
+		$limit_permin        = apply_filters( 'rank_math/indexing_api/limit_perminute', 600 );
+		$limit_metapermin    = apply_filters( 'rank_math/indexing_api/limit_metaperminute', 180 );
 		$requests_log        = get_option(
 			'giapi_requests',
 			array(
