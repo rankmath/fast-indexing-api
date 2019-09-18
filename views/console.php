@@ -2,7 +2,7 @@
 /**
  * Indexing API Console page contents.
  *
- * @package Instant Indexing API
+ * @package Instant Indexing
  */
 
 ?>

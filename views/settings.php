@@ -1,13 +1,13 @@
 <?php
 /**
- * Instant Indexing API Settings page contents.
+ * Instant Indexing Settings page contents.
  *
- * @package Instant Indexing API
+ * @package Instant Indexing
  */
 
 ?>
 <div class="wrap rank-math-wrap">
-	<h1><?php esc_attr_e( 'Instant Indexing API Settings', 'fast-indexing-api' ); ?></h1>
+	<h1><?php esc_attr_e( 'Instant Indexing Settings', 'fast-indexing-api' ); ?></h1>
 	<form enctype="multipart/form-data" method="POST" action="">
 		<?php wp_nonce_field( 'giapi-save', '_wpnonce', true, true ); ?>
 		<table class="form-table">

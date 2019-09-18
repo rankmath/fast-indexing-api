@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: Fast Indexing API
+ * Plugin Name: Instant Indexing
  * Plugin URI: https://s.rankmath.com/indexing-api
- * Description: Get pages crawled instantly with Google's Indexing API.
- * Version: 1.2
+ * Description: Get your website crawled immediately by Google using their NEW Indexing API.
+ * Version: 1.0.0
  * Author: Rank Math
  * Author URI: https://s.rankmath.com/home
  * License: GPLv2
  * Text Domain: instant-indexing
  * Domain Path: /languages
  *
- * @package Instant Indexing API
+ * @package Instant Indexing
  */
 
 defined( 'ABSPATH' ) || die;
