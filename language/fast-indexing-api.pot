@@ -20,7 +20,7 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
 #: includes/class-instant-indexing.php:78
-#: includes/class-instant-indexing.php:735 views/console.php:21
+#: includes/class-instant-indexing.php:736 views/console.php:21
 #: views/dashboard.php:36 views/dashboard.php:60 views/dashboard.php:149
 #: views/dashboard.php:171 views/dashboard.php:193 views/dashboard.php:215
 #: views/dashboard.php:237 views/dashboard.php:259 views/dashboard.php:281
@@ -32,73 +32,73 @@ msgid "Console"
 msgstr ""
 
 #: includes/class-instant-indexing.php:123
-#: includes/class-instant-indexing.php:177
+#: includes/class-instant-indexing.php:178
 msgid "Instant Indexing: Update"
 msgstr ""
 
 #: includes/class-instant-indexing.php:124
-#: includes/class-instant-indexing.php:178
+#: includes/class-instant-indexing.php:179
 msgid "Instant Indexing: Get Status"
 msgstr ""
 
-#: includes/class-instant-indexing.php:371
+#: includes/class-instant-indexing.php:372
 msgid "Dashboard"
 msgstr ""
 
-#: includes/class-instant-indexing.php:372
-#: includes/class-instant-indexing.php:376
-#: includes/class-instant-indexing.php:622 views/dashboard.php:34
+#: includes/class-instant-indexing.php:373
+#: includes/class-instant-indexing.php:377
+#: includes/class-instant-indexing.php:623 views/dashboard.php:34
 msgid "Instant Indexing"
 msgstr ""
 
-#: includes/class-instant-indexing.php:461
+#: includes/class-instant-indexing.php:462
 msgid "Success"
 msgstr ""
 
-#: includes/class-instant-indexing.php:462
+#: includes/class-instant-indexing.php:463
 msgid "Error"
 msgstr ""
 
-#: includes/class-instant-indexing.php:463
+#: includes/class-instant-indexing.php:464
 msgid "Last updated "
 msgstr ""
 
-#: includes/class-instant-indexing.php:464
+#: includes/class-instant-indexing.php:465
 msgid "See response for details."
 msgstr ""
 
-#: includes/class-instant-indexing.php:510
+#: includes/class-instant-indexing.php:511
 msgid "Settings updated."
 msgstr ""
 
-#: includes/class-instant-indexing.php:623 views/dashboard.php:35
+#: includes/class-instant-indexing.php:624 views/dashboard.php:35
 msgid "Directly notify Google when pages are added, updated or removed. The Indexing API supports pages with either job posting or livestream structured data."
 msgstr ""
 
-#: includes/class-instant-indexing.php:623 views/dashboard.php:35
+#: includes/class-instant-indexing.php:624 views/dashboard.php:35
 #: views/settings.php:18
 msgid "Read our setup guide"
 msgstr ""
 
-#: includes/class-instant-indexing.php:653
+#: includes/class-instant-indexing.php:654
 msgid "Active (Plugin)"
 msgstr ""
 
 #. translators: %s is a link to Rank Math plugin page
-#: includes/class-instant-indexing.php:672
+#: includes/class-instant-indexing.php:673
 #, php-format
 msgid "It is recommended to use %s along with the Instant Indexing plugin."
 msgstr ""
 
-#: includes/class-instant-indexing.php:672 views/dashboard.php:344
+#: includes/class-instant-indexing.php:673 views/dashboard.php:344
 msgid "Rank Math SEO"
 msgstr ""
 
-#: includes/class-instant-indexing.php:700
+#: includes/class-instant-indexing.php:701
 msgid "The post was automatically submitted to the Instant Indexing for indexation."
 msgstr ""
 
-#: includes/class-instant-indexing.php:725
+#: includes/class-instant-indexing.php:726
 msgid "The post was automatically submitted to the Instant Indexing for deletion."
 msgstr ""
 
