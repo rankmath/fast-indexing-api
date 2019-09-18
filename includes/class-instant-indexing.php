@@ -78,6 +78,13 @@ class RM_GIAPI {
 			'settings' => __( 'Settings', 'fast-indexing-api' ),
 			'console'  => __( 'Console', 'fast-indexing-api' ),
 		);
+		if ( $this->get_setting( 'json_key' ) ) {
+			$this->nav_tabs = array(
+				'console'  => __( 'Console', 'fast-indexing-api' ),
+				'settings' => __( 'Settings', 'fast-indexing-api' ),
+			);
+			$this->default_nav_tab = 'console';
+		}
 		$this->current_nav_tab = $this->default_nav_tab;
 		if ( isset( $_GET['tab'] ) && isset( $this->nav_tabs[ $_GET['tab'] ] ) ) {
 			$this->current_nav_tab = $_GET['tab']; //phpcs:ignore
