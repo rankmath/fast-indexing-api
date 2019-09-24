@@ -11,7 +11,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.2';
+	public $version = '1.0.0';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -79,10 +79,10 @@ class RM_GIAPI {
 			'console'  => __( 'Console', 'fast-indexing-api' ),
 		);
 		if ( $this->get_setting( 'json_key' ) ) {
-			$this->nav_tabs = array(
+			$this->nav_tabs = [
 				'console'  => __( 'Console', 'fast-indexing-api' ),
 				'settings' => __( 'Settings', 'fast-indexing-api' ),
-			);
+			];
 			$this->default_nav_tab = 'console';
 		}
 		$this->current_nav_tab = $this->default_nav_tab;
