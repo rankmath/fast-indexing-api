@@ -1,7 +1,7 @@
 === Instant Indexing for Google ===
 Contributors: rankmath
 Plugin link: https://s.rankmath.com/instant-indexing
-Tags: indexing api, crawling, google serp, fast indexing, job posting
+Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 5.2.3
 Requires at least: 4.6.0
 Requires PHP: 5.6
