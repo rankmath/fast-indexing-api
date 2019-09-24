@@ -67,7 +67,7 @@ The Instant Indexing plugin is created by the same brains that are behind the po
 
 **[6. Frequently Asked Questions:](#faq-header)** Here we've answered the most commonly asked questions about Instant Indexing by Rank Math.
 
-== Others ==
+== Installation ==
 
 1. Visit 'Plugins > Add New'
 2. Search for 'Instant Indexing for Google'
@@ -75,13 +75,13 @@ The Instant Indexing plugin is created by the same brains that are behind the po
 4. Activate the plugin
 5. Go to "after activation" section below.
 
-## Manually
+= Manually =
 
 1. Upload the `fast-indexing-api` folder to the `/wp-content/plugins/` directory
 2. Activate the Instant Indexing plugin through the 'Plugins' menu in WordPress
 3. Go to "after activation" section below.
 
-## After activation
+= After activation =
 
 1. You should see the Rank Math menu in the dashboard sidebar.
 2. From there you can access the plugin settings.
