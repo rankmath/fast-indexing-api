@@ -16,10 +16,14 @@
 	}
 }
 
-#giapi-response-trigger {}
+#instant-indexing textarea {
+	width: 600px;
+	max-width: 49%;
+}
 
 .giapi-limits {
 	width: 420px;
+	max-width: 49%;
 	float: right;
 	padding: 14px 20px 16px;
 	border: 1px solid #ccc;
@@ -55,6 +59,10 @@
 		top: 5px;
 		margin-right: 2px;
 	}
+}
+
+#giapi-submit {
+    margin-top: 10px;
 }
 
 .success .response-status:before {
