@@ -38,7 +38,7 @@
 			<?php } ?>
 			<?php if ( $this->get_setting( 'bing_key' ) ) { ?>
 				<p class="" style="line-height: 1.8;"><a href="https://www.bing.com/webmasters/help/submit-urls-to-bing-62f2860a" target="_blank"><strong><?php esc_html_e( 'Bing API Remaining Quota:', 'fast-indexing-api' ); ?></strong></a><br>
-				<code><?php esc_html_e( 'UrlSubmissionQuota', 'fast-indexing-api' ); ?> = <strong id="giapi-limit-metapermin"><?php echo absint( $limits['bing_submitperday'] ); ?></strong> / <?php echo absint( $limits['bing_submitperday_max'] ); ?></code></p>
+				<code><?php esc_html_e( 'UrlSubmissionQuota (per day)', 'fast-indexing-api' ); ?> = <strong id="giapi-limit-bing_submitperday"><?php echo absint( $limits['bing_submitperday'] ); ?></strong> / <?php echo absint( $limits['bing_submitperday_max'] ); ?></code></p>
 			<?php } ?>
 		</div>
 
@@ -48,14 +48,15 @@
 		<br><br>
 		<label><?php esc_html_e( 'Action:', 'fast-indexing-api' ); ?></label><br>
 		<?php if ( $this->get_setting( 'json_key' ) ) { ?>
-			<label><input type="radio" name="api_action" value="update" class="giapi-action" <?php checked( $selected_action, 'update' ); ?>> <?php esc_html_e( 'Google: Publish/update URL', 'fast-indexing-api' ); ?></label><br>
-			<label><input type="radio" name="api_action" value="remove" class="giapi-action" <?php checked( $selected_action, 'remove' ); ?>> <?php esc_html_e( 'Google: Remove URL', 'fast-indexing-api' ); ?></label><br>
-			<label><input type="radio" name="api_action" value="getstatus" class="giapi-action" <?php checked( $selected_action, 'getstatus' ); ?>> <?php esc_html_e( 'Google: Get URL status', 'fast-indexing-api' ); ?></label><br>
+			<label><input type="radio" name="api_action" value="update" class="giapi-action" <?php checked( $selected_action, 'update' ); ?>> <?php wp_kses_post( _e( '<strong>Google</strong>: Publish/update URL', 'fast-indexing-api' ) ); ?></label><br>
+			<label><input type="radio" name="api_action" value="remove" class="giapi-action" <?php checked( $selected_action, 'remove' ); ?>> <?php wp_kses_post( _e( '<strong>Google</strong>: Remove URL', 'fast-indexing-api' ) ); ?></label><br>
+			<label><input type="radio" name="api_action" value="getstatus" class="giapi-action" <?php checked( $selected_action, 'getstatus' ); ?>> <?php wp_kses_post( _e( '<strong>Google</strong>: Get URL status', 'fast-indexing-api' ) ); ?></label><br>
 		<?php } ?>
 		<?php if ( $this->get_setting( 'bing_key' ) ) { ?>
-			<label><input type="radio" name="api_action" value="bing_update" class="giapi-action" <?php checked( $selected_action, 'bing_submit' ); ?>> <?php esc_html_e( 'Bing: Submit URL', 'fast-indexing-api' ); ?></label><br>
+			<label><input type="radio" name="api_action" value="bing_submit" class="giapi-action" <?php checked( $selected_action, 'bing_submit' ); ?>> <?php wp_kses_post( _e( '<strong>Bing</strong>: Submit URL', 'fast-indexing-api' ) ); ?></label><br>
 		<?php } ?>
-		<input type="submit" id="giapi-submit" class="button button-primary" value="<?php esc_attr_e( 'Send to API', 'fast-indexing-api' ); ?>">
+		<?php wp_nonce_field( 'giapi-console' ); ?>
+		<input type="submit" id="giapi-submit" class="button button-primary" value="<?php esc_attr_e( 'Send to API', 'fast-indexing-api' ); ?>" disabled="disabled">
 	</form>
 	<div id="giapi-response-userfriendly" class="not-ready">
 		<br>

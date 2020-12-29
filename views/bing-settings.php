@@ -24,7 +24,7 @@
 			<tr valign="top">
 				<th scope="row">
 					<?php esc_html_e( 'Submit Post Types to Bing:', 'fast-indexing-api' ); ?>
-					<p class="description"><?php esc_html_e( 'Submit posts from these post types automatically to the Bing URL Submission API when a post is published, edited, or deleted. Action links to submit manually will also be added to the post listing screen.', 'fast-indexing-api' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Submit posts from these post types automatically to the Bing URL Submission API when a post is published or edited.', 'fast-indexing-api' ); ?></p>
 				</th>
 				<td><?php $this->post_types_checkboxes( 'bing' ); ?></td>
 			</tr>

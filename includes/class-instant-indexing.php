@@ -11,7 +11,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.0';
+	public $version = '1.1.0';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -139,6 +139,7 @@ class RM_GIAPI {
 				add_filter( 'bulk_actions-edit-' . $post_type, [ $this, 'register_bulk_actions' ] );
 				add_filter( 'handle_bulk_actions-edit-' . $post_type, [ $this, 'bulk_action_handler' ], 10, 3 );
 			}
+			add_action( 'trashed_post', [ $this, 'delete_post' ], 10, 1 );
 		}
 
 		if ( $this->get_setting( 'bing_key' ) ) {
@@ -156,7 +157,6 @@ class RM_GIAPI {
 		if ( $this->get_setting( 'json_key' ) || $this->get_setting( 'bing_key' ) ) {
 			add_filter( 'post_row_actions', [ $this, 'send_to_api_link' ], 10, 2 );
 			add_filter( 'page_row_actions', [ $this, 'send_to_api_link' ], 10, 2 );
-			add_action( 'trashed_post', [ $this, 'delete_post' ], 10, 1 );
 		}
 
 		// Localization.
@@ -179,6 +179,18 @@ class RM_GIAPI {
 	}
 
 	/**
+	 * Register additional actions for the bulk edit dropdowns on the post listing screen.
+	 *
+	 * @param  array $bulk_actions Actions.
+	 * @return array $bulk_actions
+	 */
+	public function bing_register_bulk_actions( $bulk_actions ) {
+		$bulk_actions['giapi_bing_submit'] = __( 'Instant Indexing: Bing Submit', 'fast-indexing-api' );
+
+		return $bulk_actions;
+	}
+
+	/**
 	 * Handle custom bulk actions.
 	 *
 	 * @param  string $redirect_to The redirect URL.
@@ -189,6 +201,35 @@ class RM_GIAPI {
 	 */
 	public function bulk_action_handler( $redirect_to, $doaction, $post_ids ) {
 		if ( $doaction !== 'giapi_update' && $doaction !== 'giapi_getstatus' ) {
+			return $redirect_to;
+		}
+
+		$nonce       = wp_create_nonce( 'giapi-action' );
+		$redirect_to = add_query_arg(
+			[
+				'page'      => 'instant-indexing',
+				'tab'       => 'console',
+				'apiaction' => substr( $doaction, 6 ),
+				'apipostid' => $post_ids,
+				'_wpnonce'  => $nonce,
+
+			],
+			admin_url( 'admin.php' )
+		);
+		return $redirect_to;
+	}
+
+	/**
+	 * Handle custom bulk actions.
+	 *
+	 * @param  string $redirect_to The redirect URL.
+	 * @param  string $doaction    The action being taken.
+	 * @param  array  $post_ids    The items to take the action on.
+	 *
+	 * @return string $redirect_to The redirect URL.
+	 */
+	public function bing_bulk_action_handler( $redirect_to, $doaction, $post_ids ) {
+		if ( $doaction !== 'bing_submit' ) {
 			return $redirect_to;
 		}
 
@@ -229,7 +270,7 @@ class RM_GIAPI {
 			return $actions;
 		}
 
-		$nonce                        = wp_create_nonce( 'giapi-action' );
+		$nonce = wp_create_nonce( 'giapi-action' );
 		if ( ! empty( $post_types[ $post->post_type ] ) ) {
 			$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=instant-indexing&tab=console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Google Update', 'fast-indexing-api' ) . '</a>';
 			$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing&tab=console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Google Get Status', 'fast-indexing-api' ) . '</a>';
@@ -256,9 +297,12 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function ajax_rm_giapi() {
+		check_ajax_referer( 'giapi-console' );
+
 		if ( ! current_user_can( apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ) ) ) {
 			die( '0' );
 		}
+
 		$url_input = $this->get_input_urls();
 		$action    = sanitize_title( wp_unslash( $_POST['api_action'] ) );
 		header( 'Content-type: application/json' );
@@ -278,42 +322,96 @@ class RM_GIAPI {
 	public function send_to_api( $url_input, $action ) {
 		$url_input = (array) $url_input;
 
-		include_once RM_GIAPI_PATH . 'vendor/autoload.php';
-		$this->client = new Google_Client();
-		$this->client->setAuthConfig( json_decode( $this->get_setting( 'json_key' ), true ) );
-		$this->client->setConfig( 'base_path', 'https://indexing.googleapis.com' );
-		$this->client->addScope( 'https://www.googleapis.com/auth/indexing' );
+		if ( strpos( $action, 'bing' ) === false ) {
+			// This is NOT a Bing API request, so it's Google.
+			include_once RM_GIAPI_PATH . 'vendor/autoload.php';
+			$this->client = new Google_Client();
+			$this->client->setAuthConfig( json_decode( $this->get_setting( 'json_key' ), true ) );
+			$this->client->setConfig( 'base_path', 'https://indexing.googleapis.com' );
+			$this->client->addScope( 'https://www.googleapis.com/auth/indexing' );
 
-		// Batch request.
-		$this->client->setUseBatch( true );
-		// init google batch and set root URL.
-		$service = new Google_Service_Indexing( $this->client );
-		$batch   = new Google_Http_Batch( $this->client, false, 'https://indexing.googleapis.com' );
-		foreach ( $url_input as $i => $url ) {
-			$post_body = new Google_Service_Indexing_UrlNotification();
-			if ( $action === 'getstatus' ) {
-				$request_part = $service->urlNotifications->getMetadata( [ 'url' => $url ] ); // phpcs:ignore
-			} else {
-				$post_body->setType( $action === 'update' ? 'URL_UPDATED' : 'URL_DELETED' );
-				$post_body->setUrl( $url );
-				$request_part = $service->urlNotifications->publish( $post_body ); // phpcs:ignore
+			// Batch request.
+			$this->client->setUseBatch( true );
+			// init google batch and set root URL.
+			$service = new Google_Service_Indexing( $this->client );
+			$batch   = new Google_Http_Batch( $this->client, false, 'https://indexing.googleapis.com' );
+			foreach ( $url_input as $i => $url ) {
+				$post_body = new Google_Service_Indexing_UrlNotification();
+				if ( $action === 'getstatus' ) {
+					$request_part = $service->urlNotifications->getMetadata( [ 'url' => $url ] ); // phpcs:ignore
+				} else {
+					$post_body->setType( $action === 'update' ? 'URL_UPDATED' : 'URL_DELETED' );
+					$post_body->setUrl( $url );
+					$request_part = $service->urlNotifications->publish( $post_body ); // phpcs:ignore
+				}
+				$batch->add( $request_part, 'url-' . $i );
 			}
-			$batch->add( $request_part, 'url-' . $i );
-		}
 
-		$results   = $batch->execute();
-		$data      = [];
-		$res_count = count( $results );
-		foreach ( $results as $id => $response ) {
-			// Change "response-url-1" to "url-1".
-			$local_id = substr( $id, 9 );
-			if ( is_a( $response, 'Google_Service_Exception' ) ) {
-				$data[ $local_id ] = json_decode( $response->getMessage() );
-			} else {
-				$data[ $local_id ] = (array) $response->toSimpleObject();
+			$results   = $batch->execute();
+			$data      = [];
+			$res_count = count( $results );
+			foreach ( $results as $id => $response ) {
+				// Change "response-url-1" to "url-1".
+				$local_id = substr( $id, 9 );
+				if ( is_a( $response, 'Google_Service_Exception' ) ) {
+					$data[ $local_id ] = json_decode( $response->getMessage() );
+				} else {
+					$data[ $local_id ] = (array) $response->toSimpleObject();
+				}
+				if ( $res_count === 1 ) {
+					$data = $data[ $local_id ];
+				}
 			}
-			if ( $res_count === 1 ) {
-				$data = $data[ $local_id ];
+		} else {
+			// Bing submit URL API.
+			$bing_url = 'https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch';
+			$bing_url = add_query_arg(
+				[
+					'apikey' => $this->get_setting( 'bing_key' ),
+				],
+				$bing_url
+			);
+
+			$body = [
+				'siteUrl' => untrailingslashit( home_url() ),
+				'urlList' => $url_input,
+			];
+			$body = wp_json_encode( $body );
+
+			$args = [
+				'headers' => [
+					'Content-Type' => 'application/json',
+					'charset'      => 'utf-8',
+				],
+				'body'        => $body,
+				'timeout'     => 15,
+			];
+
+			$request = wp_remote_post( $bing_url, $args );
+			if ( is_wp_error( $request ) ) {
+				$data = [ 
+					'error' => [ 
+						'code'   => $request->get_error_code(),
+						'message' => $request->get_error_message(),
+					]
+				];
+			} else {
+				$code = wp_remote_retrieve_response_code( $request );
+				$body = wp_remote_retrieve_body( $request );
+
+				$body_decoded = json_decode( $body, true );
+				if ( $code !== 200 ) {
+					$data = [ 
+						'error' => [ 
+							'code'   => $code,
+							'message' => $body,
+						]
+					];
+				} else {
+					$data = [
+						'success' => true
+					];
+				}
 			}
 		}
 
@@ -336,9 +434,10 @@ class RM_GIAPI {
 		$requests_log            = get_option(
 			'giapi_requests',
 			[
-				'update'    => [],
-				'delete'    => [],
-				'getstatus' => [],
+				'update'      => [],
+				'delete'      => [],
+				'getstatus'   => [],
+				'bing_submit' => [],
 			]
 		);
 		$requests_log[ $type ][] = time();
@@ -366,14 +465,15 @@ class RM_GIAPI {
 		$limit_permin        = apply_filters( 'rank_math/indexing_api/limit_perminute', 600 );
 		$limit_metapermin    = apply_filters( 'rank_math/indexing_api/limit_metaperminute', 180 );
 
-		$limit_bingsubmitperday = apply_filters( 'rank_math/indexing_api/limit_bing_submitperday', 10000 );
+		$limit_bingsubmitperday = apply_filters( 'rank_math/indexing_api/limit_bing_submitperday', 10 );
 
 		$requests_log           = get_option(
 			'giapi_requests',
 			[
-				'update'    => [],
-				'delete'    => [],
-				'getstatus' => [],
+				'update'      => [],
+				'delete'      => [],
+				'getstatus'   => [],
+				'bing_submit' => [],
 			]
 		);
 		$timestamp_1day_ago  = strtotime( '-1 day' );
@@ -404,6 +504,10 @@ class RM_GIAPI {
 		}
 
 		$bing_submit_1day = 0;
+		if ( ! isset( $requests_log['bing_submit'] ) ) {
+			$requests_log['bing_submit'] = [];
+		}
+
 		foreach ( $requests_log['bing_submit'] as $time ) {
 			if ( $time > $timestamp_1day_ago ) {
 				$bing_submit_1day++;
@@ -431,6 +535,12 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function ajax_get_limits() {
+		check_ajax_referer( 'giapi-console' );
+
+		if ( ! current_user_can( apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ) ) ) {
+			die( '0' );
+		}
+
 		wp_send_json( $this->get_limits() );
 		die();
 	}
@@ -452,7 +562,7 @@ class RM_GIAPI {
 	public function admin_menu() {
 		if ( ! class_exists( 'RankMath' ) ) {
 			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', null, 'dashicons-chart-area', 76 );
-			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', [ $this, 'show_dashboard' ], 'none', 76 );
+			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', [ $this, 'show_dashboard' ], 76 );
 			$this->menu_hook_suffix           = add_submenu_page( 'instant-indexing-dashboard', __( 'Instant Indexing', 'fast-indexing-api' ), __( 'Instant Indexing', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing', [ $this, 'show_admin_page' ] );
 			return;
 		}
@@ -511,7 +621,7 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function nav_tabs() {
-		echo '<div class="nav-tab-wrapper">';
+		echo '<div class="nav-tab-wrapper instant-indexing-nav-tabs">';
 		foreach ( $this->nav_tabs as $tab => $label ) {
 			echo '<a href="' . esc_url( add_query_arg( 'tab', $tab ) ) . '" class="nav-tab ' . ( $this->current_nav_tab == $tab ? 'nav-tab-active' : '' ) . '">' . wp_kses_post( $label ) . '</a>';
 		}
@@ -827,20 +937,51 @@ class RM_GIAPI {
 	 */
 	public function publish_post( $post_id ) {
 		$post = get_post( $post_id );
+
+		if ( $post->post_status !== 'publish' ) {
+			return;
+		}
+
 		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 			return;
 		}
 
-		$send_url = apply_filters( 'rank_math/indexing_api/publish_url', get_permalink( $post ), $post );
+		$send_url = apply_filters( 'rank_math/indexing_api/publish_url', get_permalink( $post ), $post, 'google' );
 		// Early exit if filter is set to false.
 		if ( ! $send_url ) {
 			return;
 		}
 
-		if ( $post->post_status === 'publish' ) {
-			$this->send_to_api( $send_url, 'update' );
-			$this->add_notice( __( 'The post was automatically submitted to the Instant Indexing for indexation.', 'fast-indexing-api' ), 'notice-info', null, true );
+		$this->send_to_api( $send_url, 'update' );
+		$this->add_notice( __( 'A recently published post has been automatically submitted to the Instant Indexing for indexation.', 'fast-indexing-api' ), 'notice-info', null, true );
+	}
+
+	/**
+	 * When a post from a watched post type is published, submit its URL
+	 * to the API and add notice about it.
+	 *
+	 * @param  int $post_id Post ID.
+	 * @return void
+	 */
+	public function bing_publish_post( $post_id ) {
+		$post = get_post( $post_id );
+
+		if ( $post->post_status !== 'publish' ) {
+			return;
 		}
+
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
+		$send_url = apply_filters( 'rank_math/indexing_api/publish_url', get_permalink( $post ), $post, 'bing' );
+		// Early exit if filter is set to false.
+		if ( ! $send_url ) {
+			return;
+		}
+
+		$this->send_to_api( $send_url, 'bing_submit' );
+		$this->add_notice( __( 'A recently published post has been automatically submitted to the Instant Indexing for indexation.', 'fast-indexing-api' ), 'notice-info', null, true );
 	}
 
 	/**
@@ -851,8 +992,9 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function delete_post( $post_id ) {
-		$post_types = $this->get_setting( 'post_types', [] );
-		$post       = get_post( $post_id );
+		$post_types      = $this->get_setting( 'post_types', [] );
+
+		$post = get_post( $post_id );
 		if ( empty( $post_types[ $post->post_type ] ) ) {
 			return;
 		}
@@ -864,7 +1006,7 @@ class RM_GIAPI {
 		}
 
 		$this->send_to_api( $send_url, 'delete' );
-		$this->add_notice( __( 'The post was automatically submitted to the Instant Indexing for deletion.', 'fast-indexing-api' ), 'notice-info', null, true );
+		$this->add_notice( __( 'A deleted post has been automatically submitted to the Instant Indexing for deletion.', 'fast-indexing-api' ), 'notice-info', null, true );
 	}
 
 	/**
