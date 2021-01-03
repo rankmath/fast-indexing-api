@@ -32,4 +32,13 @@ require_once 'includes/class-instant-indexing.php';
 /**
  * Instantiate plugin.
  */
-$rm_giapi = new RM_GIAPI();
+add_action( 'plugins_loaded', 'rm_giapi_init' );
+
+/**
+ * Init plugin.
+ *
+ * @return void
+ */
+function rm_giapi_init() {
+	$rm_giapi = new RM_GIAPI();
+}

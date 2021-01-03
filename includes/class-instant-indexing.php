@@ -73,6 +73,10 @@ class RM_GIAPI {
 	 * Constructor method.
 	 */
 	public function __construct() {
+		if ( function_exists( 'rank_math' ) ) {
+			return;
+		}
+
 		$this->debug    = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
 		$this->nav_tabs = array(
 			'settings' => __( 'Settings', 'fast-indexing-api' ),
