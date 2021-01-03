@@ -11,7 +11,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.0';
+	public $version = '1.0.1';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.

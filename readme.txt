@@ -5,7 +5,7 @@ Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 5.2.3
 Requires at least: 4.6.0
 Requires PHP: 5.6
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -105,6 +105,9 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 3. Plugin Settings
 
 == Changelog ==
+
+= 1.0.1 [Jan 3, 2021] =
+* Fix compatibility with new version of Rank Math which includes an Instant Indexing module
 
 = 1.0.0 [Sep 24, 2019] =
 * Official plugin release on wp.org
