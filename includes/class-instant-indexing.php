@@ -70,6 +70,20 @@ class RM_GIAPI {
 	public $debug = false;
 
 	/**
+	 * Check if Rank Math SEO is installed.
+	 *
+	 * @var bool
+	 */
+	public $is_rm_active = false;
+
+	/**
+	 * Rank Math Instant Indexing API.
+	 *
+	 * @var bool
+	 */
+	public $rmapi = null;
+
+	/**
 	 * URL of the plugin setup guide on rankmath.com.
 	 *
 	 * @var string
@@ -81,10 +95,15 @@ class RM_GIAPI {
 	 */
 	public function __construct() {
 		$this->debug             = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
+		$this->is_rm_active      = function_exists( 'rank_math' );
+		if ( $this->is_rm_active && ! RankMath\Helper::is_module_active( 'instant-indexing' ) ) {
+			return;
+		}
+
 		$this->default_nav_tab   = 'google_settings';
 		$this->settings_defaults = [
 			'json_key'   => '',
-			'bing_key'   => '',
+			'bing_api_key'   => '',
 			'post_types' => [
 				'post' => 0,
 				'page' => 0,
@@ -101,6 +120,13 @@ class RM_GIAPI {
 			'console'         => __( 'Console', 'fast-indexing-api' ),
 		];
 
+		if ( $this->is_rm_active ) {
+			$this->rmapi = new RankMath\Instant_Indexing\Api();
+			add_action( 'admin_init', [ $this, 'remove_rm_admin_page' ] );
+		} else {
+			unset( $this->nav_tabs['bing_settings'] );
+		}
+
 		if ( $this->get_setting( 'json_key' ) ) {
 			$this->nav_tabs['google_settings'] = '<span class="dashicons dashicons-yes-alt"></span> ' . $this->nav_tabs['google_settings'];
 			unset( $this->nav_tabs['console'] );
@@ -108,7 +134,7 @@ class RM_GIAPI {
 			$this->default_nav_tab = 'console';
 		}
 
-		if ( $this->get_setting( 'bing_key' ) ) {
+		if ( $this->is_rm_active && $this->get_setting( 'bing_api_key' ) ) {
 			$this->nav_tabs['bing_settings'] = '<span class="dashicons dashicons-yes-alt"></span> ' . $this->nav_tabs['bing_settings'];
 			unset( $this->nav_tabs['console'] );
 			$this->nav_tabs = [ 'console' => __( 'Console', 'fast-indexing-api' ) ] + $this->nav_tabs;
@@ -142,7 +168,7 @@ class RM_GIAPI {
 			add_action( 'trashed_post', [ $this, 'delete_post' ], 10, 1 );
 		}
 
-		if ( $this->get_setting( 'bing_key' ) ) {
+		if ( $this->is_rm_active && $this->get_setting( 'bing_api_key' ) ) {
 			$post_types = $this->get_setting( 'bing_post_types', [] );
 			foreach ( $post_types as $post_type => $enabled ) {
 				if ( empty( $enabled ) ) {
@@ -154,7 +180,7 @@ class RM_GIAPI {
 			}
 		}
 
-		if ( $this->get_setting( 'json_key' ) || $this->get_setting( 'bing_key' ) ) {
+		if ( $this->get_setting( 'json_key' ) || $this->get_setting( 'bing_api_key' ) ) {
 			add_filter( 'post_row_actions', [ $this, 'send_to_api_link' ], 10, 2 );
 			add_filter( 'page_row_actions', [ $this, 'send_to_api_link' ], 10, 2 );
 		}
@@ -163,6 +189,10 @@ class RM_GIAPI {
 		add_action( 'plugins_loaded', [ $this, 'mythemeshop_giapi_load_textdomain' ] );
 
 		add_filter( 'rank_math/modules', [ $this, 'add_rm_module' ], 25 );
+	}
+
+	public function remove_rm_admin_page() {
+		remove_submenu_page( 'rank-math', 'rank-math-options-instant-indexing' );
 	}
 
 	/**
@@ -364,54 +394,18 @@ class RM_GIAPI {
 			}
 		} else {
 			// Bing submit URL API.
-			$bing_url = 'https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch';
-			$bing_url = add_query_arg(
-				[
-					'apikey' => $this->get_setting( 'bing_key' ),
-				],
-				$bing_url
-			);
-
-			$body = [
-				'siteUrl' => untrailingslashit( home_url() ),
-				'urlList' => $url_input,
-			];
-			$body = wp_json_encode( $body );
-
-			$args = [
-				'headers' => [
-					'Content-Type' => 'application/json',
-					'charset'      => 'utf-8',
-				],
-				'body'        => $body,
-				'timeout'     => 15,
-			];
-
-			$request = wp_remote_post( $bing_url, $args );
-			if ( is_wp_error( $request ) ) {
-				$data = [ 
-					'error' => [ 
-						'code'   => $request->get_error_code(),
-						'message' => $request->get_error_message(),
-					]
+			$request = $this->rmapi->batch_submit_urls( $url_input );
+			if ( 'ok' === $request['status'] ) {
+				$data = [
+					'success' => true,
 				];
 			} else {
-				$code = wp_remote_retrieve_response_code( $request );
-				$body = wp_remote_retrieve_body( $request );
-
-				$body_decoded = json_decode( $body, true );
-				if ( $code !== 200 ) {
-					$data = [ 
-						'error' => [ 
-							'code'   => $code,
-							'message' => $body,
-						]
-					];
-				} else {
-					$data = [
-						'success' => true
-					];
-				}
+				$data = [
+					'error' => [
+						'code'    => '',
+						'message' => $request['message'],
+					],
+				];
 			}
 		}
 
@@ -711,8 +705,8 @@ class RM_GIAPI {
 			$this->add_notice( __( 'Settings could not be updated.', 'fast-indexing-api' ), 'notice-error' );
 			return;
 		}
-		
-		update_option( 'giapi_settings', $settings );
+
+		update_option( 'rank-math-options-instant-indexing', $settings );
 		$this->add_notice( __( 'Settings updated.', 'fast-indexing-api' ), 'notice-success' );
 	}
 
@@ -730,7 +724,7 @@ class RM_GIAPI {
 		$post_types = (array) $_POST['giapi_settings']['post_types']; // phpcs:ignore
 		$post_types = array_map( 'sanitize_title', $post_types );
 
-		$settings = get_option( 'giapi_settings', [] );
+		$settings = get_option( 'rank-math-options-instant-indexing', [] );
 		$settings = array_merge( $this->settings_defaults, $settings );
 
 		$new_settings  = [
@@ -752,11 +746,11 @@ class RM_GIAPI {
 		$bing_post_types = (array) $_POST['giapi_settings']['bing_post_types']; // phpcs:ignore
 		$bing_post_types = array_map( 'sanitize_title', $bing_post_types );
 
-		$settings = get_option( 'giapi_settings', [] );
+		$settings = get_option( 'rank-math-options-instant-indexing', [] );
 		$settings = array_merge( $this->settings_defaults, $settings );
 
 		$new_settings = [
-			'bing_key'        => $bing_key,
+			'bing_api_key'    => $bing_key,
 			'bing_post_types' => $bing_post_types,
 		];
 
@@ -840,7 +834,7 @@ class RM_GIAPI {
 	 * @return mixed  Setting value or default.
 	 */
 	public function get_setting( $setting, $default = null ) {
-		$settings = get_option( 'giapi_settings', [] );
+		$settings = get_option( 'rank-math-options-instant-indexing', [] );
 		$settings = array_merge( $this->settings_defaults, $settings );
 
 		if ( $setting === 'json_key' ) {

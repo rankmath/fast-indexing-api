@@ -10,7 +10,7 @@
 	<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 
 	<?php
-	if ( ! $this->get_setting( 'json_key' ) && ! $this->get_setting( 'bing_key' ) ) {
+	if ( ! $this->get_setting( 'json_key' ) && ( ! $this->get_setting( 'bing_api_key' ) || ! $this->is_rm_active ) ) {
 		?>
 		<p class="description">
 			<?php
@@ -36,7 +36,7 @@
 				<code><?php esc_html_e( 'RequestsPerMinutePerProject', 'fast-indexing-api' ); ?> = <strong id="giapi-limit-permin"><?php echo absint( $limits['permin'] ); ?></strong> / <?php echo absint( $limits['permin_max'] ); ?></code><br>
 				<code><?php esc_html_e( 'MetadataRequestsPerMinutePerProject', 'fast-indexing-api' ); ?> = <strong id="giapi-limit-metapermin"><?php echo absint( $limits['metapermin'] ); ?></strong> / <?php echo absint( $limits['metapermin_max'] ); ?></code></p>
 			<?php } ?>
-			<?php if ( $this->get_setting( 'bing_key' ) ) { ?>
+			<?php if ( $this->is_rm_active && $this->get_setting( 'bing_api_key' ) ) { ?>
 				<p class="" style="line-height: 1.8;"><a href="https://www.bing.com/webmasters/help/submit-urls-to-bing-62f2860a" target="_blank"><strong><?php esc_html_e( 'Bing API Remaining Quota:', 'fast-indexing-api' ); ?></strong></a><br>
 				<code><?php esc_html_e( 'UrlSubmissionQuota (per day)', 'fast-indexing-api' ); ?> = <strong id="giapi-limit-bing_submitperday"><?php echo absint( $limits['bing_submitperday'] ); ?></strong> / <?php echo absint( $limits['bing_submitperday_max'] ); ?></code></p>
 			<?php } ?>
@@ -52,7 +52,7 @@
 			<label><input type="radio" name="api_action" value="remove" class="giapi-action" <?php checked( $selected_action, 'remove' ); ?>> <?php wp_kses_post( _e( '<strong>Google</strong>: Remove URL', 'fast-indexing-api' ) ); ?></label><br>
 			<label><input type="radio" name="api_action" value="getstatus" class="giapi-action" <?php checked( $selected_action, 'getstatus' ); ?>> <?php wp_kses_post( _e( '<strong>Google</strong>: Get URL status', 'fast-indexing-api' ) ); ?></label><br>
 		<?php } ?>
-		<?php if ( $this->get_setting( 'bing_key' ) ) { ?>
+		<?php if ( $this->is_rm_active && $this->get_setting( 'bing_api_key' ) ) { ?>
 			<label><input type="radio" name="api_action" value="bing_submit" class="giapi-action" <?php checked( $selected_action, 'bing_submit' ); ?>> <?php wp_kses_post( _e( '<strong>Bing</strong>: Submit URL', 'fast-indexing-api' ) ); ?></label><br>
 		<?php } ?>
 		<?php wp_nonce_field( 'giapi-console' ); ?>
