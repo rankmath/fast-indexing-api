@@ -18,7 +18,7 @@
 					<div class="setup-guide-link-wrapper"><span class="dashicons dashicons-editor-help"></span> <a href="<?php echo $this->setup_guide_url; ?>" target="_blank"><?php esc_html_e( 'Read our setup guide', 'fast-indexing-api' ); ?></a></div>
 				</th>
 				<td>
-					<input type="text" value="<?php echo esc_attr( $this->get_setting( 'bing_api_key' ) ); ?>" class="large-text" name="giapi_settings[bing_key]" >
+					<input type="password" value="<?php echo esc_attr( $this->get_setting( 'bing_api_key' ) ); ?>" class="large-text" name="giapi_settings[bing_key]" >
 				</td>
 			</tr>
 			<tr valign="top">
