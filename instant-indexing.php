@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Instant Indexing
  * Plugin URI: https://s.rankmath.com/indexing-api
- * Description: Get your website crawled immediately by Google & Bing using their NEW Indexing APIs.
+ * Description: Get your website crawled immediately by Google using their NEW Indexing APIs.
  * Version: 1.2.0
  * Author: Rank Math
  * Author URI: https://s.rankmath.com/home
