@@ -11,7 +11,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.0';
+	public $version = '1.2.0';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -96,7 +96,7 @@ class RM_GIAPI {
 	public function __construct() {
 		$this->debug             = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
 		$this->is_rm_active      = function_exists( 'rank_math' );
-		if ( $this->is_rm_active && ! RankMath\Helper::is_module_active( 'instant-indexing' ) ) {
+		if ( $this->is_rm_active && ! in_array( 'instant-indexing', (array) get_option( 'rank_math_modules', [] ) ) ) {
 			return;
 		}
 
@@ -104,13 +104,10 @@ class RM_GIAPI {
 		$this->settings_defaults = [
 			'json_key'   => '',
 			'bing_api_key'   => '',
-			'post_types' => [
-				'post' => 0,
-				'page' => 0,
-			],
+			'post_types' => [],
 			'bing_post_types' => [
-				'post' => 1,
-				'page' => 1,
+				'post' => 'post',
+				'page' => 'page',
 			],
 		];
 
@@ -157,8 +154,8 @@ class RM_GIAPI {
 
 		if ( $this->get_setting( 'json_key' ) ) {
 			$post_types = $this->get_setting( 'post_types', [] );
-			foreach ( $post_types as $post_type => $enabled ) {
-				if ( empty( $enabled ) ) {
+			foreach ( $post_types as $key => $post_type ) {
+				if ( empty( $post_type ) ) {
 					continue;
 				}
 				add_action( 'save_post_' . $post_type, [ $this, 'publish_post' ], 10, 2 );
@@ -170,8 +167,8 @@ class RM_GIAPI {
 
 		if ( $this->is_rm_active && $this->get_setting( 'bing_api_key' ) ) {
 			$post_types = $this->get_setting( 'bing_post_types', [] );
-			foreach ( $post_types as $post_type => $enabled ) {
-				if ( empty( $enabled ) ) {
+			foreach ( $post_types as $key => $post_type ) {
+				if ( empty( $post_type ) ) {
 					continue;
 				}
 				add_action( 'save_post_' . $post_type, [ $this, 'bing_publish_post' ], 10, 2 );
@@ -296,16 +293,16 @@ class RM_GIAPI {
 
 		$post_types      = $this->get_setting( 'post_types', [] );
 		$bing_post_types = $this->get_setting( 'bing_post_types', [] );
-		if ( empty( $post_types[ $post->post_type ] ) && empty( $bing_post_types[ $post->post_type ] ) ) {
+		if ( ! in_array( $post->post_type, $post_types, true ) && ! in_array( $post->post_type, $bing_post_types, true ) ) {
 			return $actions;
 		}
 
 		$nonce = wp_create_nonce( 'giapi-action' );
-		if ( ! empty( $post_types[ $post->post_type ] ) ) {
+		if ( in_array( $post->post_type, $post_types, true ) ) {
 			$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=instant-indexing&tab=console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Google Update', 'fast-indexing-api' ) . '</a>';
 			$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing&tab=console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Google Get Status', 'fast-indexing-api' ) . '</a>';
 		}
-		if ( ! empty( $bing_post_types[ $post->post_type ] ) ) {
+		if ( in_array( $post->post_type, $bing_post_types, true ) ) {
 			$actions['rmgiapi_bing_submit'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing&tab=console&apiaction=bing_submit&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Bing Submit', 'fast-indexing-api' ) . '</a>';
 		}
 
@@ -729,7 +726,7 @@ class RM_GIAPI {
 
 		$new_settings  = [
 			'json_key'   => $json,
-			'post_types' => $post_types,
+			'post_types' => array_values( $post_types ),
 		];
 
 		return array_merge( $settings, $new_settings );
@@ -751,7 +748,7 @@ class RM_GIAPI {
 
 		$new_settings = [
 			'bing_api_key'    => $bing_key,
-			'bing_post_types' => $bing_post_types,
+			'bing_post_types' => array_values( $bing_post_types ),
 		];
 
 		return array_merge( $settings, $new_settings );
@@ -769,7 +766,7 @@ class RM_GIAPI {
 	public function add_notice( $message, $class = '', $show_on = null, $persist = false, $id = '' ) {
 		$notice = [
 			'message' => $message,
-			'class'   => $class,
+			'class'   => $class . ' is-dismissible',
 			'show_on' => $show_on,
 		];
 
@@ -820,8 +817,7 @@ class RM_GIAPI {
 		$post_types = get_post_types( [ 'public' => true ], 'objects' );
 		foreach ( $post_types as $post_type ) {
 			?>
-			<input type="hidden" name="giapi_settings[<?php echo sanitize_html_class( $api_prefix ); ?>post_types][<?php echo esc_attr( $post_type->name ); ?>]" value="0">
-			<label><input type="checkbox" name="giapi_settings[<?php echo sanitize_html_class( $api_prefix ); ?>post_types][<?php echo esc_attr( $post_type->name ); ?>]" value="1" <?php checked( ! empty( $settings[ $post_type->name ] ) ); ?>> <?php echo esc_html( $post_type->label ); ?></label><br>
+			<label><input type="checkbox" name="giapi_settings[<?php echo sanitize_html_class( $api_prefix ); ?>post_types][<?php echo esc_attr( $post_type->name ); ?>]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php checked( in_array( $post_type->name, $settings, true ) ); ?>> <?php echo esc_html( $post_type->label ); ?></label><br>
 			<?php
 		}
 	}
@@ -989,7 +985,7 @@ class RM_GIAPI {
 		$post_types      = $this->get_setting( 'post_types', [] );
 
 		$post = get_post( $post_id );
-		if ( empty( $post_types[ $post->post_type ] ) ) {
+		if ( ! in_array( $post->post_type, $post_types, true ) ) {
 			return;
 		}
 

@@ -84,3 +84,17 @@
 .fail .response-status {
 	color: #bb2b2b;
 }
+
+@media screen and (max-width:1110px) {
+	.giapi-limits {
+		width: 100%;
+		max-width: 100%;
+		float: none;
+		box-sizing: border-box;
+	}
+
+	#instant-indexing #giapi-url {
+		width: 100%;
+		max-width: 100%;
+	}
+}
