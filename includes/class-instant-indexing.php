@@ -409,7 +409,7 @@ class RM_GIAPI {
 		$this->log_request( $action );
 
 		if ( $this->debug ) {
-			error_log( 'RM GI API: ' . $action . ' ' . $url_input[0] . ( count( $url_input ) > 1 ? ' (+)' : '' ) . "\n" . print_r( $data, true ) ); // phpcs:ignore
+			error_log( 'Rank Math Instant Index: ' . $action . ' ' . $url_input[0] . ( count( $url_input ) > 1 ? ' (+)' : '' ) . "\n" . print_r( $data, true ) ); // phpcs:ignore
 		}
 
 		return $data;
@@ -458,7 +458,7 @@ class RM_GIAPI {
 
 		$limit_bingsubmitperday = apply_filters( 'rank_math/indexing_api/limit_bing_submitperday', 10 );
 
-		$requests_log           = get_option(
+		$requests_log = get_option(
 			'giapi_requests',
 			[
 				'update'      => [],
@@ -467,8 +467,9 @@ class RM_GIAPI {
 				'bing_submit' => [],
 			]
 		);
-		$timestamp_1day_ago  = strtotime( '-1 day' );
-		$timestamp_1min_ago  = strtotime( '-1 minute' );
+
+		$timestamp_1day_ago = strtotime( '-1 day' );
+		$timestamp_1min_ago = strtotime( '-1 minute' );
 
 		$publish_1day = 0;
 		$all_1min     = 0;
@@ -710,7 +711,7 @@ class RM_GIAPI {
 	/**
 	 * Save data from "Google API Settings" admin page.
 	 *
-	 * @return void
+	 * @return array
 	 */
 	private function save_google_settings() {
 		$json = sanitize_textarea_field( wp_unslash( $_POST['giapi_settings']['json_key'] ) );
@@ -735,7 +736,7 @@ class RM_GIAPI {
 	/**
 	 * Save data from "Bing API Settings" admin page.
 	 *
-	 * @return void
+	 * @return array
 	 */
 	private function save_bing_settings() {
 		$bing_key = sanitize_text_field( wp_unslash( $_POST['giapi_settings']['bing_key'] ) );
@@ -761,6 +762,7 @@ class RM_GIAPI {
 	 * @param string  $class   Additional class for the notice element.
 	 * @param array   $show_on Admin page IDs where the notice should be displayed.
 	 * @param boolean $persist Whether the notice should be stored in the database until it is displayed.
+	 * @param string  $id      Custom notice ID.
 	 * @return void
 	 */
 	public function add_notice( $message, $class = '', $show_on = null, $persist = false, $id = '' ) {
@@ -805,6 +807,7 @@ class RM_GIAPI {
 	/**
 	 * Output checkbox inputs for the registered post types.
 	 *
+	 * @param string $api API provider: "google" or "bing".
 	 * @return void
 	 */
 	public function post_types_checkboxes( $api = 'google' ) {
@@ -843,7 +846,7 @@ class RM_GIAPI {
 	}
 
 	/**
-	 * Output Rank Math Dashboard page contents
+	 * Output Rank Math Dashboard page contents.
 	 *
 	 * @return void
 	 */
@@ -854,14 +857,14 @@ class RM_GIAPI {
 	/**
 	 * Add Rank Math module.
 	 *
-	 * @param array $modules Current modules.
+	 * @param array  $modules Current modules.
 	 * @return array $modules New modules.
 	 */
 	public function add_rm_module( $modules ) {
 		$modules['indexing-api'] = [
 			'id'       => 'indexing-api',
-			'title'    => esc_html__( 'Instant Indexing', 'rank-math' ),
-			'desc'     => esc_html__( 'Directly notify search engines when pages are added, updated or removed.', 'rank-math' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'fast-indexing-api' ) . '</a>',
+			'title'    => esc_html__( 'Instant Indexing', 'fast-indexing-api' ),
+			'desc'     => esc_html__( 'Directly notify search engines when pages are added, updated or removed.', 'fast-indexing-api' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'fast-indexing-api' ) . '</a>',
 			'class'    => 'RM_GIAPI_Module',
 			'icon'     => 'dashicons-admin-site-alt3',
 			'settings' => admin_url( 'admin.php?page=instant-indexing' ),
@@ -982,7 +985,7 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function delete_post( $post_id ) {
-		$post_types      = $this->get_setting( 'post_types', [] );
+		$post_types = $this->get_setting( 'post_types', [] );
 
 		$post = get_post( $post_id );
 		if ( ! in_array( $post->post_type, $post_types, true ) ) {
