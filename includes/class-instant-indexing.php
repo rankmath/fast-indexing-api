@@ -380,7 +380,7 @@ class RM_GIAPI {
 	public function admin_menu() {
 		if ( ! class_exists( 'RankMath' ) ) {
 			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', null, 'dashicons-chart-area', 76 );
-			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', array( $this, 'show_dashboard' ), 'none', 76 );
+			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', array( $this, 'show_dashboard' ) );
 			$this->menu_hook_suffix           = add_submenu_page( 'instant-indexing-dashboard', __( 'Instant Indexing', 'fast-indexing-api' ), __( 'Instant Indexing', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing', array( $this, 'show_admin_page' ) );
 			return;
 		}
