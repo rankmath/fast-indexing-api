@@ -505,7 +505,7 @@ class RM_GIAPI {
 		}
 
 		$json = sanitize_textarea_field( wp_unslash( $_POST['giapi_settings']['json_key'] ) );
-		if ( isset( $_FILES['json_file'] ) && isset( $_FILES['json_file']['tmp_name'] ) && file_exists( sanitize_file_name( wp_unslash( $_FILES['json_file']['tmp_name'] ) ) ) ) {
+		if ( isset( $_FILES['json_file'] ) && ! empty( $_FILES['json_file']['tmp_name'] ) && file_exists( $_FILES['json_file']['tmp_name'] ) ) {
 			$json = file_get_contents( $_FILES['json_file']['tmp_name'] ); // phpcs:ignore
 		}
 
