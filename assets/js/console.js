@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
 	var $urlField = $('#giapi-url');
 	var $actionRadio = $('.giapi-action');
 	var $ufResponse = $('#giapi-response-userfriendly');
-	var logResponse = function( info, url ) {
+	var logResponse = function( info, url, api_action ) {
 		var d = new Date();
 		var n = d.toLocaleTimeString();
 		var urls = $urlField.val().split('\n').filter(Boolean);
@@ -18,39 +18,48 @@ jQuery(document).ready(function($) {
 		}
 
 		$ufResponse.removeClass('not-ready fail success').addClass('ready').find('.response-id').html('<strong>' + action + '</strong>' + ' ' + urls_str);
-		if ( ! is_batch ) {
-			if ( typeof info.error !== 'undefined' ) {
-				$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+info.error.code).siblings('.response-message').text(info.error.message);
-			} else {
-				var base = info;
-				if ( typeof info.urlNotificationMetadata != 'undefined' ) {
-					base = info.urlNotificationMetadata;
+		if ( api_action !== 'bing_submit' ) {
+			if ( ! is_batch ) {
+				if ( typeof info.error !== 'undefined' ) {
+					$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+info.error.code).siblings('.response-message').text(info.error.message);
+				} else {
+					var base = info;
+					if ( typeof info.urlNotificationMetadata !== 'undefined' ) {
+						base = info.urlNotificationMetadata;
+					}
+					var d = new Date(base.latestUpdate.notifyTime);
+					$ufResponse.addClass('success').find('.response-status').text(rm_giapi.l10n_success+' ').siblings('.response-message').text(rm_giapi.l10n_last_updated+' ' + d.toString());
 				}
-				var d = new Date(base.latestUpdate.notifyTime);
-				$ufResponse.addClass('success').find('.response-status').text(rm_giapi.l10n_success+' ').siblings('.response-message').text(rm_giapi.l10n_last_updated+' ' + d.toString());
+			} else {
+				$ufResponse.addClass('success').find('.response-status').text(rm_giapi.l10n_success+' ').siblings('.response-message').text(rm_giapi.l10n_see_response);
+				if ( typeof info.error !== 'undefined' ) {
+					$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+info.error.code).siblings('.response-message').text(info.error.message);
+				} else {
+					$.each(info, function(index, val) {
+						if ( typeof val.error !== 'undefined' ) {
+							var error_code = '';
+							if ( typeof val.error.code !== 'undefined' ) {
+								error_code = val.error.code;
+							}
+							var error_message = '';
+							if ( typeof val.error.message !== 'undefined' ) {
+								error_message = val.error.message;
+							}
+							$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+error_code).siblings('.response-message').text(val.error.message);
+						}
+					});
+				}
 			}
 		} else {
-			$ufResponse.addClass('success').find('.response-status').text(rm_giapi.l10n_success+' ').siblings('.response-message').text(rm_giapi.l10n_see_response);
+			// Bing URL submission API.
 			if ( typeof info.error !== 'undefined' ) {
-				$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+info.error.code).siblings('.response-message').text(info.error.message);
-			} else {
-				$.each(info, function(index, val) {
-					if ( typeof val.error !== 'undefined' ) {
-						var error_code = '';
-						if ( typeof val.error.code !== 'undefined' ) {
-							error_code = val.error.code;
-						}
-						var error_message = '';
-						if ( typeof val.error.message !== 'undefined' ) {
-							error_message = val.error.message;
-						}
-						$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+error_code).siblings('.response-message').text(val.error.message);
-					}
-				});
-			}
+					$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+info.error.code).siblings('.response-message').text(info.error.message);
+				} else {
+					$ufResponse.addClass('success').find('.response-status').text(rm_giapi.l10n_success+' ').siblings('.response-message').text(rm_giapi.l10n_see_response);
+				}
 		}
 
-		var rawdata = n + " " + action + " " + urls_str + "\n" + JSON.stringify(info, null, 2) + "\n" + "-".repeat(56);
+		var rawdata = n + " " + action + ": " + urls_str + "\n" + JSON.stringify(info, null, 2) + "\n" + "-".repeat(56);
 		var current = $responseTextarea.val();
 		$responseTextarea.val(rawdata + "\n" + current);
 	};
@@ -65,19 +74,21 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		$submitButton.attr('disabled', 'disabled');
 		var input_url = $urlField.val();
+		var api_action = $actionRadio.filter(':checked').val();
+		var nonce = $('#_wpnonce').val();
 		$.ajax({
 			url: ajaxurl,
 			type: 'POST',
 			dataType: 'json',
-			data: { action: 'rm_giapi', url: input_url, api_action: $actionRadio.filter(':checked').val() },
+			data: { action: 'rm_giapi', url: input_url, api_action: api_action, _wpnonce: nonce },
 		}).always(function(data) {
-			logResponse( data, input_url );
+			logResponse( data, input_url, api_action );
 			$submitButton.removeAttr('disabled');
 			$.ajax({
 				url: ajaxurl,
 				type: 'POST',
 				dataType: 'json',
-				data: { action: 'rm_giapi_limits' },
+				data: { action: 'rm_giapi_limits', _wpnonce: nonce },
 			})
 			.done(function( data ) {
 				$.each( data, function(index, val) {
@@ -90,4 +101,8 @@ jQuery(document).ready(function($) {
 	if ( rm_giapi.submit_onload ) {
 		$('#instant-indexing').submit();
 	}
+
+	$(window).on('load', function() {
+		$('#giapi-submit').prop('disabled', false);
+	});
 });

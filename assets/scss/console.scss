@@ -4,6 +4,10 @@
 	max-width: 1080px;
 }
 
+.instant-indexing-nav-tabs a .dashicons {
+	line-height: 1.2;
+}
+
 #giapi-response-wrapper {
 	display: none;
 }
@@ -16,10 +20,14 @@
 	}
 }
 
-#giapi-response-trigger {}
+#instant-indexing textarea {
+	width: 600px;
+	max-width: 49%;
+}
 
 .giapi-limits {
 	width: 420px;
+	max-width: 49%;
 	float: right;
 	padding: 14px 20px 16px;
 	border: 1px solid #ccc;
@@ -57,6 +65,10 @@
 	}
 }
 
+#giapi-submit {
+    margin-top: 10px;
+}
+
 .success .response-status:before {
 	content: "\f147";
 }
@@ -71,4 +83,18 @@
 
 .fail .response-status {
 	color: #bb2b2b;
+}
+
+@media screen and (max-width:1110px) {
+	.giapi-limits {
+		width: 100%;
+		max-width: 100%;
+		float: none;
+		box-sizing: border-box;
+	}
+
+	#instant-indexing #giapi-url {
+		width: 100%;
+		max-width: 100%;
+	}
 }
