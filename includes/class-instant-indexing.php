@@ -720,7 +720,7 @@ class RM_GIAPI {
 			$json = file_get_contents( $_FILES['json_file']['tmp_name'] ); // phpcs:ignore
 		}
 
-		$post_types = (array) $_POST['giapi_settings']['post_types']; // phpcs:ignore
+		$post_types = isset( $_POST['giapi_settings']['post_types'] ) ? (array) $_POST['giapi_settings']['post_types'] : array(); // phpcs:ignore
 		$post_types = array_map( 'sanitize_title', $post_types );
 
 		$settings = get_option( 'rank-math-options-instant-indexing', [] );
