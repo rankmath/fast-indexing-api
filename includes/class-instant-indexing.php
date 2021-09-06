@@ -554,8 +554,9 @@ class RM_GIAPI {
 	public function admin_menu() {
 		if ( ! class_exists( 'RankMath' ) ) {
 			$this->dashboard_menu_hook_suffix = add_menu_page( 'Rank Math', 'Rank Math', apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', null, 'dashicons-chart-area', 76 );
-			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', [ $this, 'show_dashboard' ], 76 );
-			$this->menu_hook_suffix           = add_submenu_page( 'instant-indexing-dashboard', __( 'Instant Indexing', 'fast-indexing-api' ), __( 'Instant Indexing', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing', [ $this, 'show_admin_page' ] );
+			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', array( $this, 'show_dashboard' ) );
+			$this->menu_hook_suffix           = add_submenu_page( 'instant-indexing-dashboard', __( 'Instant Indexing', 'fast-indexing-api' ), __( 'Instant Indexing', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing', array( $this, 'show_admin_page' ) );
+
 			return;
 		}
 
@@ -715,7 +716,7 @@ class RM_GIAPI {
 	 */
 	private function save_google_settings() {
 		$json = sanitize_textarea_field( wp_unslash( $_POST['giapi_settings']['json_key'] ) );
-		if ( isset( $_FILES['json_file'] ) && isset( $_FILES['json_file']['tmp_name'] ) && file_exists( sanitize_file_name( wp_unslash( $_FILES['json_file']['tmp_name'] ) ) ) ) {
+		if ( isset( $_FILES['json_file'] ) && ! empty( $_FILES['json_file']['tmp_name'] ) && file_exists( $_FILES['json_file']['tmp_name'] ) ) {
 			$json = file_get_contents( $_FILES['json_file']['tmp_name'] ); // phpcs:ignore
 		}
 
