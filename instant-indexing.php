@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: Instant Indexing
- * Plugin URI: https://s.rankmath.com/indexing-api
+ * Plugin URI: https://rankmath.com/wordpress/plugin/instant-indexing/
  * Description: Get your website crawled immediately by Google using their NEW Indexing APIs.
- * Version: 1.2.0
+ * Version: 1.1.0
  * Author: Rank Math
  * Author URI: https://s.rankmath.com/home
- * License: GPLv2
- * Text Domain: instant-indexing
+ * License: GPL v3
+ * Text Domain: fast-indexing-api
  * Domain Path: /languages
  *
  * @package Instant Indexing

@@ -10,4 +10,12 @@
 	background: #fafafa;
 	padding: 10px 10px 10px 6px;
 	margin-top: 8px;
+
+	a {
+		text-decoration: none;
+	}
+}
+
+.notice:not(.rank-math-notice) {
+	display: none;
 }

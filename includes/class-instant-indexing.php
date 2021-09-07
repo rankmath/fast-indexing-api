@@ -88,7 +88,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $setup_guide_url = 'https://s.rankmath.com/indexing-api';
+	public $setup_guide_url = 'https://rankmath.com/blog/google-indexing-api/?utm_source=Instant+Indexing+Plugin&utm_medium=Setup+Guide+Button&utm_campaign=WP';
 
 	/**
 	 * Constructor method.
@@ -180,7 +180,7 @@ class RM_GIAPI {
 		}
 
 		// Localization.
-		add_action( 'plugins_loaded', [ $this, 'mythemeshop_giapi_load_textdomain' ] );
+		add_action( 'plugins_loaded', [ $this, 'giapi_load_textdomain' ] );
 
 		add_filter( 'rank_math/modules', [ $this, 'filter_modules' ], 25 );
 	}
@@ -311,8 +311,8 @@ class RM_GIAPI {
 	 *
 	 * @return void
 	 */
-	public function mythemeshop_giapi_load_textdomain() {
-		load_plugin_textdomain( 'fast-indexing-api', false, dirname( plugin_basename( __FILE__ ) ) . '/language/' );
+	public function giapi_load_textdomain() {
+		load_plugin_textdomain( 'fast-indexing-api', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	/**
