@@ -96,9 +96,6 @@ class RM_GIAPI {
 	public function __construct() {
 		$this->debug             = ( defined( 'GIAPI_DEBUG' ) && GIAPI_DEBUG );
 		$this->is_rm_active      = function_exists( 'rank_math' );
-		if ( $this->is_rm_active && ! in_array( 'instant-indexing', (array) get_option( 'rank_math_modules', [] ) ) ) {
-			return;
-		}
 
 		$this->default_nav_tab   = 'google_settings';
 		$this->settings_defaults = [
@@ -185,7 +182,7 @@ class RM_GIAPI {
 		// Localization.
 		add_action( 'plugins_loaded', [ $this, 'mythemeshop_giapi_load_textdomain' ] );
 
-		add_filter( 'rank_math/modules', [ $this, 'add_rm_module' ], 25 );
+		add_filter( 'rank_math/modules', [ $this, 'filter_modules' ], 25 );
 	}
 
 	public function remove_rm_admin_page() {
@@ -635,6 +632,7 @@ class RM_GIAPI {
 		if ( $hook_suffix === $this->dashboard_menu_hook_suffix ) {
 			wp_enqueue_script( 'instant-indexing-dashboard', RM_GIAPI_URL . "assets/js/dashboard{$min}.js", [ 'jquery', 'updates' ], $this->version, true );
 			wp_enqueue_style( 'instant-indexing-dashboard', RM_GIAPI_URL . 'assets/css/dashboard.css', [], $this->version );
+			wp_enqueue_style( 'instant-indexing-common', RM_GIAPI_URL . 'assets/css/common.css', [], $this->version );
 		} elseif ( $hook_suffix === $this->menu_hook_suffix ) {
 			wp_enqueue_script( 'instant-indexing-console', RM_GIAPI_URL . "assets/js/console{$min}.js", [ 'jquery' ], $this->version, true );
 			wp_enqueue_style( 'instant-indexing-admin', RM_GIAPI_URL . 'assets/css/admin.css', [], $this->version );
@@ -720,13 +718,13 @@ class RM_GIAPI {
 			$json = file_get_contents( $_FILES['json_file']['tmp_name'] ); // phpcs:ignore
 		}
 
-		$post_types = isset( $_POST['giapi_settings']['post_types'] ) ? (array) $_POST['giapi_settings']['post_types'] : array(); // phpcs:ignore
+		$post_types = isset( $_POST['giapi_settings']['post_types'] ) ? (array) $_POST['giapi_settings']['post_types'] : []; // phpcs:ignore
 		$post_types = array_map( 'sanitize_title', $post_types );
 
 		$settings = get_option( 'rank-math-options-instant-indexing', [] );
 		$settings = array_merge( $this->settings_defaults, $settings );
 
-		$new_settings  = [
+		$new_settings = [
 			'json_key'   => $json,
 			'post_types' => array_values( $post_types ),
 		];
@@ -861,16 +859,17 @@ class RM_GIAPI {
 	 * @param array  $modules Current modules.
 	 * @return array $modules New modules.
 	 */
-	public function add_rm_module( $modules ) {
-		$modules['indexing-api'] = [
-			'id'       => 'indexing-api',
-			'title'    => esc_html__( 'Instant Indexing', 'fast-indexing-api' ),
-			'desc'     => esc_html__( 'Directly notify search engines when pages are added, updated or removed.', 'fast-indexing-api' ) . ' <a href="' . $this->setup_guide_url . '" target="_blank">' . __( 'Read our setup guide', 'fast-indexing-api' ) . '</a>',
-			'class'    => 'RM_GIAPI_Module',
-			'icon'     => 'dashicons-admin-site-alt3',
-			'settings' => admin_url( 'admin.php?page=instant-indexing' ),
-			'icon'     => 'search-console',
+	public function filter_modules( $modules ) {
+		$modules['instant-indexing'] = [
+			'title'         => esc_html__( 'Instant Indexing', 'fast-indexing-api' ),
+			'desc'          => esc_html__( 'Directly notify search engines when pages are added, updated or removed.', 'fast-indexing-api' ),
+			'class'         => 'RM_GIAPI_Module',
+			'icon'          => 'instant-indexing',
+			'settings'      => add_query_arg( 'page', 'instant-indexing', admin_url( 'admin.php' ) ),
+			'disabled'      => true,
+			'disabled_text' => esc_html__( 'You cannot deactivate this module because the Instant Indexing plugin is active on this site.', 'fast-indexing-api' ),
 		];
+
 		return $modules;
 	}
 
@@ -886,21 +885,27 @@ class RM_GIAPI {
 			return;
 		}
 		?>
-		<script type="text/javascript">
-			jQuery(document).ready(function($) {
-				$('#module-indexing-api')
-					.prop('checked', true)
-					.prop('readonly', true)
-					.closest('.rank-math-switch')
-					.css({opacity: 0.7})
-					.closest('div.status')
-					.css({pointerEvents: 'none'})
-					.find('.active-text')
-					.text('<?php echo esc_js( __( 'Active (Plugin)', 'fast-indexing-api' ) ); ?>')
-					.closest('.rank-math-box')
-					.addClass('active');
-			});
-		</script>
+		<style>
+			.cmb2-toggle input#module-instant-indexing+.cmb2-slider {
+				background-color: #069de3;
+				border-color: #069de3
+			}
+
+			.cmb2-toggle input#module-instant-indexing+.cmb2-slider:before {
+				background: #fff;
+				-webkit-transform: translateX(24px);
+				transform: translateX(24px)
+			}
+
+			.cmb2-toggle input#module-instant-indexing+.cmb2-slider .toggle_off {
+				display: none
+			}
+
+			.cmb2-toggle input#module-instant-indexing+.cmb2-slider .toggle_on {
+				display: block
+			}
+
+		</style>
 		<?php
 	}
 
