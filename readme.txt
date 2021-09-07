@@ -106,6 +106,7 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 
 == Changelog ==
 
+= v1.1.0 [Sep 0, 2021] =
 * Improved: Compatibility with the [Rank Math SEO](https://rankmath.com/) plugin. Now, you can use Rank Math's [Bing Instant Indexing](https://rankmath.com/blog/bing-indexing-api/) feature from the same settings page
 * Improved: Reduce clutter on the Settings page by hiding unrelated admin notices
 * Improved: Updated the third-party libraries to their latest version
@@ -114,8 +115,5 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 * Fixed: Wrong text domain in some `gettext` calls
 * Removed: Some unused files
 
-= 1.0.1 [Jan 3, 2021] =
-* Fix compatibility with new version of Rank Math which includes an Instant Indexing module
-
-= 1.0.0 [Sep 24, 2019] =
+= v1.0.0 [Sep 24, 2019] =
 * Official plugin release on wp.org
