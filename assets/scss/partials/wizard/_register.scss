@@ -1,9 +1,0 @@
-// main: ../../setup-wizard.scss
-
-.#{$namespace}-wizard-body--register {
-	.wrapper {
-		.cmb-row input.invalid + label {
-			display: block !important;
-		}
-	}
-}
