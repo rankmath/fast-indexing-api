@@ -1,0 +1,346 @@
+// main: ../../option-panel.scss
+
+%flex {
+    @include flex;
+}
+
+// Wizard
+.wizard-content--analytics {
+    .connect-wrap {
+        display: grid;
+
+        margin-bottom: 4rem;
+
+        place-items: center;
+    }
+
+    .cmb2-metabox-description {
+        text-align: center;
+    }
+}
+
+// Options Panel.
+#setting-panel-analyitcs .connect-wrap {
+    margin-bottom: 1rem;
+
+    .button {
+        font-size: 16px;
+        line-height: 40px;
+
+        padding: 0 20px;
+
+        &:before {
+            display: none;
+        }
+    }
+}
+
+.disconnect-wrap {
+    margin-bottom: .5rem;
+
+    text-align: right;
+
+    button.button,
+    a.button {
+        line-height: 1.3;
+
+        padding: 0;
+
+        text-decoration: none;
+
+        color: $error;
+        border-bottom: 1px dotted #fff;
+
+        &:hover,
+        &:focus {
+            color: $error;
+            border-bottom-color: $error;
+            background: transparent;
+            box-shadow: none;
+        }
+    }
+
+    a.button {
+        line-height: 29px;
+
+        margin: 0;
+
+        color: $color-4;
+    }
+
+    span {
+        line-height: 30px;
+
+        margin: 0 8px;
+
+        color: $gray;
+    }
+}
+
+.#{$namespace}-accordion {
+    margin-bottom: 1rem;
+
+    transition: .25s all ease-in-out;
+
+    border: 1px solid $light-gray;
+    border-radius: 6px;
+    background: #fff;
+
+    &:hover,
+    &:focus {
+        border-color: $primary;
+        box-shadow: 0 0 0 1px $primary;
+    }
+
+    .cmb-row {
+        padding: 1rem 0;
+
+        border-top: 0!important;
+
+        .cmb-td {
+            width: 100%;
+        }
+    }
+
+    .cmb2-toggle {
+        margin-right: 5px;
+    }
+
+    header {
+        line-height: 1;
+
+        padding: 1rem;
+
+        cursor: pointer;
+
+        border-bottom: 1px solid $light-gray;
+
+        @extend %flex;
+        justify-content: space-between;
+
+        h3 {
+            font-size: 1.25rem;
+            line-height: 1;
+
+            margin: 0;
+
+            &:before {
+                display: inline-block;
+
+                width: 14px;
+                height: 14px;
+                margin-right: .825rem;
+
+                content: '';
+
+                border-radius: 50%;
+                background: $light-gray;
+            }
+        }
+    }
+
+    &.connected {
+        h3:before {
+            background: $color-good;
+        }
+    }
+
+    &-content {
+        padding: 1rem;
+
+        .cmb-type-select {
+            label {
+                display: block;
+
+                margin-bottom: .5rem;
+            }
+
+            &:not(.no-flex) {
+                @extend %flex;
+
+                .cmb-row-col {
+                    margin-right: 3%;
+
+                    flex: 0 0 31.3333333%;
+
+                    &:nth-of-type(3),
+                    &:last-of-type {
+                        margin-right: 0;
+                    }
+
+                    &.create-new-view {
+                        margin-top: 1rem;
+
+                        @extend %flex;
+                        flex: 0 0 100%;
+
+                        > * {
+                            margin-right: .5rem;
+                        }
+
+                        label {
+                            flex: 0 0 100%;
+                        }
+
+                        input {
+                            width: auto;
+                        }
+
+                        input:not(:hover):not(:focus) {
+                            border-color: $gray;
+                        }
+                    }
+                }
+            }
+        }
+
+        .warning {
+            font-size: 14px;
+
+            margin: 0 0 1rem;
+
+            strong {
+                color: $color-3;
+            }
+
+            &.yellow strong {
+                color: $color-ok-dark-alt;
+            }
+        }
+
+        .country-option {
+            margin-top: 1rem;
+        }
+
+        .cmb-td {
+            width: 100%;
+        }
+
+        .cmb2-metabox-description {
+            text-align: left;
+        }
+    }
+}
+
+// Privacy box.
+@import '../../../../../includes/modules/analytics/assets/scss/partials/_privacy-box.scss';
+##{$namespace}-pro-cta.#{$namespace}-privacy-box {
+    width: 630px;
+    max-width: 100%;
+    margin: 3rem auto 0;
+}
+
+.#{$namespace}-tabs-content {
+    ##{$namespace}-pro-cta.#{$namespace}-privacy-box {
+        width: 100%;
+    }
+}
+
+.next-fetch {
+    float: left;
+
+    margin-top: 4px;
+
+    color: $dark-gray;
+}
+
+.cancel-fetch {
+    transition: 0.25s linear all;
+
+    &:disabled {
+        opacity: 0;
+    }
+}
+
+.#{$namespace}-console-db-info {
+    display: inline-block;
+
+    margin: 8px 8px 0 0;
+    padding: 5px 8px;
+
+    border-radius: 4px;
+    background: #f6f6f6;
+
+    i {
+        font-size: 12px;
+
+        margin-right: 3px;
+
+        vertical-align: -1px;
+    }
+}
+
+#console_caching_control {
+    margin-bottom: 10px;
+}
+
+#console-updating-manually-progress {
+    position: relative;
+
+    display: none;
+    overflow: hidden;
+
+    margin: 10px 0;
+    padding: 8px;
+
+    border-radius: 4px;
+    background: #f6f6f6;
+
+    .progress {
+        overflow: hidden;
+
+        height: 100%;
+        padding: 8px;
+
+        transition: width 2s ease-in-out;
+        white-space: nowrap;
+
+        color: #fff;
+        border-radius: 3px;
+        background: #008ec2;
+
+        @include position( absolute, 0 null null 0 );
+    }
+}
+
+#setting-panel-search-console {
+    .select2-container {
+        min-width: 65%;
+    }
+}
+
+.cmb2-id-console-authorization-code {
+    &.unauthorized {
+        ~ div {
+            display: none;
+        }
+
+        input,
+        button {
+            display: none !important;
+        }
+    }
+
+    &.authorizing {
+        input,
+        button {
+            display: inline-block !important;
+        }
+
+        .rank-math-get-authorization-code {
+            margin-top: 10px;
+        }
+    }
+
+    &.authorized {
+        #console_authorization_code {
+            display: none;
+        }
+    }
+}
+
+.cmb2-id-console-profile {
+    .rank-math-refresh {
+        margin-right: 10px;
+    }
+}

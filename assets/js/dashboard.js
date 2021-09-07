@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
 	})
 
 	// Enable/Disable Modules
-	$( '.module-listing .rank-math-box:not(.active)' ).on( 'click', function(e) {
+	$( '.module-listing .rank-math-box:not(.active), a.rank-math-tab' ).on( 'click', function(e) {
 		e.preventDefault();
 
 		$( '#rank-math-feedback-form' ).fadeIn();

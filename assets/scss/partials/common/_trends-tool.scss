@@ -1,0 +1,39 @@
+// main: ../../metabox.scss
+##{$namespace}-compare-keywords-trigger {
+	position: absolute;
+	right: 0;
+	top: -31px;
+	height: 22px;
+	min-height: 22px;
+	width: 22px;
+	line-height: 22px;
+	padding: 0;
+	text-decoration: none;
+	text-align: center;
+	border-radius: 3px;
+	box-shadow: none;
+
+	svg {
+		width: 16px;
+		height: 16px;
+		vertical-align: -2px;
+	}
+
+	@at-root .rank-math-sidebar-panel & {
+		top: 15px;
+		right: 16px;
+	}
+}
+
+.#{$namespace}-modal.#{$namespace}-trends-cta-modal {
+	width: 930px;
+	max-height: 580px;
+
+	img {
+		max-width: 99.3%;
+	}
+
+	##{$namespace}-pro-cta {
+		z-index: initial;
+	}
+}

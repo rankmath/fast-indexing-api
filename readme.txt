@@ -1,11 +1,11 @@
 === Instant Indexing for Google ===
 Contributors: rankmath
-Plugin link: https://s.rankmath.com/instant-indexing
+Plugin link: https://rankmath.com/wordpress/plugin/instant-indexing/
 Tags: indexing api, crawling, live streaming, fast indexing, job posting
-Tested up to: 5.2.3
+Tested up to: 5.7.1
 Requires at least: 4.6.0
 Requires PHP: 5.6
-Stable tag: 1.0.1
+Stable tag: 1.2.0
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -105,6 +105,14 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 3. Plugin Settings
 
 == Changelog ==
+
+* Improved: Compatibility with the [Rank Math SEO](https://rankmath.com/) plugin. Now, you can use Rank Math's [Bing Instant Indexing](https://rankmath.com/blog/bing-indexing-api/) feature from the same settings page
+* Improved: Reduce clutter on the Settings page by hiding unrelated admin notices
+* Improved: Updated the third-party libraries to their latest version
+* Fixed: JSON file upload option was not working on the Settings page
+* Fixed: PHP notice appearing after saving the Settings or updating the post on some installations
+* Fixed: Wrong text domain in some `gettext` calls
+* Removed: Some unused files
 
 = 1.0.1 [Jan 3, 2021] =
 * Fix compatibility with new version of Rank Math which includes an Instant Indexing module
