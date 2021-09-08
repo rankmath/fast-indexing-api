@@ -15,7 +15,7 @@
 				<th scope="row">
 					<?php esc_html_e( 'Bing API Key:', 'fast-indexing-api' ); ?>
 					<p class="description"><?php esc_html_e( 'Paste your Bing URL Submission API Key in this field.', 'fast-indexing-api' ); ?></p>
-					<div class="setup-guide-link-wrapper"><span class="dashicons dashicons-editor-help"></span> <a href="<?php echo $this->setup_guide_url; ?>" target="_blank"><?php esc_html_e( 'Read our setup guide', 'fast-indexing-api' ); ?></a></div>
+					<div class="setup-guide-link-wrapper"><span class="dashicons dashicons-editor-help"></span> <a href="<?php echo $this->bing_guide_url; ?>" target="_blank"><?php esc_html_e( 'Read our setup guide', 'fast-indexing-api' ); ?></a></div>
 				</th>
 				<td>
 					<input type="password" value="<?php echo esc_attr( $this->get_setting( 'bing_api_key' ) ); ?>" class="large-text" name="giapi_settings[bing_key]" >

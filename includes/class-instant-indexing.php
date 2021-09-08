@@ -84,11 +84,18 @@ class RM_GIAPI {
 	public $rmapi = null;
 
 	/**
-	 * URL of the plugin setup guide on rankmath.com.
+	 * URL of the Google plugin setup guide on rankmath.com.
 	 *
 	 * @var string
 	 */
-	public $setup_guide_url = 'https://rankmath.com/blog/google-indexing-api/?utm_source=Instant+Indexing+Plugin&utm_medium=Setup+Guide+Button&utm_campaign=WP';
+	public $google_guide_url = 'https://rankmath.com/blog/google-indexing-api/?utm_source=Instant+Indexing+Plugin&utm_medium=Setup+Guide+Button&utm_campaign=WP';
+
+	/**
+	 * URL of the Bing plugin setup guide on rankmath.com.
+	 *
+	 * @var string
+	 */
+	public $bing_guide_url = 'https://rankmath.com/blog/bing-indexing-api/?utm_source=Instant+Indexing+Plugin&utm_medium=Setup+Guide+Button&utm_campaign=WP';
 
 	/**
 	 * Constructor method.

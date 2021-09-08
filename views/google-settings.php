@@ -15,7 +15,7 @@
 				<th scope="row">
 					<?php esc_html_e( 'Google JSON Key:', 'fast-indexing-api' ); ?>
 					<p class="description"><?php esc_html_e( 'Upload the Service Account JSON key file you obtained from Google API Console or paste its contents in the field.', 'fast-indexing-api' ); ?></p>
-					<div class="setup-guide-link-wrapper"><span class="dashicons dashicons-editor-help"></span> <a href="<?php echo $this->setup_guide_url; ?>" target="_blank"><?php esc_html_e( 'Read our setup guide', 'fast-indexing-api' ); ?></a></div>
+					<div class="setup-guide-link-wrapper"><span class="dashicons dashicons-editor-help"></span> <a href="<?php echo $this->google_guide_url; ?>" target="_blank"><?php esc_html_e( 'Read our setup guide', 'fast-indexing-api' ); ?></a></div>
 				</th>
 				<td>
 					<?php if ( file_exists( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' ) ) { ?>
