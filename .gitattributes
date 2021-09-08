@@ -33,6 +33,7 @@ webpack.config.js export-ignore
 
 # Export Ignore Folders
 assets/scss export-ignore
+assets/vendor export-ignore
 
 # Export Ignore unneeded Google API files
 vendor/google/apiclient-services/src/AbusiveExperienceReport export-ignore
