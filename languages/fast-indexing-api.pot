@@ -143,15 +143,6 @@ msgstr ""
 msgid "Response..."
 msgstr ""
 
-msgid "Contextual Help Tab"
-msgstr ""
-
-msgid "Easy Mode"
-msgstr ""
-
-msgid "Advanced Mode"
-msgstr ""
-
 msgid "Rank Math Knowledge Base"
 msgstr ""
 
