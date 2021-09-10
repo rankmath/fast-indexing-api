@@ -11,7 +11,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.0';
+	public $version = '1.1.1';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -736,8 +736,7 @@ class RM_GIAPI {
 		$post_types = isset( $_POST['giapi_settings']['post_types'] ) ? (array) $_POST['giapi_settings']['post_types'] : []; // phpcs:ignore
 		$post_types = array_map( 'sanitize_title', $post_types );
 
-		$settings = get_option( 'rank-math-options-instant-indexing', [] );
-		$settings = array_merge( $this->settings_defaults, $settings );
+		$settings = $this->get_settings();
 
 		$new_settings = [
 			'json_key'   => $json,
@@ -745,6 +744,19 @@ class RM_GIAPI {
 		];
 
 		return array_merge( $settings, $new_settings );
+	}
+
+	private function get_settings() {
+		$settings = get_option( 'rank-math-options-instant-indexing', [] );
+		if ( empty( $settings ) ) {
+			$old_settings = get_option( 'giapi_settings' );
+			if ( ! empty( $old_settings ) ) {
+				$settings = $old_settings;
+			}
+		}
+		$settings = array_merge( $this->settings_defaults, $settings );
+
+		return $settings;
 	}
 
 	/**
@@ -758,8 +770,7 @@ class RM_GIAPI {
 		$bing_post_types = (array) $_POST['giapi_settings']['bing_post_types']; // phpcs:ignore
 		$bing_post_types = array_map( 'sanitize_title', $bing_post_types );
 
-		$settings = get_option( 'rank-math-options-instant-indexing', [] );
-		$settings = array_merge( $this->settings_defaults, $settings );
+		$settings = $this->get_settings();
 
 		$new_settings = [
 			'bing_api_key'    => $bing_key,
@@ -847,8 +858,7 @@ class RM_GIAPI {
 	 * @return mixed  Setting value or default.
 	 */
 	public function get_setting( $setting, $default = null ) {
-		$settings = get_option( 'rank-math-options-instant-indexing', [] );
-		$settings = array_merge( $this->settings_defaults, $settings );
+		$settings = $this->get_settings();
 
 		if ( $setting === 'json_key' ) {
 			if ( file_exists( plugin_dir_path( __FILE__ ) . 'rank-math-835b6feb842b.json' ) ) {

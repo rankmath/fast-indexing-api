@@ -2,10 +2,10 @@
 Contributors: rankmath
 Plugin link: https://rankmath.com/wordpress/plugin/instant-indexing/
 Tags: indexing api, crawling, live streaming, fast indexing, job posting
-Tested up to: 5.7.1
+Tested up to: 5.8.1
 Requires at least: 5.6
 Requires PHP: 7.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -106,7 +106,10 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 
 == Changelog ==
 
-= v1.1.0 [Sep 0, 2021] =
+= v1.1.1 [Sep 10, 2021] =
+* Improved: Apply settings from v1.0.0 if available
+
+= v1.1.0 [Sep 8, 2021] =
 * Improved: Compatibility with the [Rank Math SEO](https://rankmath.com/) plugin. Now, you can use Rank Math's [Bing Instant Indexing](https://rankmath.com/blog/bing-indexing-api/) feature from the same settings page
 * Improved: Reduce clutter on the Settings page by hiding unrelated admin notices
 * Improved: Updated the third-party libraries to their latest version
