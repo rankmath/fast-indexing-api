@@ -102,7 +102,9 @@ jQuery(document).ready(function($) {
 		$('#instant-indexing').submit();
 	}
 
-	$(window).on('load', function() {
-		$('#giapi-submit').prop('disabled', false);
-	});
+	
+});
+
+jQuery(window).on('load', function() {
+	jQuery('#giapi-submit').prop('disabled', false);
 });
