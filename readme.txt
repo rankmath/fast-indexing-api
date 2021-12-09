@@ -5,7 +5,7 @@ Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 5.8.1
 Requires at least: 5.6
 Requires PHP: 7.2
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -105,6 +105,10 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 3. Plugin Settings
 
 == Changelog ==
+
+= v1.1.3 [Dec 10, 2021] =
+* Fixed: Request count when sending multiple URL's
+* Fixed: PHP notice showing on the Bing settings page in some cases
 
 = v1.1.2 [Sep 11, 2021] =
 * Fixed: Send to API button was disabled on Firefox

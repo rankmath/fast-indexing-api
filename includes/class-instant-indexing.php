@@ -11,7 +11,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.2';
+	public $version = '1.1.3';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -352,6 +352,7 @@ class RM_GIAPI {
 	 */
 	public function send_to_api( $url_input, $action ) {
 		$url_input = (array) $url_input;
+		$urls_count = count( $url_input );
 
 		if ( strpos( $action, 'bing' ) === false ) {
 			// This is NOT a Bing API request, so it's Google.
@@ -366,6 +367,7 @@ class RM_GIAPI {
 			// init google batch and set root URL.
 			$service = new Google_Service_Indexing( $this->client );
 			$batch   = new Google_Http_Batch( $this->client, false, 'https://indexing.googleapis.com' );
+			
 			foreach ( $url_input as $i => $url ) {
 				$post_body = new Google_Service_Indexing_UrlNotification();
 				if ( $action === 'getstatus' ) {
@@ -410,7 +412,7 @@ class RM_GIAPI {
 			}
 		}
 
-		$this->log_request( $action );
+		$this->log_request( $action, $urls_count );
 
 		if ( $this->debug ) {
 			error_log( 'Rank Math Instant Index: ' . $action . ' ' . $url_input[0] . ( count( $url_input ) > 1 ? ' (+)' : '' ) . "\n" . print_r( $data, true ) ); // phpcs:ignore
@@ -425,8 +427,8 @@ class RM_GIAPI {
 	 * @param  string $type API action.
 	 * @return void
 	 */
-	public function log_request( $type ) {
-		$requests_log            = get_option(
+	public function log_request( $type, $number = 1 ) {
+		$requests_log = get_option(
 			'giapi_requests',
 			[
 				'update'      => [],
@@ -435,7 +437,13 @@ class RM_GIAPI {
 				'bing_submit' => [],
 			]
 		);
-		$requests_log[ $type ][] = time();
+
+		if ( ! isset( $requests_log[ $type ] ) ) {
+			$requests_log[ $type ] = array();
+		}
+
+		$add = array_fill( 0, $number, time() );
+		$requests_log[ $type ] = array_merge( $requests_log[ $type ], $add );
 		if ( count( $requests_log[ $type ] ) > 600 ) {
 			$requests_log[ $type ] = array_slice( $requests_log[ $type ], -600, 600, true );
 		}
@@ -767,7 +775,7 @@ class RM_GIAPI {
 	private function save_bing_settings() {
 		$bing_key = sanitize_text_field( wp_unslash( $_POST['giapi_settings']['bing_key'] ) );
 
-		$bing_post_types = (array) $_POST['giapi_settings']['bing_post_types']; // phpcs:ignore
+		$bing_post_types = isset( $_POST['giapi_settings']['bing_post_types'] ) ? (array) $_POST['giapi_settings']['bing_post_types'] : array(); // phpcs:ignore
 		$bing_post_types = array_map( 'sanitize_title', $bing_post_types );
 
 		$settings = $this->get_settings();
