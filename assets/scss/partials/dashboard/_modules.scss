@@ -36,98 +36,110 @@
 			// Icon Colors.
 			&.rm-icon {
 				&-404 {
-					color: #FF521B;
-					background: rgba( #FF521B, 0.12 );
+					color: #ff521b;
+					background: rgba( #ff521b, .12 );
 				}
 
 				&-mobile {
 					color: #3f8aca;
-					background: rgba( #3f8aca, 0.12 );;
+					background: rgba( #3f8aca, .12 );;
 				}
 
 				&-acf {
-					color: #03E6AA;
-					background: rgba( #03E6AA, 0.12 );
+					color: #03e6aa;
+					background: rgba( #03e6aa, .12 );
 				}
 
 				&-users {
-					color: #3494BE;
-					background: rgba( #3494BE, 0.1 );
+					color: #3494be;
+					background: rgba( #3494be, .1 );
 				}
 
 				&-comments {
-					color: #B8423F;
-					background: rgba( #B8423F, 0.1 );
+					color: #b8423f;
+					background: rgba( #b8423f, .1 );
 				}
 
 				&-images {
 					color: #649d66;
-					background: rgba( #649d66, 0.1 );
+					background: rgba( #649d66, .1 );
 				}
 
 				&-link {
-					color: #DBA240;
-					background: rgba( #DBA240, 0.1 );
+					color: #dba240;
+					background: rgba( #dba240, .1 );
 				}
 
 				&-local-seo {
-					color: #2940C9;
-					background: rgba( #2940C9, 0.1 );
+					color: #2940c9;
+					background: rgba( #2940c9, .1 );
 				}
 
 				&-post {
 					color: #679cf7;
-					background: rgba( #679cf7, 0.1 );
+					background: rgba( #679cf7, .1 );
 				}
 
 				&-redirection {
-					color: #F7B267;
-					background: rgba( #F7B267, 0.1 );
+					color: #f7b267;
+					background: rgba( #f7b267, .1 );
 				}
 
 				&-schema {
 					color: #843224;
-					background: rgba( #843224, 0.1 );
+					background: rgba( #843224, .1 );
 				}
 
 				&-role-manager {
 					color: #87a627;
-					background: rgba( #87a627, 0.1 );
+					background: rgba( #87a627, .1 );
 				}
 
 				&-search-console {
-					color: #3C88D8;
-					background: rgba( #3C88D8, 0.1 );
+					color: #3c88d8;
+					background: rgba( #3c88d8, .1 );
 				}
 
 				&-analyzer {
-					color: #E3765C;
-					background: rgba( #E3765C, 0.1 );
+					color: #e3765c;
+					background: rgba( #e3765c, .1 );
 				}
 
 				&-sitemap {
 					color: #049404;
-					background: rgba( #049404, 0.1 );
+					background: rgba( #049404, .1 );
 				}
 
 				&-cart {
 					color: #842474;
-					background: rgba( #842474, 0.1 );
+					background: rgba( #842474, .1 );
 				}
 
 				&-video {
 					color: #f76767;
-					background: rgba( #f76767, 0.1 );
+					background: rgba( #f76767, .1 );
 				}
 
 				&-stories {
 					color: #180ca4;
-					background: rgba( #180ca4, 0.1 );
+					background: rgba( #180ca4, .1 );
 				}
 
 				&-instant-indexing {
 					color: #a40fa4;
-    				background: rgba( #a40fa4, 0.1 );
+					background: rgba( #a40fa4, .1 );
+				}
+
+				&-target {
+					color: #e91e63;
+					background: rgba( #e91e63, .05 );
+
+					&:before {
+						background: linear-gradient(-135deg, #ff4492, #434e8f);
+						-webkit-background-clip: text;
+						background-clip: text;
+						-webkit-text-fill-color: transparent;
+					}
 				}
 			}
 		}
@@ -143,6 +155,11 @@
 					background: rgba(16,172,132,0.1);
 					color: #019e76;
 					font-weight: 500;
+
+                    &.beta {
+                        color: #e91e63;
+                        background: rgba( #e91e63, .1 );
+                    }
 				}
 			}
 

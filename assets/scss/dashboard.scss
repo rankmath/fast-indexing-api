@@ -120,6 +120,7 @@
 
 			.star {
 				vertical-align: 0;
+				color: #ffb900;
 			}
 		}
 
@@ -133,3 +134,7 @@
 	pointer-events: none;
 }
 
+.toplevel_page_instant-indexing-dashboard {
+	height: auto;
+	position: relative;
+}
