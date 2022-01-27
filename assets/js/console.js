@@ -53,10 +53,12 @@ jQuery(document).ready(function($) {
 		} else {
 			// Bing URL submission API.
 			if ( typeof info.error !== 'undefined' ) {
-					$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+info.error.code).siblings('.response-message').text(info.error.message);
-				} else {
-					$ufResponse.addClass('success').find('.response-status').text(rm_giapi.l10n_success+' ').siblings('.response-message').text(rm_giapi.l10n_see_response);
-				}
+				$ufResponse.addClass('fail').find('.response-status').text(rm_giapi.l10n_error+' '+info.error.code).siblings('.response-message').text(info.error.message);
+			} else {
+				$ufResponse.addClass('success').find('.response-status').text(rm_giapi.l10n_success+' ').siblings('.response-message').text(rm_giapi.l10n_see_response);
+			}
+
+			action = 'indexnow_submit';
 		}
 
 		var rawdata = n + " " + action + ": " + urls_str + "\n" + JSON.stringify(info, null, 2) + "\n" + "-".repeat(56);
