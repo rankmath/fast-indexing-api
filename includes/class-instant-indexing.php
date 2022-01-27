@@ -106,8 +106,8 @@ class RM_GIAPI {
 
 		$this->default_nav_tab   = 'google_settings';
 		$this->settings_defaults = [
-			'json_key'   => '',
-			'post_types' => [],
+			'json_key'        => '',
+			'post_types'      => [],
 			'bing_post_types' => [
 				'post' => 'post',
 				'page' => 'page',
