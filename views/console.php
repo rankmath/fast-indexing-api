@@ -10,7 +10,7 @@
 	<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 
 	<?php
-	if ( ! $this->get_setting( 'json_key' ) && ( ! $this->get_setting( 'bing_api_key' ) || ! $this->is_rm_active ) ) {
+	if ( ! $this->get_setting( 'json_key' ) ) {
 		?>
 		<p class="description">
 			<?php
@@ -18,7 +18,7 @@
 				sprintf(
 					/* translators: %s is a link to the plugin settings tab. */
 					__( 'Please navigate to the %s tab to configure the plugin.', 'fast-indexing-api' ),
-					'<a href="' . esc_url( admin_url( 'admin.php?page=instant-indexing' ) ) . '">' . __( 'Settings', 'fast-indexing-api' ) . '</a>'
+					'<a href="' . esc_url( admin_url( 'admin.php?page=instant-indexing&tab=google_settings' ) ) . '">' . __( 'Settings', 'fast-indexing-api' ) . '</a>'
 				)
 			);
 			?>
@@ -48,7 +48,7 @@
 			<label><input type="radio" name="api_action" value="remove" class="giapi-action" <?php checked( $selected_action, 'remove' ); ?>> <?php wp_kses_post( _e( '<strong>Google</strong>: Remove URL', 'fast-indexing-api' ) ); ?></label><br>
 			<label><input type="radio" name="api_action" value="getstatus" class="giapi-action" <?php checked( $selected_action, 'getstatus' ); ?>> <?php wp_kses_post( _e( '<strong>Google</strong>: Get URL status', 'fast-indexing-api' ) ); ?></label><br>
 		<?php } ?>
-		<?php if ( $this->is_rm_active && $this->get_setting( 'bing_api_key' ) ) { ?>
+		<?php if ( $this->is_rm_active ) { ?>
 			<label><input type="radio" name="api_action" value="bing_submit" class="giapi-action" <?php checked( $selected_action, 'bing_submit' ); ?>> <?php wp_kses_post( _e( '<strong>IndexNow</strong>: Submit URL', 'fast-indexing-api' ) ); ?></label><br>
 		<?php } ?>
 		<?php wp_nonce_field( 'giapi-console' ); ?>
