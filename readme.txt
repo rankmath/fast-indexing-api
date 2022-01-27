@@ -107,7 +107,7 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 == Changelog ==
 
 = v1.1.4 [Jan 26, 2022] =
-* Improved: Make use of the new IndexNow API if the [Rank Math SEO](https://rankmath.com/) plugin is also activated
+* Improved: Make use of the new IndexNow API if the [Rank Math SEO](https://rankmath.com/) plugin is also active
 * Fixed: PHP error when submitting to Bing API
 
 = v1.1.3 [Dec 10, 2021] =
