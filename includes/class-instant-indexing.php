@@ -889,7 +889,7 @@ class RM_GIAPI {
 	public function filter_modules( $modules ) {
 		$modules['instant-indexing'] = [
 			'title'         => esc_html__( 'Instant Indexing', 'fast-indexing-api' ),
-			'desc'          => esc_html__( 'Directly notify search engines when pages are added, updated or removed.', 'fast-indexing-api' ),
+			'desc'          => sprintf( esc_html__( 'Directly notify search engines like Bing & Yandex using the %s when pages are added, updated and removed, or submit URLs manually.', 'fast-indexing-api' ), '<a href="https://rankmath.com/kb/how-to-use-indexnow/?utm_source=Plugin&utm_campaign=WP" target="_blank">' . __( 'IndexNow API', 'fast-indexing-api' ) . '</a>' ),
 			'class'         => 'RM_GIAPI_Module',
 			'icon'          => 'instant-indexing',
 			'settings'      => add_query_arg( 'page', 'instant-indexing', admin_url( 'admin.php' ) ),
