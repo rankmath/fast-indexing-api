@@ -17,7 +17,12 @@ jQuery(document).ready(function($) {
 			is_batch = true;
 		}
 
-		$ufResponse.removeClass('not-ready fail success').addClass('ready').find('.response-id').html('<strong>' + action + '</strong>' + ' ' + urls_str);
+		var action_label = action;
+		if ( 'bing_submit' === action ) {
+			action_label = 'indexnow_submit';
+		}
+
+		$ufResponse.removeClass('not-ready fail success').addClass('ready').find('.response-id').html('<strong>' + action_label + '</strong>' + ' ' + urls_str);
 		if ( api_action !== 'bing_submit' ) {
 			if ( ! is_batch ) {
 				if ( typeof info.error !== 'undefined' ) {
