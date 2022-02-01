@@ -229,7 +229,8 @@
 						<h3>
 							<?php esc_html_e( 'Instant Indexing', 'fast-indexing-api' ); ?>
 						</h3>
-						<p><?php esc_html_e( 'Directly notify search engines(Bing) when pages are added, updated or removed.', 'fast-indexing-api' ); ?></p>
+						<?php // Translators: placeholder is "IndexNow API". ?>
+						<p><?php echo sprintf( esc_html__( 'Directly notify search engines like Bing & Yandex using the %s when pages are added, updated and removed, or submit URLs manually.', 'fast-indexing-api' ), '<a href="https://rankmath.com/kb/how-to-use-indexnow/?utm_source=Plugin&utm_campaign=WP" target="_blank">' . __( 'IndexNow API', 'fast-indexing-api' ) . '</a>' ); ?></p>
 					</header>
 					<div class="status wp-clearfix">
 						<span class="cmb2-toggle">

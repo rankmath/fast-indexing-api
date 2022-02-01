@@ -2,10 +2,10 @@
 Contributors: rankmath
 Plugin link: https://rankmath.com/wordpress/plugin/instant-indexing/
 Tags: indexing api, crawling, live streaming, fast indexing, job posting
-Tested up to: 5.8.1
+Tested up to: 5.9
 Requires at least: 5.6
 Requires PHP: 7.2
-Stable tag: 1.1.4
+Stable tag: 1.1.7
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -106,10 +106,18 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 
 == Changelog ==
 
-= v1.1.4 [Jan 03, 2022] =
+= v1.1.7 [Feb 01, 2022] =
 * Improved: Styling of some elements
 * Fixed: Some of the text was not translation ready
 * Fixed: A couple of coding standard issues
+
+= v1.1.6 [Jan 28, 2022] =
+* Improved: Show IndexNow log when IndexNow is available.
+* Fixed: Change "bing_submit" action label to "indexnow_submit".
+
+= v1.1.4 [Jan 27, 2022] =
+* Improved: Make use of the new IndexNow API if the [Rank Math SEO](https://rankmath.com/) plugin is also active
+* Fixed: PHP error when submitting to Bing API
 
 = v1.1.3 [Dec 10, 2021] =
 * Fixed: Request count when sending multiple URL's

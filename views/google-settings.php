@@ -34,7 +34,7 @@
 			</tr>
 			<tr valign="top">
 				<th scope="row">
-					<?php esc_html_e( 'Submit Post Types to Google:', 'fast-indexing-api' ); ?>
+					<?php esc_html_e( 'Submit Posts to Google:', 'fast-indexing-api' ); ?>
 					<p class="description"><?php esc_html_e( 'Submit posts from these post types automatically to the Google Instant Indexing API when a post is published, edited, or deleted.', 'fast-indexing-api' ); ?></p>
 				</th>
 				<td><?php $this->post_types_checkboxes(); ?></td>
