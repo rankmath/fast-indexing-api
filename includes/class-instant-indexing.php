@@ -3,6 +3,10 @@
  * Main plugin class.
  *
  * @package Instant Indexing
+ * @since 1.0.0
+ * @author Rank Math
+ * @link https://rankmath.com
+ * @license GNU General Public License 3.0+
  */
 class RM_GIAPI {
 
@@ -11,7 +15,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.6';
+	public $version = '1.1.7';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -192,6 +196,9 @@ class RM_GIAPI {
 		add_action( 'admin_init', [ $this, 'handle_clear_history' ] );
 	}
 
+	/**
+	 * Remove Admin page.
+	 */
 	public function remove_rm_admin_page() {
 		remove_submenu_page( 'rank-math', 'rank-math-options-instant-indexing' );
 	}
@@ -425,6 +432,7 @@ class RM_GIAPI {
 	 * Log request type & timestamp to keep track of remaining quota.
 	 *
 	 * @param  string $type API action.
+	 * @param  int    $number Number of URLs.
 	 * @return void
 	 */
 	public function log_request( $type, $number = 1 ) {
@@ -439,7 +447,7 @@ class RM_GIAPI {
 		);
 
 		if ( ! isset( $requests_log[ $type ] ) ) {
-			$requests_log[ $type ] = array();
+			$requests_log[ $type ] = [];
 		}
 
 		$add = array_fill( 0, $number, time() );
@@ -574,8 +582,8 @@ class RM_GIAPI {
 				'data:image/svg+xml;base64,' . \base64_encode( '<svg viewBox="0 0 462.03 462.03" xmlns="http://www.w3.org/2000/svg" width="20"><g fill="#fff"><path d="m462 234.84-76.17 3.43 13.43 21-127 81.18-126-52.93-146.26 60.97 10.14 24.34 136.1-56.71 128.57 54 138.69-88.61 13.43 21z"/><path d="m54.1 312.78 92.18-38.41 4.49 1.89v-54.58h-96.67zm210.9-223.57v235.05l7.26 3 89.43-57.05v-181zm-105.44 190.79 96.67 40.62v-165.19h-96.67z"/></g></svg>' ),
 				76
 			);
-			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', array( $this, 'show_dashboard' ) );
-			$this->menu_hook_suffix           = add_submenu_page( 'instant-indexing-dashboard', __( 'Instant Indexing', 'fast-indexing-api' ), __( 'Instant Indexing', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing', array( $this, 'show_admin_page' ) );
+			$this->dashboard_menu_hook_suffix = add_submenu_page( 'instant-indexing-dashboard', 'Rank Math', __( 'Dashboard', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing-dashboard', [ $this, 'show_dashboard' ] );
+			$this->menu_hook_suffix           = add_submenu_page( 'instant-indexing-dashboard', __( 'Instant Indexing', 'fast-indexing-api' ), __( 'Instant Indexing', 'fast-indexing-api' ), apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ), 'instant-indexing', [ $this, 'show_admin_page' ] );
 
 			return;
 		}
@@ -684,7 +692,7 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function show_google_settings() {
-		include_once RM_GIAPI_PATH . "views/google-settings.php";
+		include_once RM_GIAPI_PATH . 'views/google-settings.php';
 	}
 
 	/**
@@ -693,7 +701,7 @@ class RM_GIAPI {
 	 * @return void
 	 */
 	public function show_bing_settings() {
-		include_once RM_GIAPI_PATH . "views/bing-settings.php";
+		include_once RM_GIAPI_PATH . 'views/bing-settings.php';
 	}
 
 	/**
@@ -763,6 +771,9 @@ class RM_GIAPI {
 		return array_merge( $settings, $new_settings );
 	}
 
+	/**
+	 * Get settings.
+	 */
 	private function get_settings() {
 		$settings = get_option( 'rank-math-options-instant-indexing', [] );
 		if ( empty( $settings ) ) {
@@ -782,7 +793,7 @@ class RM_GIAPI {
 	 * @return array
 	 */
 	private function save_bing_settings() {
-		$bing_post_types = isset( $_POST['giapi_settings']['bing_post_types'] ) ? (array) $_POST['giapi_settings']['bing_post_types'] : array(); // phpcs:ignore
+		$bing_post_types = isset( $_POST['giapi_settings']['bing_post_types'] ) ? (array) $_POST['giapi_settings']['bing_post_types'] : []; // phpcs:ignore
 		$bing_post_types = array_map( 'sanitize_title', $bing_post_types );
 
 		$settings = $this->get_settings();
@@ -895,7 +906,7 @@ class RM_GIAPI {
 	/**
 	 * Add Rank Math module.
 	 *
-	 * @param array  $modules Current modules.
+	 * @param  array $modules Current modules.
 	 * @return array $modules New modules.
 	 */
 	public function filter_modules( $modules ) {
@@ -959,7 +970,7 @@ class RM_GIAPI {
 		}
 
 		/* translators: %s is a link to Rank Math plugin page */
-		$message = sprintf( __( 'It is recommended to use %s along with the Instant Indexing plugin.', 'fast-indexing-api' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO' ) . '</a>' );
+		$message = sprintf( __( 'It is recommended to use %s along with the Instant Indexing plugin.', 'fast-indexing-api' ), '<a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank">' . __( 'Rank Math SEO', 'fast-indexing-api' ) . '</a>' );
 		$class   = 'notice-error';
 		$show_on = [ 'rank-math_page_instant-indexing', 'rank-math_page_instant-indexing-dashboard' ];
 
@@ -990,6 +1001,11 @@ class RM_GIAPI {
 			return;
 		}
 
+		// Don't submit if post is set to noindex in Rank Math SEO.
+		if ( class_exists( 'RankMath' ) && ! RankMath\Helper::is_post_indexable( $post_id ) ) {
+			return;
+		}
+
 		$this->send_to_api( $send_url, 'update', false );
 		$this->add_notice( __( 'A recently published post has been automatically submitted to the Instant Indexing API.', 'fast-indexing-api' ), 'notice-info', null, true );
 	}
@@ -1015,6 +1031,11 @@ class RM_GIAPI {
 		$send_url = apply_filters( 'rank_math/indexing_api/publish_url', get_permalink( $post ), $post, 'bing' );
 		// Early exit if filter is set to false.
 		if ( ! $send_url ) {
+			return;
+		}
+
+		// Don't submit if post is set to noindex in Rank Math SEO.
+		if ( class_exists( 'RankMath' ) && ! RankMath\Helper::is_post_indexable( $post_id ) ) {
 			return;
 		}
 

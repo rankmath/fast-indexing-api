@@ -5,7 +5,7 @@ Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 5.9
 Requires at least: 5.6
 Requires PHP: 7.2
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -105,6 +105,12 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 3. Plugin Settings
 
 == Changelog ==
+
+= v1.1.7 [Feb 01, 2022] =
+* Improved: Styling of some elements
+* Improved: Don't submit a post automatically if it's set to noindex
+* Fixed: Some of the text was not translation ready
+* Fixed: A couple of coding standard issues
 
 = v1.1.6 [Jan 28, 2022] =
 * Improved: Show IndexNow log when IndexNow is available.
