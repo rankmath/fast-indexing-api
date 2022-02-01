@@ -44,9 +44,9 @@
 		<br><br>
 		<label><?php esc_html_e( 'Action:', 'fast-indexing-api' ); ?></label><br>
 		<?php if ( $this->get_setting( 'json_key' ) ) { ?>
-			<label><input type="radio" name="api_action" value="update" class="giapi-action" <?php checked( $selected_action, 'update' ); ?>> <?php echo wp_kses_post( '<strong>Google</strong>: Publish/update URL', 'fast-indexing-api' ); ?></label><br>
-			<label><input type="radio" name="api_action" value="remove" class="giapi-action" <?php checked( $selected_action, 'remove' ); ?>> <?php echo wp_kses_post( '<strong>Google</strong>: Remove URL', 'fast-indexing-api' ); ?></label><br>
-			<label><input type="radio" name="api_action" value="getstatus" class="giapi-action" <?php checked( $selected_action, 'getstatus' ); ?>> <?php echo wp_kses_post( '<strong>Google</strong>: Get URL status', 'fast-indexing-api' ); ?></label><br>
+			<label><input type="radio" name="api_action" value="update" class="giapi-action" <?php checked( $selected_action, 'update' ); ?>> <?php echo wp_kses_post( __( '<strong>Google</strong>: Publish/update URL', 'fast-indexing-api' ) ); ?></label><br>
+			<label><input type="radio" name="api_action" value="remove" class="giapi-action" <?php checked( $selected_action, 'remove' ); ?>> <?php echo wp_kses_post( __( '<strong>Google</strong>: Remove URL', 'fast-indexing-api' ) ); ?></label><br>
+			<label><input type="radio" name="api_action" value="getstatus" class="giapi-action" <?php checked( $selected_action, 'getstatus' ); ?>> <?php echo wp_kses_post( __( '<strong>Google</strong>: Get URL status', 'fast-indexing-api' ) ); ?></label><br>
 		<?php } ?>
 		<?php if ( $this->is_rm_active ) { ?>
 			<label><input type="radio" name="api_action" value="bing_submit" class="giapi-action" <?php checked( $selected_action, 'bing_submit' ); ?>> <?php wp_kses_post( _e( '<strong>IndexNow</strong>: Submit URL', 'fast-indexing-api' ) ); ?></label><br>
