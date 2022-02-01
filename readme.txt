@@ -108,6 +108,7 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 
 = v1.1.7 [Feb 01, 2022] =
 * Improved: Styling of some elements
+* Improved: Don't submit a post automatically if it's set to noindex
 * Fixed: Some of the text was not translation ready
 * Fixed: A couple of coding standard issues
 
