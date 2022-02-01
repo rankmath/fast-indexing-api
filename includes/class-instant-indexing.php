@@ -1001,6 +1001,11 @@ class RM_GIAPI {
 			return;
 		}
 
+		// Don't submit if post is set to noindex in Rank Math SEO.
+		if ( class_exists( 'RankMath' ) && ! RankMath\Helper::is_post_indexable( $post_id ) ) {
+			return;
+		}
+
 		$this->send_to_api( $send_url, 'update', false );
 		$this->add_notice( __( 'A recently published post has been automatically submitted to the Instant Indexing API.', 'fast-indexing-api' ), 'notice-info', null, true );
 	}
@@ -1026,6 +1031,11 @@ class RM_GIAPI {
 		$send_url = apply_filters( 'rank_math/indexing_api/publish_url', get_permalink( $post ), $post, 'bing' );
 		// Early exit if filter is set to false.
 		if ( ! $send_url ) {
+			return;
+		}
+
+		// Don't submit if post is set to noindex in Rank Math SEO.
+		if ( class_exists( 'RankMath' ) && ! RankMath\Helper::is_post_indexable( $post_id ) ) {
 			return;
 		}
 
