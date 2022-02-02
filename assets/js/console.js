@@ -109,6 +109,11 @@ jQuery(document).ready(function($) {
 		$('#instant-indexing').submit();
 	}
 
+	$( '#indexnow_show_response_codes' ).on( 'click', function( e ) {
+		e.preventDefault();
+		$( this ).toggleClass( 'active' );
+		$( '#indexnow_response_codes' ).toggleClass( 'hidden' );
+	});
 	
 });
 

@@ -5,7 +5,7 @@ Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 5.9
 Requires at least: 5.6
 Requires PHP: 7.2
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -105,6 +105,11 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 3. Plugin Settings
 
 == Changelog ==
+
+= v1.1.8 [Feb 02, 2022] =
+* Improved: Added response code help to the IndexNow History tab
+* Improved: Added new column in IndexNow History table for submission type (manual/auto)
+* Fixed: PHP notice when visiting the IndexNow History tab
 
 = v1.1.7 [Feb 01, 2022] =
 * Improved: Styling of some elements
