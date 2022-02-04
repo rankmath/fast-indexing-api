@@ -15,7 +15,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.8';
+	public $version = '1.1.9';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -116,6 +116,7 @@ class RM_GIAPI {
 				'post' => 'post',
 				'page' => 'page',
 			],
+			'indexnow_api_key' => '',
 		];
 
 		$this->nav_tabs = [
@@ -125,7 +126,8 @@ class RM_GIAPI {
 		];
 
 		if ( $this->is_rm_active && class_exists( 'RankMath\\Instant_Indexing\\Api' ) ) {
-			$this->rmapi = new RankMath\Instant_Indexing\Api();
+			$this->rm_module = new RankMath\Instant_Indexing\Instant_Indexing();
+			$this->rmapi = RankMath\Instant_Indexing\Api::get();
 			add_action( 'admin_init', [ $this, 'remove_rm_admin_page' ] );
 		} else {
 			unset( $this->nav_tabs['bing_settings'] );
@@ -358,7 +360,7 @@ class RM_GIAPI {
 	 * @return array  $data      Result of the API call.
 	 */
 	public function send_to_api( $url_input, $action, $is_manual = true ) {
-		$url_input = (array) $url_input;
+		$url_input  = (array) $url_input;
 		$urls_count = count( $url_input );
 
 		if ( strpos( $action, 'bing' ) === false ) {
@@ -681,6 +683,7 @@ class RM_GIAPI {
 					'l10n_error'        => __( 'Error', 'fast-indexing-api' ),
 					'l10n_last_updated' => __( 'Last updated ', 'fast-indexing-api' ),
 					'l10n_see_response' => __( 'See response for details.', 'fast-indexing-api' ),
+					'rest_url'          => $this->is_rm_active ? rest_url( \RankMath\Rest\Rest_Helper::BASE . '/in' ) : '',
 				]
 			);
 		}
@@ -734,7 +737,7 @@ class RM_GIAPI {
 		$settings = [];
 		if ( isset( $_POST['giapi_settings']['json_key'] ) ) {
 			$settings = $this->save_google_settings();
-		} elseif ( isset( $_POST['giapi_settings']['bing_post_types'] ) ) {
+		} elseif ( isset( $_POST['giapi_settings']['indexnow_api_key'] ) ) {
 			$settings = $this->save_bing_settings();
 		}
 
@@ -799,10 +802,12 @@ class RM_GIAPI {
 		$settings = $this->get_settings();
 
 		$new_settings = [
-			'bing_post_types' => array_values( $bing_post_types ),
+			'bing_post_types'  => array_values( $bing_post_types ),
+			'indexnow_api_key' => sanitize_text_field( wp_unslash( $_POST['giapi_settings']['indexnow_api_key'] ) ),   // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		];
+		$new_settings = array_merge( $settings, $new_settings );
 
-		return array_merge( $settings, $new_settings );
+		return $new_settings;
 	}
 
 	/**
