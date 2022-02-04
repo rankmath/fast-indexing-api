@@ -120,11 +120,9 @@ jQuery(document).ready(function($) {
 		var originalValue = $( '#giapi_indexnow_api_key' ).val()
 		$( '#giapi_indexnow_api_key' ).val( '...' )
 		$.ajax( {
-			url: rm_giapi.rest_url + '/resetKey',
-			type: 'POST',
-			beforeSend( xhr ) {
-				xhr.setRequestHeader( 'X-WP-Nonce', rankMath.api.nonce );
-			},
+			url: ajaxurl,
+			type: 'GET',
+			data: { action: 'rm_giapi_reset_key', _ajax_nonce: $('#reset_key_nonce').val() },
 			success: function( response ) {
 				$( '#giapi_indexnow_api_key' ).val( response.key );
 				$( '#indexnow_api_key_location').text( response.location );
