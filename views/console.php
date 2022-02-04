@@ -17,7 +17,7 @@
 			echo wp_kses_post(
 				sprintf(
 					/* translators: %s is a link to the plugin settings tab. */
-					__( 'Please navigate to the %s tab to configure the plugin.', 'fast-indexing-api' ),
+					__( 'To use the Google Indexing API, please navigate to the %s tab and configure the API.', 'fast-indexing-api' ),
 					'<a href="' . esc_url( admin_url( 'admin.php?page=instant-indexing&tab=google_settings' ) ) . '">' . __( 'Settings', 'fast-indexing-api' ) . '</a>'
 				)
 			);
@@ -25,10 +25,8 @@
 		</p>
 		</div>
 		<?php
-		return;
-	}
-	?>
-
+	} else {
+		?>
 		<div class="giapi-limits">
 			<?php if ( $this->get_setting( 'json_key' ) ) { ?>
 				<p class="" style="line-height: 1.8"><a href="https://developers.google.com/search/apis/indexing-api/v3/quota-pricing" target="_blank"><strong><?php esc_html_e( 'Google API Remaining Quota:', 'fast-indexing-api' ); ?></strong></a><br>
@@ -37,6 +35,9 @@
 				<code><?php esc_html_e( 'MetadataRequestsPerMinutePerProject', 'fast-indexing-api' ); ?> = <strong id="giapi-limit-metapermin"><?php echo absint( $limits['metapermin'] ); ?></strong> / <?php echo absint( $limits['metapermin_max'] ); ?></code></p>
 			<?php } ?>
 		</div>
+		<?php
+	}
+	?>
 
 	<form id="instant-indexing" class="wpform" method="post">
 		<label for="giapi-url"><?php esc_html_e( 'URLs (one per line, up to 100 for Google and 10,000 for IndexNow):', 'fast-indexing-api' ); ?></label><br>
