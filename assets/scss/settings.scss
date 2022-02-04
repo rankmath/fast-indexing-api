@@ -19,3 +19,13 @@
 .notice:not(.rank-math-notice) {
 	display: none;
 }
+
+#indexnow_reset_key,
+#indexnow_check_key {
+	margin-top: 10px;
+}
+
+#indexnow_reset_key .dashicons,
+#indexnow_check_key .dashicons {
+	line-height: 1.4;
+}

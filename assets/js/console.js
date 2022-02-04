@@ -114,6 +114,27 @@ jQuery(document).ready(function($) {
 		$( this ).toggleClass( 'active' );
 		$( '#indexnow_response_codes' ).toggleClass( 'hidden' );
 	});
+
+	$('#indexnow_reset_key').on( 'click', function( e ) {
+		e.preventDefault()
+		var originalValue = $( '#giapi_indexnow_api_key' ).val()
+		$( '#giapi_indexnow_api_key' ).val( '...' )
+		$.ajax( {
+			url: rm_giapi.rest_url + '/resetKey',
+			type: 'POST',
+			beforeSend( xhr ) {
+				xhr.setRequestHeader( 'X-WP-Nonce', rankMath.api.nonce );
+			},
+			success: function( response ) {
+				$( '#giapi_indexnow_api_key' ).val( response.key );
+				$( '#indexnow_api_key_location').text( response.location );
+				$( '#indexnow_check_key' ).attr( 'href', response.location );
+			},
+			error: function( response ) {
+				$( '#giapi_indexnow_api_key' ).val( originalValue );
+			},
+		} );
+	} );
 	
 });
 
