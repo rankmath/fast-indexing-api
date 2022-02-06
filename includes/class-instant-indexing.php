@@ -15,7 +15,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.10';
+	public $version = '1.1.11';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -406,7 +406,7 @@ class RM_GIAPI {
 				}
 			}
 		} else {
-			// Bing submit URL API.
+			// IndexNow submit URL.
 			$request = $this->rmapi->submit( $url_input, $is_manual );
 			if ( $request ) {
 				$data = [
@@ -420,9 +420,11 @@ class RM_GIAPI {
 					],
 				];
 			}
+
+			$action = 'indexnow_submit';
 		}
 
-		$this->log_request( 'indexnow_submit', $urls_count );
+		$this->log_request( $action, $urls_count );
 
 		if ( $this->debug ) {
 			error_log( 'Rank Math Instant Index: ' . $action . ' ' . $url_input[0] . ( count( $url_input ) > 1 ? ' (+)' : '' ) . "\n" . print_r( $data, true ) ); // phpcs:ignore

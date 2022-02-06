@@ -5,7 +5,7 @@ Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 5.9
 Requires at least: 5.6
 Requires PHP: 7.2
-Stable tag: 1.1.10
+Stable tag: 1.1.11
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -106,7 +106,10 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 
 == Changelog ==
 
-= v1.1.10 [Feb 03, 2022] =
+= v1.1.11 [Feb 06, 2022] =
+* Fixed: Limits calculation for the Google Indexing API
+
+= v1.1.10 [Feb 04, 2022] =
 * Fixed: Compatibility issue with Rank Math SEO
 
 = v1.1.9 [Feb 03, 2022] =
