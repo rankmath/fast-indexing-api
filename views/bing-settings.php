@@ -34,7 +34,7 @@ $check_button = '<a href="' . esc_url( $key_location ) . '" id="indexnow_check_k
 					<p class="description"><?php esc_html_e( 'The IndexNow API key proves the ownership of the site. It is generated automatically. You can change the key if it becomes known to third parties.', 'fast-indexing-api' ); ?></p>
 				</th>
 				<td>
-					<input type="text" class="large-text" id="giapi_indexnow_api_key" disabled="disabled" name="giapi_settings[indexnow_api_key]" value="<?php echo esc_attr( $this->rmapi->get_api_key() ); ?>">
+					<input type="text" class="large-text" id="giapi_indexnow_api_key" readonly="readonly" name="giapi_settings[indexnow_api_key]" value="<?php echo esc_attr( $this->rmapi->get_api_key() ); ?>">
 					<br />
 					<?php echo wp_kses_post( $reset_button ); ?>
 					<?php echo $reset_nonce; ?>
