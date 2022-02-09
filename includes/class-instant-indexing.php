@@ -620,7 +620,7 @@ class RM_GIAPI {
 	 * @return array Input URLs.
 	 */
 	public function get_input_urls() {
-		return array_values( array_filter( array_map( 'trim', explode( "\n", sanitize_textarea_field( wp_unslash( $_POST['url'] ) ) ) ) ) );
+		return array_values( array_filter( array_map( 'trim', array_map( 'esc_url_raw', explode( "\n", wp_unslash( $_POST['url'] ) ) ) ) ) );
 	}
 
 	/**
