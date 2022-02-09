@@ -116,23 +116,25 @@ jQuery(document).ready(function($) {
 	});
 
 	$('#indexnow_reset_key').on( 'click', function( e ) {
-		e.preventDefault()
-		var originalValue = $( '#giapi_indexnow_api_key' ).val()
-		$( '#giapi_indexnow_api_key' ).val( '...' )
+		e.preventDefault();
+		let originalValue = $( '#giapi_indexnow_api_key' ).val();
+		$( '#giapi_indexnow_api_key' ).val( '...' );
 		$.ajax( {
-			url: ajaxurl,
-			type: 'GET',
-			data: { action: 'rm_giapi_reset_key', _ajax_nonce: $('#reset_key_nonce').val() },
+			url: rankMath.indexNow.restUrl + '/resetKey',
+			type: 'POST',
+			beforeSend( xhr ) {
+				xhr.setRequestHeader( 'X-WP-Nonce', rankMath.api.nonce );
+			},
 			success: function( response ) {
 				$( '#giapi_indexnow_api_key' ).val( response.key );
 				$( '#indexnow_api_key_location').text( response.location );
 				$( '#indexnow_check_key' ).attr( 'href', response.location );
 			},
 			error: function( response ) {
-				$( '#giapi_indexnow_api_key' ).val( originalValue );
+				$( '#giapi_indexnow_api_key' ).val( originalValue )
 			},
-		} );
-	} );
+		} )
+	} )
 	
 });
 
