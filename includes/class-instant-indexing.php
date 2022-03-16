@@ -15,7 +15,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.12';
+	public $version = '1.1.13';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -156,7 +156,6 @@ class RM_GIAPI {
 		add_action( 'admin_footer', [ $this, 'admin_footer' ], 20 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 		add_action( 'wp_ajax_rm_giapi', [ $this, 'ajax_rm_giapi' ] );
-		add_action( 'wp_ajax_rm_giapi_reset_key', [ $this, 'ajax_reset_key' ] );
 		add_action( 'wp_ajax_rm_giapi_limits', [ $this, 'ajax_get_limits' ] );
 		add_action( 'admin_init', [ $this, 'rm_missing_admin_notice_error' ], 20, 1 );
 		add_action( 'admin_notices', [ $this, 'display_notices' ], 10, 1 );
@@ -407,6 +406,25 @@ class RM_GIAPI {
 			}
 		} else {
 			// IndexNow submit URL.
+
+			/**
+			 * Filter the URL to be submitted to IndexNow.
+			 * Returning false will prevent the URL from being submitted.
+			 *
+			 * @param bool   $is_manual Whether the URL is submitted manually by the user.
+			 */
+			$url_input = apply_filters( 'rank_math/instant_indexing/submit_url', $url_input, $is_manual );
+			if ( ! $url_input ) {
+				return false;
+			}
+
+			if ( ! $is_manual ) {
+				$logs = array_values( array_reverse( $this->rmapi->get_log() ) );
+				if ( ! empty( $logs[0] ) && $logs[0]['url'] === $url_input[0] && time() - $logs[0]['time'] < 15 ) {
+					return false;
+				}
+			}
+
 			$request = $this->rmapi->submit( $url_input, $is_manual );
 			if ( $request ) {
 				$data = [
@@ -563,64 +581,12 @@ class RM_GIAPI {
 	}
 
 	/**
-	 * AJAX handler to generate and save a new API key.
-	 *
-	 * @return void
-	 */
-	public function ajax_reset_key() {
-		check_ajax_referer( 'rm_giapi_reset_key' );
-
-		if ( ! current_user_can( apply_filters( 'rank_math/indexing_api/capability', 'manage_options' ) ) ) {
-			die( '0' );
-		}
-
-		$this->reset_indexnow_key();
-
-		$settings = get_option( 'rank-math-options-instant-indexing', [] );
-		$key      = $settings['indexnow_api_key'];
-		$location = trailingslashit( home_url() ) . $key . '.txt';
-
-		wp_send_json(
-			[
-				'status'   => 'ok',
-				'key'      => $key,
-				'location' => $location,
-			]
-		);
-		die();
-	}
-
-	/**
-	 * Generate new API key and save it.
-	 *
-	 * @return void
-	 */
-	public function reset_indexnow_key() {
-		$settings = RankMath\Helper::get_settings( 'instant_indexing', [] );
-		$settings['indexnow_api_key'] = $this->generate_indexnow_key();
-		$this->api_key = $settings['indexnow_api_key'];
-		update_option( 'rank-math-options-instant-indexing', $settings );
-	}
-
-	/**
-	 * Generate new API key.
-	 *
-	 * @return string
-	 */
-	public function generate_indexnow_key() {
-		$api_key = wp_generate_uuid4();
-		$api_key = preg_replace( '[-]', '', $api_key );
-
-		return $api_key;
-	}
-
-	/**
 	 * Normalize input URLs.
 	 *
 	 * @return array Input URLs.
 	 */
 	public function get_input_urls() {
-		return array_values( array_filter( array_map( 'trim', explode( "\n", sanitize_textarea_field( wp_unslash( $_POST['url'] ) ) ) ) ) );
+		return array_values( array_filter( array_map( 'trim', array_map( 'esc_url_raw', explode( "\n", wp_unslash( $_POST['url'] ) ) ) ) ) );
 	}
 
 	/**
