@@ -406,6 +406,25 @@ class RM_GIAPI {
 			}
 		} else {
 			// IndexNow submit URL.
+
+			/**
+			 * Filter the URL to be submitted to IndexNow.
+			 * Returning false will prevent the URL from being submitted.
+			 *
+			 * @param bool   $is_manual Whether the URL is submitted manually by the user.
+			 */
+			$url_input = apply_filters( 'rank_math/instant_indexing/submit_url', $url_input, $is_manual );
+			if ( ! $url_input ) {
+				return false;
+			}
+
+			if ( ! $is_manual ) {
+				$logs = array_values( array_reverse( $this->rmapi->get_log() ) );
+				if ( ! empty( $logs[0] ) && $logs[0]['url'] === $url_input[0] && time() - $logs[0]['time'] < 15 ) {
+					return false;
+				}
+			}
+
 			$request = $this->rmapi->submit( $url_input, $is_manual );
 			if ( $request ) {
 				$data = [

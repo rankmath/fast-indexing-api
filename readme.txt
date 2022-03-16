@@ -2,7 +2,7 @@
 Contributors: rankmath
 Plugin link: https://rankmath.com/wordpress/plugin/instant-indexing/
 Tags: indexing api, crawling, live streaming, fast indexing, job posting
-Tested up to: 5.9
+Tested up to: 5.9.2
 Requires at least: 5.6
 Requires PHP: 7.2
 Stable tag: 1.1.13
@@ -106,8 +106,9 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 
 == Changelog ==
 
-= v1.1.13 [Feb 09, 2022] =
-* Fixed: cyrillic letters getting removed from submitted URL
+= v1.1.13 [Mar 16, 2022] =
+* Fixed: special characters getting removed from submitted URL
+* Fixed: double IndexNow submissions
 * Improved: use reset key REST API endpoint from Rank Math
 
 = v1.1.12 [Feb 08, 2022] =
