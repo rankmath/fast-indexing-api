@@ -15,13 +15,12 @@
 
 namespace phpseclib3\Crypt\Common;
 
-use phpseclib3\Exception\UnsupportedFormatException;
-use phpseclib3\Exception\NoKeyLoadedException;
-use phpseclib3\Math\BigInteger;
+use phpseclib3\Crypt\DSA;
 use phpseclib3\Crypt\Hash;
 use phpseclib3\Crypt\RSA;
-use phpseclib3\Crypt\DSA;
-use phpseclib3\Crypt\ECDSA;
+use phpseclib3\Exception\NoKeyLoadedException;
+use phpseclib3\Exception\UnsupportedFormatException;
+use phpseclib3\Math\BigInteger;
 
 /**
  * Base Class for all asymmetric cipher classes
@@ -124,6 +123,12 @@ abstract class AsymmetricKey
     private $comment;
 
     /**
+     * @param string $type
+     * @return string
+     */
+    abstract public function toString($type, array $options = []);
+
+    /**
      * The constructor
      */
     protected function __construct()
@@ -140,7 +145,7 @@ abstract class AsymmetricKey
     protected static function initialize_static_variables()
     {
         if (!isset(self::$zero)) {
-            self::$zero= new BigInteger(0);
+            self::$zero = new BigInteger(0);
             self::$one = new BigInteger(1);
         }
 
@@ -198,7 +203,7 @@ abstract class AsymmetricKey
      * @param string|array $key
      * @param string $password optional
      */
-    public function loadPrivateKey($key, $password = '')
+    public static function loadPrivateKey($key, $password = '')
     {
         $key = self::load($key, $password);
         if (!$key instanceof PrivateKey) {
@@ -214,7 +219,7 @@ abstract class AsymmetricKey
      * @access public
      * @param string|array $key
      */
-    public function loadPublicKey($key)
+    public static function loadPublicKey($key)
     {
         $key = self::load($key);
         if (!$key instanceof PublicKey) {
@@ -230,7 +235,7 @@ abstract class AsymmetricKey
      * @access public
      * @param string|array $key
      */
-    public function loadParameters($key)
+    public static function loadParameters($key)
     {
         $key = self::load($key);
         if (!$key instanceof PrivateKey && !$key instanceof PublicKey) {
@@ -245,7 +250,7 @@ abstract class AsymmetricKey
      * @param string $type
      * @param string $key
      * @param string $password optional
-     * @return AsymmetricKey
+     * @return static
      */
     public static function loadFormat($type, $key, $password = false)
     {
@@ -280,7 +285,7 @@ abstract class AsymmetricKey
      * @param string $key
      * @param string $password optional
      */
-    public function loadPrivateKeyFormat($type, $key, $password = false)
+    public static function loadPrivateKeyFormat($type, $key, $password = false)
     {
         $key = self::loadFormat($type, $key, $password);
         if (!$key instanceof PrivateKey) {
@@ -297,7 +302,7 @@ abstract class AsymmetricKey
      * @param string $type
      * @param string $key
      */
-    public function loadPublicKeyFormat($type, $key)
+    public static function loadPublicKeyFormat($type, $key)
     {
         $key = self::loadFormat($type, $key);
         if (!$key instanceof PublicKey) {
@@ -314,7 +319,7 @@ abstract class AsymmetricKey
      * @param string $type
      * @param string|array $key
      */
-    public function loadParametersFormat($type, $key)
+    public static function loadParametersFormat($type, $key)
     {
         $key = self::loadFormat($type, $key);
         if (!$key instanceof PrivateKey && !$key instanceof PublicKey) {
@@ -332,7 +337,7 @@ abstract class AsymmetricKey
      * @param string $method optional
      * @return mixed
      */
-    protected static function validatePlugin($format, $type, $method = NULL)
+    protected static function validatePlugin($format, $type, $method = null)
     {
         $type = strtolower($type);
         if (!isset(self::$plugins[static::ALGORITHM][$format][$type])) {
@@ -514,7 +519,7 @@ abstract class AsymmetricKey
      */
     public function getHash()
     {
-       return clone $this->hash;
+        return clone $this->hash;
     }
 
     /**
@@ -576,7 +581,7 @@ abstract class AsymmetricKey
         $rolen = $this->q->getLengthInBytes();
         if (strlen($out) < $rolen) {
             return str_pad($out, $rolen, "\0", STR_PAD_LEFT);
-        } else if (strlen($out) > $rolen) {
+        } elseif (strlen($out) > $rolen) {
             return substr($out, -$rolen);
         } else {
             return $out;
