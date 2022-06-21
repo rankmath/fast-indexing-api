@@ -1,8 +1,7 @@
 {
-    "name": "symfony/polyfill-php72",
+    "name": "symfony/deprecation-contracts",
     "type": "library",
-    "description": "Symfony polyfill backporting some PHP 7.2+ features to lower PHP versions",
-    "keywords": ["polyfill", "shim", "compatibility", "portable"],
+    "description": "A generic function and convention to trigger deprecation notices",
     "homepage": "https://symfony.com",
     "license": "MIT",
     "authors": [
@@ -19,17 +18,18 @@
         "php": ">=7.1"
     },
     "autoload": {
-        "psr-4": { "Symfony\\Polyfill\\Php72\\": "" },
-        "files": [ "bootstrap.php" ]
+        "files": [
+            "function.php"
+        ]
     },
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-main": "1.26-dev"
+            "dev-main": "2.5-dev"
         },
         "thanks": {
-            "name": "symfony/polyfill",
-            "url": "https://github.com/symfony/polyfill"
+            "name": "symfony/contracts",
+            "url": "https://github.com/symfony/contracts"
         }
     }
 }
