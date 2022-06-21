@@ -5,7 +5,7 @@ Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 6.0
 Requires at least: 5.6
 Requires PHP: 7.2.5
-Stable tag: 1.1.15
+Stable tag: 1.1.16
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -106,7 +106,7 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 
 == Changelog ==
 
-= v1.1.15 [Jun 21, 2022] =
+= v1.1.16 [Jun 21, 2022] =
 * Updated the Guzzle HTTP library to version 7.4.4 (requires PHP 7.2.5)
 
 = v1.1.14 [Jun 4, 2022] =
