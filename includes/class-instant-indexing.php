@@ -15,7 +15,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.16';
+	public $version = '1.1.17';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -140,7 +140,7 @@ class RM_GIAPI {
 			$this->default_nav_tab = 'console';
 		}
 
-		if ( $this->is_rm_active ) {
+		if ( $this->is_rm_active && isset( $this->nav_tabs['bing_settings'] ) ) {
 			$this->nav_tabs['bing_settings'] = '<span class="dashicons dashicons-yes-alt"></span> ' . $this->nav_tabs['bing_settings'];
 			unset( $this->nav_tabs['console'] );
 			$this->nav_tabs = [ 'console' => __( 'Console', 'fast-indexing-api' ) ] + $this->nav_tabs;
