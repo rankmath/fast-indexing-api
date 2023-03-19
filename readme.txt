@@ -2,7 +2,7 @@
 Contributors: rankmath
 Plugin link: https://rankmath.com/wordpress/plugin/instant-indexing/
 Tags: indexing api, crawling, live streaming, fast indexing, job posting
-Tested up to: 6.0
+Tested up to: 6.2
 Requires at least: 5.6
 Requires PHP: 7.2.5
 Stable tag: 1.1.16
