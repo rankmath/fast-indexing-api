@@ -88,6 +88,20 @@ class RM_GIAPI {
 	public $rmapi = null;
 
 	/**
+	 * Rank Math Instant Indexing module instance.
+	 *
+	 * @var object
+	 */
+	public $rm_module = null;
+
+	/**
+	 * Holds the Google API client.
+	 *
+	 * @var object
+	 */
+	public $client = null;
+
+	/**
 	 * URL of the Google plugin setup guide on rankmath.com.
 	 *
 	 * @var string
@@ -100,6 +114,11 @@ class RM_GIAPI {
 	 * @var string
 	 */
 	public $bing_guide_url = 'https://rankmath.com/blog/bing-indexing-api/?utm_source=Instant+Indexing+Plugin&utm_medium=Setup+Guide+Button&utm_campaign=WP';
+
+	/**
+	 * Restrict to one request every X seconds to a given URL.
+	 */
+	const THROTTLE_LIMIT = 5;
 
 	/**
 	 * Constructor method.
@@ -127,7 +146,7 @@ class RM_GIAPI {
 
 		if ( $this->is_rm_active && class_exists( 'RankMath\\Instant_Indexing\\Api' ) ) {
 			$this->rm_module = new RankMath\Instant_Indexing\Instant_Indexing();
-			$this->rmapi = RankMath\Instant_Indexing\Api::get();
+			$this->rmapi     = RankMath\Instant_Indexing\Api::get();
 			add_action( 'admin_init', [ $this, 'remove_rm_admin_page' ] );
 		} else {
 			unset( $this->nav_tabs['bing_settings'] );
@@ -172,7 +191,7 @@ class RM_GIAPI {
 				add_filter( 'bulk_actions-edit-' . $post_type, [ $this, 'register_bulk_actions' ] );
 				add_filter( 'handle_bulk_actions-edit-' . $post_type, [ $this, 'bulk_action_handler' ], 10, 3 );
 			}
-			add_action( 'trashed_post', [ $this, 'delete_post' ], 10, 1 );
+			add_action( 'wp_trash_post', [ $this, 'delete_post' ], 10, 1 );
 		}
 
 		if ( $this->is_rm_active ) {
@@ -315,7 +334,7 @@ class RM_GIAPI {
 			$actions['rmgiapi_update']    = '<a href="' . admin_url( 'admin.php?page=instant-indexing&tab=console&apiaction=update&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Google Update', 'fast-indexing-api' ) . '</a>';
 			$actions['rmgiapi_getstatus'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing&tab=console&apiaction=getstatus&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Google Get Status', 'fast-indexing-api' ) . '</a>';
 		}
-		if ( in_array( $post->post_type, $bing_post_types, true ) ) {
+		if ( in_array( $post->post_type, $bing_post_types, true ) && function_exists( 'rank_math' ) ) {
 			$actions['rmgiapi_bing_submit'] = '<a href="' . admin_url( 'admin.php?page=instant-indexing&tab=console&apiaction=bing_submit&_wpnonce=' . $nonce . '&apiurl=' . rawurlencode( get_permalink( $post ) ) ) . '" class="rmgiapi-link rmgiapi_update">' . __( 'Instant Indexing: Submit to IndexNow', 'fast-indexing-api' ) . '</a>';
 		}
 
@@ -357,6 +376,8 @@ class RM_GIAPI {
 	 *
 	 * @param  array  $url_input URLs.
 	 * @param  string $action    API action.
+	 * @param  bool   $is_manual Whether the URL is submitted manually by the user.
+	 *
 	 * @return array  $data      Result of the API call.
 	 */
 	public function send_to_api( $url_input, $action, $is_manual = true ) {
@@ -364,6 +385,31 @@ class RM_GIAPI {
 		$urls_count = count( $url_input );
 
 		if ( strpos( $action, 'bing' ) === false ) {
+			/**
+			 * Filter the URL to be submitted to IndexNow.
+			 * Returning false will prevent the URL from being submitted.
+			 *
+			 * @param bool   $is_manual Whether the URL is submitted manually by the user.
+			 */
+			$url_input = apply_filters( 'rank_math/instant_indexing/submit_url', $url_input, $is_manual );
+			if ( ! $url_input ) {
+				return false;
+			}
+			$url_input = array_unique( $url_input );
+
+			if ( count( $url_input ) > 100 ) {
+				$url_input = array_slice( $url_input, 0, 100 );
+			}
+
+			$auto_submission_log = get_option( 'giapi_auto_submissions', [] );
+			if ( ! $is_manual ) {
+				// We keep the auto-submitted URLs in a log to prevent duplicates.
+				$logs = array_values( array_reverse( $auto_submission_log ) );
+				if ( ! empty( $logs[0] ) && $logs[0]['url'] === $url_input[0] && time() - $logs[0]['time'] < self::THROTTLE_LIMIT ) {
+					return false;
+				}
+			}
+
 			// This is NOT a Bing API request, so it's Google.
 			include_once RM_GIAPI_PATH . 'vendor/autoload.php';
 			$this->client = new Google_Client();
@@ -387,6 +433,21 @@ class RM_GIAPI {
 					$request_part = $service->urlNotifications->publish( $post_body ); // phpcs:ignore
 				}
 				$batch->add( $request_part, 'url-' . $i );
+
+				// Log auto-submitted URLs.
+				if ( ! $is_manual ) {
+					$auto_submission_log[] = [
+						'url'  => $url,
+						'time' => time(),
+					];
+				}
+			}
+
+			if ( ! $is_manual ) {
+				if ( count( $auto_submission_log ) > 100 ) {
+					$auto_submission_log = array_slice( $auto_submission_log, -100, 100, true );
+				}
+				update_option( 'giapi_auto_submissions', $auto_submission_log );
 			}
 
 			$results   = $batch->execute();
@@ -420,7 +481,7 @@ class RM_GIAPI {
 
 			if ( ! $is_manual ) {
 				$logs = array_values( array_reverse( $this->rmapi->get_log() ) );
-				if ( ! empty( $logs[0] ) && $logs[0]['url'] === $url_input[0] && time() - $logs[0]['time'] < 15 ) {
+				if ( ! empty( $logs[0] ) && $logs[0]['url'] === $url_input[0] && time() - $logs[0]['time'] < self::THROTTLE_LIMIT ) {
 					return false;
 				}
 			}
@@ -1081,6 +1142,11 @@ class RM_GIAPI {
 
 		$post = get_post( $post_id );
 		if ( ! in_array( $post->post_type, $post_types, true ) ) {
+			return;
+		}
+
+		// Only submit delete action if post was published.
+		if ( $post->post_status !== 'publish' ) {
 			return;
 		}
 
