@@ -106,7 +106,7 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 
 == Changelog ==
 
-= v1.1.17 [May 20, 2023] =
+= v1.1.17 [May 31, 2023] =
 * Fixed: PHP notice on the plugin settings page.
 * Fixed: Double submission of posts to the Google Indexing API.
 * Fixed: "Submit to IndexNow" action showing even when IndexNow is disabled.
