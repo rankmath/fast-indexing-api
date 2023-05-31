@@ -2,10 +2,10 @@
 Contributors: rankmath
 Plugin link: https://rankmath.com/wordpress/plugin/instant-indexing/
 Tags: indexing api, crawling, live streaming, fast indexing, job posting
-Tested up to: 6.2
+Tested up to: 6.2.2
 Requires at least: 5.6
 Requires PHP: 7.2.5
-Stable tag: 1.1.16
+Stable tag: 1.1.17
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -105,6 +105,12 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 3. Plugin Settings
 
 == Changelog ==
+
+= v1.1.17 [May 31, 2023] =
+* Fixed: PHP notice on the plugin settings page.
+* Fixed: Double submission of posts to the Google Indexing API.
+* Fixed: "Submit to IndexNow" action showing even when IndexNow is disabled.
+* Fixed: PHP 8.2 compatibility issues.
 
 = v1.1.16 [Jun 21, 2022] =
 * Updated the Guzzle HTTP library to version 7.4.4 (requires PHP 7.2.5)
