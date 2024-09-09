@@ -5,7 +5,7 @@ Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 6.6
 Requires at least: 5.6
 Requires PHP: 7.2.5
-Stable tag: 1.1.19
+Stable tag: 1.1.20
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -105,6 +105,9 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 3. Plugin Settings
 
 == Changelog ==
+
+= v1.1.20 [Sep 10, 2024] =
+* Fixed: Adjusted limits as per Google's new guidelines
 
 = v1.1.19 [Sept 02, 2024] =
 * Added: WordPress 6.6 Compatibility
