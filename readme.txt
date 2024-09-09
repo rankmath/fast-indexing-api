@@ -107,7 +107,7 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 == Changelog ==
 
 = v1.1.20 [Sep 10, 2024] =
-* Added: Adjusted limits as per Google's new guidelines
+* Fixed: Adjusted limits as per Google's new guidelines
 
 = v1.1.19 [Sept 02, 2024] =
 * Added: WordPress 6.6 Compatibility
