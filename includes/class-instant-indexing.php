@@ -15,7 +15,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.19';
+	public $version = '1.1.20';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -557,7 +557,7 @@ class RM_GIAPI {
 		];
 
 		$limit_publishperday = apply_filters( 'rank_math/indexing_api/limit_publishperday', 200 );
-		$limit_permin        = apply_filters( 'rank_math/indexing_api/limit_perminute', 600 );
+		$limit_permin        = apply_filters( 'rank_math/indexing_api/limit_perminute', 380 );
 		$limit_metapermin    = apply_filters( 'rank_math/indexing_api/limit_metaperminute', 180 );
 
 		$limit_bingsubmitperday = apply_filters( 'rank_math/indexing_api/limit_bing_submitperday', 10 );
