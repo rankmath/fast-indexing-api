@@ -32,7 +32,14 @@ jQuery(document).ready(function($) {
 					if ( typeof info.urlNotificationMetadata !== 'undefined' ) {
 						base = info.urlNotificationMetadata;
 					}
-					var d = new Date(base.latestUpdate.notifyTime);
+
+					// Now.
+					var timestamp = Date.now();
+					if ( typeof base.latestUpdate !== 'undefined' && typeof base.latestUpdate.notifyTime !== 'undefined' ) {
+						timestamp = base.latestUpdate.notifyTime;
+					}
+
+					var d = new Date(timestamp);
 					$ufResponse.addClass('success').find('.response-status').text(rm_giapi.l10n_success+' ').siblings('.response-message').text(rm_giapi.l10n_last_updated+' ' + d.toString());
 				}
 			} else {
