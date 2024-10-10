@@ -8,5 +8,8 @@
     "require": {
         "google/apiclient": "^2.0",
         "guzzlehttp/guzzle": "^7"
+    },
+    "require-dev": {
+        "humbug/php-scoper": "^0.18"
     }
 }
