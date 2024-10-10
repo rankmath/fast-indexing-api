@@ -13,7 +13,7 @@ A very efficient yet simple plugin to take care of your indexing woos and helps 
 
 == Description ==
 
-### Get your website's pages, and content crawled immediately! Use the Instant Indexing plugin to beat your competition and rank higher.
+### Get your website's pages, and content crawled immediately! Use the Instant Indexing plugin to beat your competition and rank higher. 
 
 ★★★★★<br>
 
