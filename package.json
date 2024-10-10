@@ -52,8 +52,9 @@
 		"npm": "^6.14.14"
 	},
 	"scripts": {
+		"compose-and-scope": "gulp composeAndScope",
 		"build": "webpack --mode=production --progress",
-		"dist": "npm run build && gulp pot && gulp adminCSS"
+		"dist": "npm run compose-and-scope && npm run build && gulp pot && gulp adminCSS"
 	},
 	"browserslist": [
 		"last 2 versions"

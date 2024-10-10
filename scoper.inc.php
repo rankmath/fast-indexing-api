@@ -3,28 +3,27 @@
 use Symfony\Component\Finder\Finder;
 
 return [
-    'prefix' => 'Rank_Math_Instant_Indexing',
+	'prefix' => 'Rank_Math_Instant_Indexing',
 
-    'finders' => [
-        Finder::create()
-            ->files()
-            ->in('vendor')
-            ->notName('/^composer\..*$/')
-            ->notName('aliases.php'), // Exclude the Google aliases file
-    ],
+	'finders' => [
+		Finder::create()
+			->files()
+			->in('vendor')
+			->notName('/^composer\..*$/')
+			->notName('aliases.php'),
+	],
 
-    'output-dir' => 'vendor-prefixed',
+	'output-dir' => 'vendor-prefixed',
 
-    'exclude-namespaces' => [],
+	'exclude-namespaces' => [],
 
-    'exclude-classes' => [],
+	'exclude-classes' => [],
 
-    'exclude-constants' => [],
+	'exclude-constants' => [],
 
-    'exclude-files' => [
-        // Explicitly exclude the aliases.php file to prevent conflicts
-        'vendor/google/apiclient/src/aliases.php',
-    ],
+	'exclude-files' => [
+		'vendor/google/apiclient/src/aliases.php',
+	],
 
-    'patchers' => [],
+	'patchers' => [],
 ];
