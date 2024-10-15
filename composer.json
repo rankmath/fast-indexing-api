@@ -2,8 +2,7 @@
     "config": {
         "platform": {
             "php": "7.4"
-        },
-        "vendor-dir": "vendor-prefixed"
+        }
     },
     "require": {
         "google/apiclient": "^2.0",

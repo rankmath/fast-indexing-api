@@ -1,14 +1,16 @@
 /*eslint camelcase: ["error", {properties: "never"}]*/
 
-const { src, dest, watch, series } = require('gulp');
-const wpPot = require('gulp-wp-pot');
-const checktextdomain = require('gulp-checktextdomain');
-const sass = require('gulp-sass');
-const autoprefixer = require('gulp-autoprefixer');
-const del = require('del');
-const { exec } = require('child_process');
+import { src, dest, watch, series } from 'gulp';
+import wpPot from 'gulp-wp-pot';
+import checktextdomain from 'gulp-checktextdomain';
+import gulpSass from 'gulp-sass';
+import autoprefixer from 'gulp-autoprefixer';
+import del from 'del';
+import { exec } from 'child_process';
+import sass from 'sass';
 
-sass.compiler = require('node-sass');
+// Set the Sass compiler
+const sassCompiler = gulpSass(sass);
 
 const paths = {
 	admin: {
@@ -43,7 +45,25 @@ function cleanup() {
 
 // Function to prefix PHP classes using PHP-Scoper
 function phpScoper(cb) {
-	exec('php-scoper add-prefix', (err, stdout, stderr) => {
+	exec('php-scoper add-prefix -n', (err, stdout, stderr) => {
+		console.log(stdout);
+		console.error(stderr);
+		cb(err);
+	});
+}
+
+// Function to dump Composer autoload file with "vendor-dir" set to "vendor-prefixed"
+function dumpAutoload(cb) {
+	exec('COMPOSER_VENDOR_DIR=vendor-prefixed composer dump-autoload', (err, stdout, stderr) => {
+		console.log(stdout);
+		console.error(stderr);
+		cb(err);
+	} );
+}
+
+// Function to replace vendor-prefixed/google/apiclient/src/aliases.php with an empty file
+function deleteAliases(cb) {
+	exec('echo "<?php" > vendor-prefixed/google/apiclient/src/aliases.php', (err, stdout, stderr) => {
 		console.log(stdout);
 		console.error(stderr);
 		cb(err);
@@ -52,14 +72,14 @@ function phpScoper(cb) {
 
 // Main task for Composer install, cleanup, and PHP-Scoper
 function composeAndScope(cb) {
-	series(composerInstall, cleanup, phpScoper)(cb);
+	series(composerInstall, cleanup, phpScoper, dumpAutoload, deleteAliases)(cb);
 }
 
 // SASS to CSS
 function adminCSS() {
 	return src(paths.admin.src, { sourcemaps: false })
 		.pipe(
-			sass({ outputStyle: 'compressed' }).on('error', sass.logError)
+			sassCompiler({ outputStyle: 'compressed' }).on('error', sassCompiler.logError)
 		)
 		.pipe(autoprefixer())
 		.pipe(dest(paths.admin.dest, { sourcemaps: '.' }));
@@ -110,8 +130,4 @@ function ct() {
 }
 
 // Export all tasks
-exports.ct = ct;
-exports.pot = pot;
-exports.adminCSS = adminCSS;
-exports.watch = watchFiles;
-exports.composeAndScope = composeAndScope;
+export { ct, pot, adminCSS, watchFiles as watch, composeAndScope };
