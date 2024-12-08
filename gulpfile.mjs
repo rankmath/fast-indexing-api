@@ -7,7 +7,7 @@ import gulpSass from 'gulp-sass';
 import autoprefixer from 'gulp-autoprefixer';
 import del from 'del';
 import { exec } from 'child_process';
-import sass from 'sass';
+import * as sass from 'sass'
 
 // Set the Sass compiler
 const sassCompiler = gulpSass(sass);
@@ -45,6 +45,9 @@ function cleanup() {
 
 // Function to prefix PHP classes using PHP-Scoper
 function phpScoper(cb) {
+	// Remove the existing vendor-prefixed directory
+	del.sync('vendor-prefixed');
+	
 	exec('php-scoper add-prefix -n', (err, stdout, stderr) => {
 		console.log(stdout);
 		console.error(stderr);
@@ -92,16 +95,18 @@ function watchFiles() {
 
 // POT file generation
 function pot() {
-	return src(paths.pot.src)
-		.pipe(
-			wpPot({
-				domain: 'fast-indexing-api',
-				lastTranslator: 'Rank Math',
-				noFilePaths: true,
-				team: 'Rank Math',
-			})
-		)
-		.pipe(dest(paths.pot.dest));
+    return src(paths.pot.src)
+        .pipe(
+            wpPot({
+                domain: 'fast-indexing-api',
+                lastTranslator: 'Rank Math',
+                noFilePaths: true,
+                team: 'Rank Math',
+            })
+        )
+        .pipe(dest(paths.pot.dest))
+        .on('error', console.error)
+        .on('end', () => console.log('POT task completed'));
 }
 
 // Check text domain

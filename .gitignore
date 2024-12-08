@@ -27,3 +27,4 @@ assets/.DS_Store
 .DS_Store
 vendor/wordpress-stubs.php
 vendor
+vendor-prefixed

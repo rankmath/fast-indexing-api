@@ -34,7 +34,8 @@
 		"sass": "^1.79.5",
 		"webpack": "^5.95.0",
 		"webpack-cli": "^5.1.4",
-		"webpack-dev-server": "^5.1.0"
+		"webpack-dev-server": "^5.1.0",
+		"wp-pot": "^2.0.0"
 	},
 	"dependencies": {
 		"del": "^6.1.1",
@@ -43,7 +44,7 @@
 	"scripts": {
 		"compose-and-scope": "gulp composeAndScope",
 		"build": "webpack --mode=production --progress",
-		"dist": "npm run compose-and-scope && npm run build && gulp pot && gulp adminCSS"
+		"dist": "npm run compose-and-scope && npm run build && gulp adminCSS"
 	},
 	"browserslist": [
 		"last 2 versions"
