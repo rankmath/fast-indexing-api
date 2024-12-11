@@ -57,6 +57,15 @@ function phpScoper(cb) {
 
 // Function to dump Composer autoload file with "vendor-dir" set to "vendor-prefixed"
 function dumpAutoload(cb) {
+	// Check that the vendor-prefixed/humbug/php-scoper/vendor-hotfix directory exists, otherwise an error may occur
+	exec('mkdir -p vendor-prefixed/humbug/php-scoper/vendor-hotfix', (err, stdout, stderr) => {
+		console.log(stdout);
+		console.error(stderr);
+	});
+
+	// Delete the vendor-prefixed/humbug, vendor-prefixed/thecodingmachine, vendor-predixed/monolog directories (even if they are not empty)
+	del(['vendor-prefixed/humbug', 'vendor-prefixed/thecodingmachine'], { force: true });
+
 	exec('COMPOSER_VENDOR_DIR=vendor-prefixed composer dump-autoload', (err, stdout, stderr) => {
 		console.log(stdout);
 		console.error(stderr);

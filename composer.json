@@ -4,11 +4,18 @@
             "php": "7.4"
         }
     },
+    "autoload": {
+    "exclude-from-classmap":
+        [
+            "vendor-prefixed/humbug/php-scoper/vendor-hotfix/*"
+        ]
+    },
     "require": {
         "google/apiclient": "^2.0",
-        "guzzlehttp/guzzle": "^7"
+        "guzzlehttp/guzzle": "^7",
+        "monolog/monolog": "2.10.0"
     },
     "require-dev": {
-        "humbug/php-scoper": "^0.17"
+        "humbug/php-scoper": "0.17.5"
     }
 }
