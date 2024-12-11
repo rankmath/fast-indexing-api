@@ -15,7 +15,7 @@ class RM_GIAPI {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.21';
+	public $version = '1.1.22';
 
 	/**
 	 * Holds the admin menu hook suffix for the "dummy" dashboard.
@@ -411,8 +411,8 @@ class RM_GIAPI {
 			}
 
 			// This is NOT a Bing API request, so it's Google.
-			include_once RM_GIAPI_PATH . 'vendor/autoload.php';
-			$this->client = new Google_Client();
+			include_once RM_GIAPI_PATH . 'vendor-prefixed/autoload.php';
+			$this->client = new Rank_Math_Instant_Indexing\Google\Client();
 			$this->client->setAuthConfig( json_decode( $this->get_setting( 'json_key' ), true ) );
 			$this->client->setConfig( 'base_path', 'https://indexing.googleapis.com' );
 			$this->client->addScope( 'https://www.googleapis.com/auth/indexing' );
@@ -420,11 +420,11 @@ class RM_GIAPI {
 			// Batch request.
 			$this->client->setUseBatch( true );
 			// init google batch and set root URL.
-			$service = new Google_Service_Indexing( $this->client );
-			$batch   = new Google_Http_Batch( $this->client, false, 'https://indexing.googleapis.com' );
+			$service = new Rank_Math_Instant_Indexing\Google\Service\Indexing( $this->client );
+			$batch   = new Rank_Math_Instant_Indexing\Google\Http\Batch( $this->client, false, 'https://indexing.googleapis.com' );
 
 			foreach ( $url_input as $i => $url ) {
-				$post_body = new Google_Service_Indexing_UrlNotification();
+				$post_body = new Rank_Math_Instant_Indexing\Google\Service\Indexing\UrlNotification();
 				if ( $action === 'getstatus' ) {
 					$request_part = $service->urlNotifications->getMetadata( [ 'url' => $url ] ); // phpcs:ignore
 				} else {
@@ -456,10 +456,10 @@ class RM_GIAPI {
 			foreach ( $results as $id => $response ) {
 				// Change "response-url-1" to "url-1".
 				$local_id = substr( $id, 9 );
-				if ( is_a( $response, 'Google_Service_Exception' ) ) {
+				if ( is_a( $response, 'Rank_Math_Instant_Indexing\\Google\\Service\\Exception' ) ) {
 					$data[ $local_id ] = json_decode( $response->getMessage() );
 				} else {
-					$data[ $local_id ] = (array) $response->toSimpleObject();
+					$data[ $local_id ] = (array) json_decode( json_encode( $response ), true );
 				}
 				if ( $res_count === 1 ) {
 					$data = $data[ $local_id ];
