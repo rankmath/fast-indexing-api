@@ -32,7 +32,7 @@ require_once 'includes/class-instant-indexing.php';
 /**
  * Instantiate plugin.
  */
-add_action( 'after_setup_theme', 'rm_giapi_init', 1 );
+add_action( 'plugins_loaded', 'rm_giapi_init', 9 );
 
 /**
  * Init plugin.
