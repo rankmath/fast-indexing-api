@@ -127,7 +127,7 @@ jQuery(document).ready(function($) {
 		let originalValue = $( '#giapi_indexnow_api_key' ).val();
 		$( '#giapi_indexnow_api_key' ).val( '...' );
 		$.ajax( {
-			url: rankMath.indexNow.restUrl + '/resetKey',
+			url: rankMath.api.root + 'rankmath/v1/in/resetKey',
 			type: 'POST',
 			beforeSend( xhr ) {
 				xhr.setRequestHeader( 'X-WP-Nonce', rankMath.api.nonce );
