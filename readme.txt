@@ -5,7 +5,7 @@ Tags: indexing api, crawling, live streaming, fast indexing, job posting
 Tested up to: 6.6
 Requires at least: 5.6
 Requires PHP: 7.2.5
-Stable tag: 1.1.21
+Stable tag: 1.1.22
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -105,6 +105,10 @@ Technically, yes. That's what the plugin is made to do. But, please note that we
 3. Plugin Settings
 
 == Changelog ==
+
+= v1.1.22 [Nov 21, 2025] =
+* Fixed: Changing the API Key in the IndexNow settings was not working
+* Fixed: PHP warning triggered by the `_load_textdomain_just_in_time` function
 
 = v1.1.21 [Sep 19, 2024] =
 * Fixed: JS error on the console page due to changes in the Google API
